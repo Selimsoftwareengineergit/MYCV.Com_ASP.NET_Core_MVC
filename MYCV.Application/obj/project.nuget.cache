@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "XI+ent5nW8g=",
+  "success": true,
+  "projectFilePath": "G:\\60_Projects\\MYCV\\MYCV\\MYCV.Application\\MYCV.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\selim\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

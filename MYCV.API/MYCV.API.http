@@ -1,0 +1,6 @@
+@MYCV.API_HostAddress = http://localhost:5146
+
+GET {{MYCV.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

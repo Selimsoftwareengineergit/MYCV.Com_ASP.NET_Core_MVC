@@ -1,0 +1,11 @@
+G:\60_Projects\MYCV\MYCV\MYCV.Domain\bin\Debug\net8.0\MYCV.Domain.deps.json
+G:\60_Projects\MYCV\MYCV\MYCV.Domain\bin\Debug\net8.0\MYCV.Domain.dll
+G:\60_Projects\MYCV\MYCV\MYCV.Domain\bin\Debug\net8.0\MYCV.Domain.pdb
+G:\60_Projects\MYCV\MYCV\MYCV.Domain\obj\Debug\net8.0\MYCV.Domain.GeneratedMSBuildEditorConfig.editorconfig
+G:\60_Projects\MYCV\MYCV\MYCV.Domain\obj\Debug\net8.0\MYCV.Domain.AssemblyInfoInputs.cache
+G:\60_Projects\MYCV\MYCV\MYCV.Domain\obj\Debug\net8.0\MYCV.Domain.AssemblyInfo.cs
+G:\60_Projects\MYCV\MYCV\MYCV.Domain\obj\Debug\net8.0\MYCV.Domain.csproj.CoreCompileInputs.cache
+G:\60_Projects\MYCV\MYCV\MYCV.Domain\obj\Debug\net8.0\MYCV.Domain.dll
+G:\60_Projects\MYCV\MYCV\MYCV.Domain\obj\Debug\net8.0\refint\MYCV.Domain.dll
+G:\60_Projects\MYCV\MYCV\MYCV.Domain\obj\Debug\net8.0\MYCV.Domain.pdb
+G:\60_Projects\MYCV\MYCV\MYCV.Domain\obj\Debug\net8.0\ref\MYCV.Domain.dll

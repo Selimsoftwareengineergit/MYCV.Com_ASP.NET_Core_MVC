@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "m7EK2ULgZDDqThPDCfUCefpesJPJDz1e0dvv8YDMTi0=",
+  "Source": "MYCV.API",
+  "BasePath": "_content/MYCV.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

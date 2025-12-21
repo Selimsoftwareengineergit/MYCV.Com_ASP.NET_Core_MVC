@@ -1,0 +1,15 @@
+G:\60_Projects\MYCV\MYCV\MYCV.Application\bin\Debug\net8.0\MYCV.Application.deps.json
+G:\60_Projects\MYCV\MYCV\MYCV.Application\bin\Debug\net8.0\MYCV.Application.dll
+G:\60_Projects\MYCV\MYCV\MYCV.Application\bin\Debug\net8.0\MYCV.Application.pdb
+G:\60_Projects\MYCV\MYCV\MYCV.Application\bin\Debug\net8.0\MYCV.Domain.dll
+G:\60_Projects\MYCV\MYCV\MYCV.Application\bin\Debug\net8.0\MYCV.Domain.pdb
+G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\MYCV.Application.csproj.AssemblyReference.cache
+G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\MYCV.Application.GeneratedMSBuildEditorConfig.editorconfig
+G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\MYCV.Application.AssemblyInfoInputs.cache
+G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\MYCV.Application.AssemblyInfo.cs
+G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\MYCV.Application.csproj.CoreCompileInputs.cache
+G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\MYCV.App.03A0107A.Up2Date
+G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\MYCV.Application.dll
+G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\refint\MYCV.Application.dll
+G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\MYCV.Application.pdb
+G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\ref\MYCV.Application.dll
