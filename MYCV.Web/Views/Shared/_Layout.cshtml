@@ -1,0 +1,321 @@
+﻿<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+
+    <!-- Dynamic Title -->
+    <title>@ViewData["Title"] - MYCV</title>
+
+    <meta name="description" content="Professional CV builder platform" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="~/assets/img/favicon.ico" type="image/x-icon" />
+
+    <!-- ========================= CSS here ========================= -->
+    <!-- Add ~/ for ASP.NET Core root path -->
+    <link rel="stylesheet" href="~/assets/css/bootstrap-5.0.0-beta1.min.css" />
+    <link rel="stylesheet" href="~/assets/css/LineIcons.2.0.css" />
+    <link rel="stylesheet" href="~/assets/css/tiny-slider.css" />
+    <link rel="stylesheet" href="~/assets/css/animate.css" />
+    <link rel="stylesheet" href="~/assets/css/lindy-uikit.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <!-- View-specific CSS -->
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <!--[if lte IE 9]>
+      <p class="browserupgrade">
+        You are using an <strong>outdated</strong> browser. Please
+        <a href="https://browsehappy.com/">upgrade your browser</a> to improve
+        your experience and security.
+      </p>
+    <![endif]-->
+    <!-- ========================= preloader start ========================= -->
+    <div class="preloader">
+        <div class="loader">
+            <div class="spinner">
+                <div class="spinner-container">
+                    <div class="spinner-rotator">
+                        <div class="spinner-left">
+                            <div class="spinner-circle"></div>
+                        </div>
+                        <div class="spinner-right">
+                            <div class="spinner-circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ========================= preloader end ========================= -->
+    <!-- ========================= header-6 start ========================= -->
+    <header class="header header-6">
+        <div class="navbar-area">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-12">
+                        <nav class="navbar navbar-expand-lg">
+                            <!-- Logo with ASP.NET Core tag helper -->
+                            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                                <img src="~/assets/img/logo/logo.svg" alt="MYCV Logo" />
+                            </a>
+
+                            <!-- Mobile menu toggle -->
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#navbarSupportedContent6"
+                                    aria-controls="navbarSupportedContent6"
+                                    aria-expanded="false"
+                                    aria-label="Toggle navigation">
+                                <span class="toggler-icon"></span>
+                                <span class="toggler-icon"></span>
+                                <span class="toggler-icon"></span>
+                            </button>
+
+                            <!-- Navigation Menu -->
+                            <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent6">
+                                <ul id="nav6" class="navbar-nav ms-auto">
+                                    <li class="nav-item">
+                                        <a class="page-scroll" asp-controller="Home" asp-action="Index">Home</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="page-scroll" asp-controller="Home" asp-action="Features">Features</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="page-scroll" asp-controller="Home" asp-action="About">About</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="page-scroll" asp-controller="Home" asp-action="Pricing">Pricing</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="page-scroll" asp-controller="Home" asp-action="Contact">Contact</a>
+                                    </li>
+
+                                    <!-- Authentication Section -->
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown"
+                                               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="lni lni-user"></i> @User.Identity.Name
+                                            </a>
+                                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                                <li>
+                                                    <a class="dropdown-item" asp-controller="Dashboard" asp-action="Index">
+                                                        <i class="lni lni-dashboard"></i> Dashboard
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" asp-controller="Account" asp-action="Profile">
+                                                        <i class="lni lni-user"></i> Profile
+                                                    </a>
+                                                </li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <form asp-controller="Account" asp-action="Logout" method="post">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="lni lni-exit"></i> Logout
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="nav-item">
+                                            <a class="btn btn-outline-primary ms-2" asp-controller="Account" asp-action="Login">
+                                                Login
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="btn btn-primary ms-2" asp-controller="Account" asp-action="Register">
+                                                Sign Up
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            <!-- navbar collapse -->
+                        </nav>
+                        <!-- navbar -->
+                    </div>
+                </div>
+                <!-- row -->
+            </div>
+            <!-- container -->
+        </div>
+        <!-- navbar area -->
+    </header>
+    <!-- ========================= header-6 end ========================= -->
+    <!-- ========================= MAIN CONTENT START ========================= -->
+    <!-- This is where your view content will be inserted -->
+    <main role="main">
+        @RenderBody()
+    </main>
+    <!-- ========================= MAIN CONTENT END ========================= -->
+    <!-- ========================= footer style-4 start ========================= -->
+    <footer class="footer footer-style-4">
+        <div class="container">
+            <div class="widget-wrapper">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-4 col-md-6">
+                        <div class="footer-widget wow fadeInUp" data-wow-delay=".2s">
+                            <div class="logo">
+                                <a asp-controller="Home" asp-action="Index">
+                                    <img src="~/assets/img/logo/logo.svg" alt="MYCV Logo">
+                                </a>
+                            </div>
+                            <p class="desc">Professional CV builder platform to create stunning resumes that get you hired. Build your career with us.</p>
+                            <ul class="socials">
+                                <li>
+                                    <a href="https://facebook.com" target="_blank">
+                                        <i class="lni lni-facebook-filled"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://twitter.com" target="_blank">
+                                        <i class="lni lni-twitter-filled"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://instagram.com" target="_blank">
+                                        <i class="lni lni-instagram-filled"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://linkedin.com" target="_blank">
+                                        <i class="lni lni-linkedin-original"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 offset-xl-1 col-lg-2 col-md-6 col-sm-6">
+                        <div class="footer-widget wow fadeInUp" data-wow-delay=".3s">
+                            <h6>Quick Link</h6>
+                            <ul class="links">
+                                <li> <a asp-controller="Home" asp-action="Index">Home</a> </li>
+                                <li> <a asp-controller="Home" asp-action="About">About</a> </li>
+                                <li> <a asp-controller="Home" asp-action="Features">Features</a> </li>
+                                <li> <a asp-controller="Home" asp-action="Pricing">Pricing</a> </li>
+                                <li> <a asp-controller="Home" asp-action="Contact">Contact</a> </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                        <div class="footer-widget wow fadeInUp" data-wow-delay=".4s">
+                            <h6>Services</h6>
+                            <ul class="links">
+                                <li> <a asp-controller="Services" asp-action="CVBuilder">CV Builder</a> </li>
+                                <li> <a asp-controller="Services" asp-action="ResumeTemplates">Resume Templates</a> </li>
+                                <li> <a asp-controller="Services" asp-action="CoverLetters">Cover Letters</a> </li>
+                                <li> <a asp-controller="Services" asp-action="CareerAdvice">Career Advice</a> </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6">
+                        <div class="footer-widget wow fadeInUp" data-wow-delay=".5s">
+                            <h6>Contact Us</h6>
+                            <ul class="contact-info">
+                                <li>
+                                    <i class="lni lni-phone"></i>
+                                    <span>+1 234 567 8900</span>
+                                </li>
+                                <li>
+                                    <i class="lni lni-envelope"></i>
+                                    <span>support@mycv.com</span>
+                                </li>
+                                <li>
+                                    <i class="lni lni-map-marker"></i>
+                                    <span>123 Business Street, Suite 100<br>New York, NY 10001</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright-wrapper wow fadeInUp" data-wow-delay=".2s">
+                <p>
+                    &copy; @DateTime.Now.Year MYCV. All rights reserved. |
+                    <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a> |
+                    <a asp-controller="Home" asp-action="Terms">Terms of Service</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+    <!-- ========================= footer style-4 end ========================= -->
+    <!-- ========================= scroll-top start ========================= -->
+    <a href="#" class="scroll-top">
+        <i class="lni lni-chevron-up"></i>
+    </a>
+    <!-- ========================= scroll-top end ========================= -->
+    <!-- ========================= JS here ========================= -->
+    <!-- Add ~/ for ASP.NET Core root path -->
+    <script src="~/assets/js/bootstrap-5.0.0-beta1.min.js"></script>
+    <script src="~/assets/js/tiny-slider.js"></script>
+    <script src="~/assets/js/wow.min.js"></script>
+    <script src="~/assets/js/main.js"></script>
+
+    <!-- jQuery (if needed by template) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- View-specific scripts -->
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- Initialize WOW.js -->
+    <script>
+        new WOW().init();
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a.page-scroll').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId.startsWith('#')) {
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 70,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
+        });
+
+        // Scroll to top button
+        const scrollTop = document.querySelector('.scroll-top');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTop.classList.add('active');
+            } else {
+                scrollTop.classList.remove('active');
+            }
+        });
+
+        scrollTop.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Preloader
+        window.addEventListener('load', () => {
+            const preloader = document.querySelector('.preloader');
+            preloader.style.opacity = '0';
+            preloader.style.visibility = 'hidden';
+        });
+    </script>
+</body>
+</html>

@@ -13,3 +13,4 @@ G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\MYCV.Application.dll
 G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\refint\MYCV.Application.dll
 G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\MYCV.Application.pdb
 G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\ref\MYCV.Application.dll
+G:\60_Projects\MYCV\MYCV\MYCV.Application\obj\Debug\net8.0\MYCV.Application.sourcelink.json

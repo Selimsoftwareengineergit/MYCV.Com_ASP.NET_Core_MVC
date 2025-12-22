@@ -17,3 +17,4 @@ G:\60_Projects\MYCV\MYCV\MYCV.Infrastructure\obj\Debug\net8.0\refint\MYCV.Infras
 G:\60_Projects\MYCV\MYCV\MYCV.Infrastructure\obj\Debug\net8.0\MYCV.Infrastructure.pdb
 G:\60_Projects\MYCV\MYCV\MYCV.Infrastructure\obj\Debug\net8.0\MYCV.Infrastructure.genruntimeconfig.cache
 G:\60_Projects\MYCV\MYCV\MYCV.Infrastructure\obj\Debug\net8.0\ref\MYCV.Infrastructure.dll
+G:\60_Projects\MYCV\MYCV\MYCV.Infrastructure\obj\Debug\net8.0\MYCV.Infrastructure.sourcelink.json
