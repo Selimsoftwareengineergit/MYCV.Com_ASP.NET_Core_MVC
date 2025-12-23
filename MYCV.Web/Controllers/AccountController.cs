@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MYCV.Application.DTOs;
+using MYCV.Web.Services.Api;
+using MYCV.Web.ViewModels;
 
 namespace MYCV.Web.Controllers
 {
@@ -18,6 +21,41 @@ namespace MYCV.Web.Controllers
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Login(string? returnUrl = null)
+        {
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                return RedirectToAction("Index", "Home");
+            }
 
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        // POST: /Account/Login
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+
+        public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            try
+            {
+                var loginrequest = new LoginRequestDto
+                {
+                    Email = model.Email,
+                    Password = model.Password
+                };
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
