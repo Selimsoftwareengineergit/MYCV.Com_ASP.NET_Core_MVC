@@ -50,7 +50,6 @@ namespace MYCV.Web.Controllers
                     Email = model.Email,
                     Password = model.Password
                 };
-
             }
             catch (Exception)
             {
