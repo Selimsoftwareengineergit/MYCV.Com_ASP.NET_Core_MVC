@@ -1,7 +1,13 @@
-﻿namespace MYCV.Web.Services.Api
+﻿using MYCV.Application.DTOs;
+
+namespace MYCV.Web.Services.Api
 {
     public interface IAuthApiService
     {
-        
+        Task<ApiResponse<AuthResponseDto>> LoginAsync(LoginRequestDto dto);
+        Task<ApiResponse<UserResponseDto>> RegisterAsync(UserCreateRequestDto dto);
+        Task<ApiResponse<bool>> RegisterAsync();
+
+
     }
 }
