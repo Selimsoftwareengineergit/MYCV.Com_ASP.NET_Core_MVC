@@ -6,8 +6,8 @@ namespace MYCV.Web.Services.Api
     {
         Task<ApiResponse<AuthResponseDto>> LoginAsync(LoginRequestDto dto);
         Task<ApiResponse<UserResponseDto>> RegisterAsync(UserCreateRequestDto dto);
-        Task<ApiResponse<bool>> RegisterAsync();
-
-
+        Task<ApiResponse<bool>> LogoutAsync();
+        Task<ApiResponse<bool>> ForgotPasswordAsync(string email);
+        Task<ApiResponse<bool>> ResetPasswordAsync(ResetPasswordRequestDto dto);
     }
 }

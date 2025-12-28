@@ -3,12 +3,16 @@
   "WorkspaceRootPath": "G:\\60_Projects\\MYCV\\MYCV\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{95BA882C-DF52-4660-871D-18C96B56443B}|MYCV.Application\\MYCV.Application.csproj|g:\\60_projects\\mycv\\mycv\\mycv.application\\dtos\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{95BA882C-DF52-4660-871D-18C96B56443B}|MYCV.Application\\MYCV.Application.csproj|solutionrelative:mycv.application\\dtos\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B1FFF54D-3A04-40E3-B274-15B22D86C3DA}|MYCV.Web\\MYCV.Web.csproj|g:\\60_projects\\mycv\\mycv\\mycv.web\\services\\api\\iauthapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B1FFF54D-3A04-40E3-B274-15B22D86C3DA}|MYCV.Web\\MYCV.Web.csproj|solutionrelative:mycv.web\\services\\api\\iauthapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B1FFF54D-3A04-40E3-B274-15B22D86C3DA}|MYCV.Web\\MYCV.Web.csproj|g:\\60_projects\\mycv\\mycv\\mycv.web\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B1FFF54D-3A04-40E3-B274-15B22D86C3DA}|MYCV.Web\\MYCV.Web.csproj|solutionrelative:mycv.web\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{95BA882C-DF52-4660-871D-18C96B56443B}|MYCV.Application\\MYCV.Application.csproj|g:\\60_projects\\mycv\\mycv\\mycv.application\\dtos\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{95BA882C-DF52-4660-871D-18C96B56443B}|MYCV.Application\\MYCV.Application.csproj|solutionrelative:mycv.application\\dtos\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -47,6 +51,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "IAuthApiService.cs",
+              "DocumentMoniker": "G:\\60_Projects\\MYCV\\MYCV\\MYCV.Web\\Services\\Api\\IAuthApiService.cs",
+              "RelativeDocumentMoniker": "MYCV.Web\\Services\\Api\\IAuthApiService.cs",
+              "ToolTip": "G:\\60_Projects\\MYCV\\MYCV\\MYCV.Web\\Services\\Api\\IAuthApiService.cs",
+              "RelativeToolTip": "MYCV.Web\\Services\\Api\\IAuthApiService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-28T07:05:09.47Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "ApiResponse.cs",
               "DocumentMoniker": "G:\\60_Projects\\MYCV\\MYCV\\MYCV.Application\\DTOs\\ApiResponse.cs",
               "RelativeDocumentMoniker": "MYCV.Application\\DTOs\\ApiResponse.cs",
@@ -65,7 +82,7 @@
               "RelativeDocumentMoniker": "MYCV.Web\\Controllers\\AccountController.cs",
               "ToolTip": "G:\\60_Projects\\MYCV\\MYCV\\MYCV.Web\\Controllers\\AccountController.cs",
               "RelativeToolTip": "MYCV.Web\\Controllers\\AccountController.cs",
-              "ViewState": "AgIAACIAAAAAAAAAAAAAADUAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABYAAAAAAAAAAAAqwDUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-28T05:55:39.43Z",
               "EditorCaption": ""
