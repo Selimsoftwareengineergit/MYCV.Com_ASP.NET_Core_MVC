@@ -27,6 +27,7 @@ namespace MYCV.Web.Controllers
         {
             if (User?.Identity?.IsAuthenticated == true)
             {
+                _logger.LogInformation("User already authenticated, redirecting to home");
                 return RedirectToAction("Index", "Home");
             }
 
@@ -45,20 +46,26 @@ namespace MYCV.Web.Controllers
 
             if (!ModelState.IsValid)
             {
+                _logger.LogWarning("Login model validation failed for email: {Email}",model.Email);
                 return View(model);
             }
             try
             {
+                // Create DTO for API call
                 var loginRequest = new LoginRequestDto
                 {
                     Email = model.Email,
                     Password = model.Password
                 };
+                _logger.LogInformation("Attempting login for user: {Email}",model.Email);
 
+                // Call API service (Web → API communication pattern)
                 var apiResponse = await _authApiService.LoginAsync(loginRequest);
 
+                // Check API response
                 if (!apiResponse.Success || apiResponse.Data == null) 
                 {
+                    _logger.LogWarning("Login failed for {Email}: {Message}", model.Email, apiResponse.Message);
                     ModelState.AddModelError("", apiResponse.Message ?? "Invalid login attempt.");
                     return View(model);
                 }
@@ -67,26 +74,44 @@ namespace MYCV.Web.Controllers
 
                 var claims = new List<Claim>
                 {
-                    new Claim (ClaimTypes.NameIdentifier, authData.User.Id.ToString()),
-                    new Claim (ClaimTypes.Email, authData.User.Email),
-                    new Claim (ClaimTypes.Name, $"{authData.User.FullName}"),
-                    //new Claim (ClaimTypes.Role, authData.Role ?? "User"),
-                    new Claim ("Token", authData.Token)
+                    new Claim(ClaimTypes.NameIdentifier, authData.User.Id.ToString()),
+                    new Claim(ClaimTypes.Email, authData.User.Email),
+                    new Claim(ClaimTypes.Name, $"{authData.User.FullName}"),
+                    //new Claim(ClaimTypes.Role, authData.User.Role ?? "User"), // Role-based authorization
+                    new Claim("Token", authData.Token), // Store JWT token
+                    new Claim("UserId", authData.User.Id.ToString())
                 };
 
                 var claimsIdentity = new ClaimsIdentity(
                     claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                // Create authentication properties with security settings
                 var authproperties = new AuthenticationProperties
                 {
                     IsPersistent = model.RememberMe,
                     ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8),
-                    RedirectUri = returnUrl ?? "/"
+                    RedirectUri = returnUrl ?? "/",
+
+                    // Security settings
+                    AllowRefresh = true,
+                    IssuedUtc = DateTimeOffset.UtcNow
                 };
+
+                // Sign in user with cookie authentication
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity),
+                    authproperties);
+
+                _logger.LogInformation("User {Email} logged in successfully", model.Email);
+                TempData["SuccessMessage"] = "Login successful! Welcome back.";
+
+                return RedirectToLocal(returnUrl);
             }
             catch (Exception)
             {
                 throw;
             }
         }
+
+        private IActionResult RedirectToLocal(string? )
     }
 }
