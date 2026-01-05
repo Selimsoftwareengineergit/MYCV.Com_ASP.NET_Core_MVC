@@ -32,23 +32,28 @@ namespace MYCV.Web.Controllers
             }
 
             ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            return View(new LoginViewModel
+            {
+                ReturnUrl = returnUrl
+            });
         }
 
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
+            // Fix: Preserve ReturnUrl from parameter if model doesn't have it
+            model.ReturnUrl = returnUrl ?? model.ReturnUrl;
+            ViewData["ReturnUrl"] = model.ReturnUrl;
 
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Login model validation failed for email: {Email}", model.Email);
                 return View(model);
             }
+
             try
             {
                 // Create DTO for API call
@@ -57,6 +62,7 @@ namespace MYCV.Web.Controllers
                     Email = model.Email,
                     Password = model.Password
                 };
+
                 _logger.LogInformation("Attempting login for user: {Email}", model.Email);
 
                 // Call API service (Web → API communication pattern)
@@ -86,11 +92,11 @@ namespace MYCV.Web.Controllers
                     claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
                 // Create authentication properties with security settings
-                var authproperties = new AuthenticationProperties
+                var authProperties = new AuthenticationProperties
                 {
                     IsPersistent = model.RememberMe,
                     ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8),
-                    RedirectUri = returnUrl ?? "/",
+                    RedirectUri = model.ReturnUrl ?? "/",
 
                     // Security settings
                     AllowRefresh = true,
@@ -98,30 +104,28 @@ namespace MYCV.Web.Controllers
                 };
 
                 // Sign in user with cookie authentication
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity),
-                    authproperties);
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
 
                 _logger.LogInformation("User {Email} logged in successfully", model.Email);
                 TempData["SuccessMessage"] = "Login successful! Welcome back.";
 
-                return RedirectToLocal(returnUrl);
+                return RedirectToLocal(model.ReturnUrl);
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, "API connecttion error during login for {Email}", model.Email);
-                ModelState.AddModelError("", "Unable to connect to authentication service.Please try again");
+                _logger.LogError(ex, "API connection error during login for {Email}", model.Email);
+                ModelState.AddModelError("", "Unable to connect to authentication service. Please try again.");
                 return View(model);
             }
-        }
-
-        //Safely redirects to a local URL
-        private IActionResult RedirectToLocal(string? returnUrl)
-        {
-            if (!string.IsNullOrEmpty(returnUrl))
+            catch (Exception ex)
             {
-                return Redirect(returnUrl);
+                _logger.LogError(ex, "Unexpected error during login for {Email}", model.Email);
+                ModelState.AddModelError("", "An unexpected error occurred. Please try again.");
+                return View(model);
             }
-            return RedirectToAction("Index", "Home");
         }
 
         //GET:/Account/Register
@@ -268,8 +272,35 @@ namespace MYCV.Web.Controllers
                 return RedirectToAction("Login");
             }
 
-            var model = new Reset
+            var model = new ResetPasswordViewModel
+            {
+                Token = token,
+                Email = email
+            };
             return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            { 
+                return View(model);
+            }
+            TempData["SuccessMessage"] = "Password reset successful! You can login with your new password.";
+            return RedirectToAction("Login");
+        }
+
+        //Safely redirects to a local URL
+        private IActionResult RedirectToLocal(string? returnUrl)
+        {
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction("Index", "Home");
         }
     }
 }

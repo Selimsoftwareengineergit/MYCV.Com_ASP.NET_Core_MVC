@@ -1,0 +1,405 @@
+﻿@model MYCV.Web.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login - MYCV";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- ========================= breadcrumb start ========================= -->
+<section class="breadcrumb bg-primary position-relative">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="text-white">Login</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center bg-transparent">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="breadcrumb-item active text-white" aria-current="page">Login</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ========================= breadcrumb end ========================= -->
+
+<!-- ========================= login-section start ========================= -->
+<section class="login-section pt-100 pb-100">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8 col-sm-10">
+                <div class="login-wrapper">
+                    <!-- Success/Error Messages -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="lni lni-checkmark-circle me-2"></i>
+                            @TempData["SuccessMessage"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                    }
+
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="lni lni-cross-circle me-2"></i>
+                            @TempData["ErrorMessage"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                    }
+
+                    <!-- Login Card -->
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body p-5">
+                            <!-- Header -->
+                            <div class="text-center mb-5">
+                                <div class="login-icon">
+                                    <i class="lni lni-user-circle" style="font-size: 4rem; color: #5a4fdc;"></i>
+                                </div>
+                                <h2 class="fw-bold mb-2">Welcome Back</h2>
+                                <p class="text-muted">Login to access your professional CV dashboard</p>
+                            </div>
+
+                            <!-- Login Form -->
+                            <form asp-controller="Account" asp-action="Login" method="post" asp-route-returnUrl="@Model.ReturnUrl">
+                                @Html.AntiForgeryToken()
+
+                                <div class="mb-4">
+                                    <label asp-for="Email" class="form-label fw-semibold">
+                                        <i class="lni lni-envelope me-2"></i>Email Address
+                                    </label>
+                                    <input asp-for="Email" 
+                                           class="form-control form-control-lg @(ViewData.ModelState["Email"]?.Errors.Any() == true ? "is-invalid" : "")" 
+                                           placeholder="Enter your email">
+                                    <span asp-validation-for="Email" class="invalid-feedback"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <div class="d-flex justify-content-between">
+                                        <label asp-for="Password" class="form-label fw-semibold">
+                                            <i class="lni lni-lock me-2"></i>Password
+                                        </label>
+                                        <a asp-controller="Account" asp-action="ForgotPassword" class="text-primary small">
+                                            Forgot Password?
+                                        </a>
+                                    </div>
+                                    <div class="input-group">
+                                        <input asp-for="Password" 
+                                               type="password" 
+                                               class="form-control form-control-lg @(ViewData.ModelState["Password"]?.Errors.Any() == true ? "is-invalid" : "")" 
+                                               placeholder="Enter your password"
+                                               id="passwordInput">
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                            <i class="lni lni-eye" id="eyeIcon"></i>
+                                        </button>
+                                    </div>
+                                    <span asp-validation-for="Password" class="invalid-feedback d-block"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input asp-for="RememberMe" class="form-check-input">
+                                        <label asp-for="RememberMe" class="form-check-label">
+                                            Remember me on this device
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Validation Summary -->
+                                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                                <div class="d-grid mb-4">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="lni lni-enter me-2"></i>Login to Account
+                                    </button>
+                                </div>
+
+                                <!-- Divider -->
+                                <div class="divider my-4">
+                                    <div class="divider-text">Or continue with</div>
+                                </div>
+
+                                <!-- Social Login (Optional) -->
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <a href="#" class="btn btn-outline-dark btn-lg w-100">
+                                            <i class="lni lni-google me-2"></i>Google
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a href="#" class="btn btn-outline-primary btn-lg w-100">
+                                            <i class="lni lni-linkedin-original me-2"></i>LinkedIn
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Register Link -->
+                                <div class="text-center pt-4">
+                                    <p class="text-muted mb-0">
+                                        Don't have an account?
+                                        <a asp-controller="Account" asp-action="Register" class="text-primary fw-semibold ms-2">
+                                            Create Account
+                                        </a>
+                                    </p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ========================= login-section end ========================= -->
+
+<!-- ========================= feature-section start ========================= -->
+<section class="feature-section bg-light py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="text-center mb-5">
+                    <h3 class="fw-bold">Why Login to MYCV?</h3>
+                    <p class="text-muted">Access exclusive features to boost your career</p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="feature-card text-center p-4 h-100">
+                            <div class="feature-icon mb-3">
+                                <i class="lni lni-files" style="font-size: 2.5rem; color: #5a4fdc;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Professional CV Templates</h5>
+                            <p class="text-muted">Choose from 50+ professionally designed templates that get noticed by recruiters.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="feature-card text-center p-4 h-100">
+                            <div class="feature-icon mb-3">
+                                <i class="lni lni-download" style="font-size: 2.5rem; color: #5a4fdc;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Unlimited Downloads</h5>
+                            <p class="text-muted">Download your CV in PDF, Word, and HTML formats anytime, anywhere.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="feature-card text-center p-4 h-100">
+                            <div class="feature-icon mb-3">
+                                <i class="lni lni-bar-chart" style="font-size: 2.5rem; color: #5a4fdc;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Track Applications</h5>
+                            <p class="text-muted">Monitor where your CV is being downloaded and track application success rates.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ========================= feature-section end ========================= -->
+
+@section Styles {
+        <style>
+            /* Custom styles for login page */
+            .breadcrumb {
+                background: linear-gradient(135deg, #5a4fdc 0%, #6a5bff 100%);
+                padding: 80px 0 60px;
+                margin-bottom: 0;
+            }
+
+            .breadcrumb.bg-primary {
+                background-color: #5a4fdc !important;
+            }
+
+            .breadcrumb .breadcrumb-item a {
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+            }
+
+            .breadcrumb .breadcrumb-item a:hover {
+                color: #ffffff;
+            }
+
+            .breadcrumb-item.active {
+                color: #ffffff;
+            }
+
+            .login-section {
+                background: #ffffff;
+            }
+
+            .login-wrapper {
+                margin-top: -50px;
+                position: relative;
+                z-index: 1;
+            }
+
+            .login-icon {
+                margin-bottom: 1.5rem;
+            }
+
+            .card {
+                border-radius: 15px;
+                border: none;
+            }
+
+            .form-control-lg {
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                border: 2px solid #e9ecef;
+                transition: all 0.3s;
+            }
+
+            .form-control-lg:focus {
+                border-color: #5a4fdc;
+                box-shadow: 0 0 0 0.2rem rgba(90, 79, 220, 0.25);
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, #5a4fdc 0%, #6a5bff 100%);
+                border: none;
+                padding: 1rem 2rem;
+                font-weight: 600;
+                border-radius: 10px;
+                transition: all 0.3s;
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(90, 79, 220, 0.3);
+            }
+
+            .divider {
+                display: flex;
+                align-items: center;
+                text-align: center;
+            }
+
+            .divider::before,
+            .divider::after {
+                content: '';
+                flex: 1;
+                border-bottom: 1px solid #e9ecef;
+            }
+
+            .divider-text {
+                padding: 0 1rem;
+                color: #6c757d;
+                font-size: 0.875rem;
+            }
+
+            .feature-card {
+                background: #ffffff;
+                border-radius: 15px;
+                transition: all 0.3s;
+                border: 1px solid #e9ecef;
+            }
+
+            .feature-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            }
+
+            .feature-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 70px;
+                height: 70px;
+                background: rgba(90, 79, 220, 0.1);
+                border-radius: 50%;
+            }
+
+            /* Password toggle eye button */
+            .input-group .btn-outline-secondary {
+                border-color: #e9ecef;
+                border-left: none;
+                border-radius: 0 10px 10px 0;
+            }
+
+            .input-group .btn-outline-secondary:hover {
+                background-color: #f8f9fa;
+            }
+
+            .input-group .form-control-lg:focus {
+                border-right: none;
+            }
+
+            .input-group .form-control-lg:focus + .btn-outline-secondary {
+                border-color: #5a4fdc;
+            }
+
+            /* Alert styling */
+            .alert {
+                border-radius: 10px;
+                border: none;
+            }
+
+            .alert-success {
+                background-color: rgba(40, 167, 69, 0.1);
+                color: #28a745;
+            }
+
+            .alert-danger {
+                background-color: rgba(220, 53, 69, 0.1);
+                color: #dc3545;
+            }
+
+            /* Responsive adjustments */
+            @@media (max-width: 768px) {
+                .login-wrapper {
+                    margin-top: -30px;
+                }
+
+                .breadcrumb {
+                    padding: 60px 0 40px;
+                }
+
+                .feature-card {
+                    margin-bottom: 1rem;
+                }
+            }
+        </style>
+}
+
+@section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+
+        <script>
+            // Password visibility toggle
+            document.getElementById('togglePassword').addEventListener('click', function() {
+                const passwordInput = document.getElementById('passwordInput');
+                const eyeIcon = document.getElementById('eyeIcon');
+
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    eyeIcon.classList.remove('lni-eye');
+                    eyeIcon.classList.add('lni-eye-off');
+                } else {
+                    passwordInput.type = 'password';
+                    eyeIcon.classList.remove('lni-eye-off');
+                    eyeIcon.classList.add('lni-eye');
+                }
+            });
+
+            // Auto-hide alerts after 5 seconds
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+
+            // Focus on first invalid field
+            document.addEventListener('DOMContentLoaded', function() {
+                const invalidField = document.querySelector('.is-invalid');
+                if (invalidField) {
+                    invalidField.focus();
+                }
+            });
+        </script>
+}

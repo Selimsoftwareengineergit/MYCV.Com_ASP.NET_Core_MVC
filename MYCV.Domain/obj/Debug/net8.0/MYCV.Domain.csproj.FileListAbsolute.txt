@@ -9,3 +9,4 @@ G:\60_Projects\MYCV\MYCV\MYCV.Domain\obj\Debug\net8.0\MYCV.Domain.dll
 G:\60_Projects\MYCV\MYCV\MYCV.Domain\obj\Debug\net8.0\refint\MYCV.Domain.dll
 G:\60_Projects\MYCV\MYCV\MYCV.Domain\obj\Debug\net8.0\MYCV.Domain.pdb
 G:\60_Projects\MYCV\MYCV\MYCV.Domain\obj\Debug\net8.0\ref\MYCV.Domain.dll
+G:\60_Projects\MYCV\MYCV\MYCV.Domain\obj\Debug\net8.0\MYCV.Domain.sourcelink.json
