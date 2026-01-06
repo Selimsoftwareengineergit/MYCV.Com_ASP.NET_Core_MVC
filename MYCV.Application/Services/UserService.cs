@@ -1,21 +1,23 @@
-﻿using MYCV.Application.DTOs;
+﻿using Microsoft.Extensions.Logging;
+using MYCV.Application.DTOs;
 using MYCV.Application.Interfaces;
 using MYCV.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MYCV.Application.Services
 {
     public class UserService : IUserService
     {
-        public readonly IUserRepository _repository;
+        private readonly IUserRepository _repository;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(IUserRepository repository)
+        public UserService(IUserRepository repository, ILogger<UserService> logger)
         {
             _repository = repository;
+            _logger = logger;
         }
 
         public async Task<List<UserResponseDto>> GetUsersAsync()
@@ -49,7 +51,7 @@ namespace MYCV.Application.Services
             await _repository.AddAsync(user);
         }
 
-        private string HashPassword(string password) 
+        private string HashPassword(string password)
         {
             return BCrypt.Net.BCrypt.HashPassword(password);
         }

@@ -26,8 +26,8 @@ namespace MYCV.Web.ViewModels
         [Compare("Password", ErrorMessage ="Password do not match")]
         public string ConfirmPassword { get; set; } = string.Empty;
 
-        [Display(Name = "I agree to the Terms and Conditions")]
-        [Range(typeof(bool),"true", "true", ErrorMessage ="You must accept the terms and condition")]
-        public bool AccetTerms { get; set; }
+        [Required(ErrorMessage = "You must agree to the terms and conditions")]
+        [Display(Name = "Agree to Terms & Conditions")]
+        public bool AgreeToTerms { get; set; }
     }
 }

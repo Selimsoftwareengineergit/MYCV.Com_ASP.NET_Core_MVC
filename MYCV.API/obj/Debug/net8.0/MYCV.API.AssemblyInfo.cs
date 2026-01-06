@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MYCV.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+39f6609d34f6cdaa94014972e948002b09bc32a6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ab858ee9eebcb44fbe7cd9cc6d4a29b9f667fad")]
 [assembly: System.Reflection.AssemblyProductAttribute("MYCV.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MYCV.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
