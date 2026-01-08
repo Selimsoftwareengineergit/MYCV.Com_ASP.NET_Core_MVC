@@ -34,7 +34,7 @@ namespace MYCV.Application.Services
             }).ToList();
         }
 
-        public async Task CreateUserAsync(UserCreateRequestDto dto)
+        public async Task<UserResponseDto> CreateUserAsync(UserCreateRequestDto dto)
         {
             var existingUser = await _repository.GetByEmailAsync(dto.Email);
             if (existingUser != null)
@@ -45,15 +45,28 @@ namespace MYCV.Application.Services
                 FullName = dto.FullName,
                 Email = dto.Email,
                 Password = HashPassword(dto.Password),
-                VerificationCode = Guid.NewGuid().ToString("N")
+                VerificationCode = Convert.ToString(GenerateVerificationCode())
             };
 
             await _repository.AddAsync(user);
+
+            return new UserResponseDto
+            {
+                Id = user.Id, 
+                FullName = user.FullName,
+                Email = user.Email,
+                IsEmailVerified = user.IsEmailVerified,
+                CreatedDate = user.CreatedDate
+            };
         }
 
         private string HashPassword(string password)
         {
             return BCrypt.Net.BCrypt.HashPassword(password);
+        }
+        private int GenerateVerificationCode()
+        {
+            return Math.Abs(Guid.NewGuid().GetHashCode()) % 90000000 + 10000000;
         }
     }
 }

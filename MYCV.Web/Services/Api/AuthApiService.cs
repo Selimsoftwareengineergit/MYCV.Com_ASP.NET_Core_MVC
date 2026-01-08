@@ -45,7 +45,7 @@ namespace MYCV.Web.Services.Api
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/auth/register", dto);
+                var response = await _httpClient.PostAsJsonAsync("api/users", dto);
 
                 if (response.IsSuccessStatusCode) 
                 {

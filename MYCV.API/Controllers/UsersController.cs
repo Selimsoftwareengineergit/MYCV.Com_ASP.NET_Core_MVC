@@ -40,7 +40,6 @@ namespace MYCV.API.Controllers
             {
                 _logger.LogInformation("Creating user: {Email}", dto.Email);
 
-                // Now returns UserResponseDto
                 var createdUser = await _service.CreateUserAsync(dto);
 
                 _logger.LogInformation("User created successfully with ID: {UserId}", createdUser.Id);
