@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MYCV.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,5 +14,6 @@ namespace MYCV.Domain.Entities
         public string Password { get; set; } = null!;
         public bool IsEmailVerified { get; set; } = false;
         public string? VerificationCode { get; set; }
+        public UserRole Role { get; set; } = UserRole.Client;
     }
 }

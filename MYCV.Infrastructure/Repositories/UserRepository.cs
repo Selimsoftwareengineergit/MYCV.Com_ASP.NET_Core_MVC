@@ -26,7 +26,16 @@ namespace MYCV.Infrastructure.Repositories
 
         public async Task<User?> GetByEmailAsync(string email)
         {
-            return await _context.Users.FirstOrDefaultAsync(x => x.Email == email && !x.IsDeleted);
+            if (string.IsNullOrWhiteSpace(email))
+                return null;
+
+            var normalizedEmail = email.Trim().ToLower();
+
+            return await _context.Users
+                .FirstOrDefaultAsync(x =>
+                    x.Email.ToLower() == normalizedEmail &&
+                    !x.IsDeleted &&
+                    x.IsActive);
         }
 
         public async Task AddAsync(User user)

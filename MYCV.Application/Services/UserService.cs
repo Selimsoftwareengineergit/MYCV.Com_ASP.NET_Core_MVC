@@ -5,6 +5,7 @@ using MYCV.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace MYCV.Application.Services
@@ -45,7 +46,7 @@ namespace MYCV.Application.Services
                 FullName = dto.FullName,
                 Email = dto.Email,
                 Password = HashPassword(dto.Password),
-                VerificationCode = Convert.ToString(GenerateVerificationCode())
+                VerificationCode = GenerateVerificationCode(),
             };
 
             await _repository.AddAsync(user);
@@ -62,11 +63,11 @@ namespace MYCV.Application.Services
 
         private string HashPassword(string password)
         {
-            return BCrypt.Net.BCrypt.HashPassword(password);
+            return BCrypt.Net.BCrypt.HashPassword(password, workFactor: 10);
         }
-        private int GenerateVerificationCode()
+        private string GenerateVerificationCode()
         {
-            return Math.Abs(Guid.NewGuid().GetHashCode()) % 90000000 + 10000000;
+            return RandomNumberGenerator.GetInt32(10000000, 100000000).ToString();
         }
     }
 }
