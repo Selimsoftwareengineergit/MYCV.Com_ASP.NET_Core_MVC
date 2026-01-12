@@ -14,11 +14,16 @@ namespace MYCV.Application.Services
     {
         private readonly IUserRepository _repository;
         private readonly ILogger<UserService> _logger;
+        private readonly IEmailService _emailService;
 
-        public UserService(IUserRepository repository, ILogger<UserService> logger)
+        public UserService(
+            IUserRepository repository,
+            ILogger<UserService> logger,
+            IEmailService emailService)  
         {
             _repository = repository;
             _logger = logger;
+            _emailService = emailService;  
         }
 
         public async Task<List<UserResponseDto>> GetUsersAsync()
@@ -49,11 +54,20 @@ namespace MYCV.Application.Services
                 VerificationCode = GenerateVerificationCode(),
             };
 
+            // 1️⃣ Save user FIRST
             await _repository.AddAsync(user);
 
+            // 2️⃣ Fire-and-forget email (DO NOT await)
+            _ = _emailService.SendVerificationEmailAsync(
+                user.Email,
+                user.FullName,
+                user.VerificationCode
+            );
+
+            // 3️⃣ Return response immediately
             return new UserResponseDto
             {
-                Id = user.Id, 
+                Id = user.Id,
                 FullName = user.FullName,
                 Email = user.Email,
                 IsEmailVerified = user.IsEmailVerified,
