@@ -10,11 +10,13 @@ namespace MYCV.API.Controllers
     public class UsersController : ControllerBase 
     {
         private readonly IUserService _service;
+        private readonly ITokenService _tokenService;
         private readonly ILogger<UsersController> _logger;
 
-        public UsersController(IUserService service, ILogger<UsersController> logger)
+        public UsersController(IUserService service, ITokenService tokenService, ILogger<UsersController> logger)
         {
             _service = service;
+            _tokenService = tokenService;
             _logger = logger;
         }
 
@@ -97,5 +99,73 @@ namespace MYCV.API.Controllers
                     ApiResponse<object>.ErrorResponse("Internal server error"));
             }
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Password))
+                {
+                    return BadRequest(ApiResponse<AuthResponseDto>.ErrorResponse("Email and password are required"));
+                }
+
+                _logger.LogInformation("Attempting login for: {Email}", dto.Email);
+
+                // 1️⃣ Get user from database
+                var user = await _service.GetUserByEmailAsync(dto.Email);
+                if (user == null)
+                {
+                    return BadRequest(ApiResponse<AuthResponseDto>.ErrorResponse("Invalid email or password"));
+                }
+
+                // 2️⃣ Verify password
+                if (!_service.VerifyPassword(dto.Password, user.Password))
+                {
+                    return BadRequest(ApiResponse<AuthResponseDto>.ErrorResponse("Invalid email or password"));
+                }
+
+                // 3️⃣ Check email verification
+                if (!user.IsEmailVerified)
+                {
+                    if (string.IsNullOrEmpty(dto.VerificationCode))
+                    {
+                        return BadRequest(ApiResponse<AuthResponseDto>.ErrorResponse("Verification code required"));
+                    }
+
+                    if (dto.VerificationCode != user.VerificationCode)
+                    {
+                        return BadRequest(ApiResponse<AuthResponseDto>.ErrorResponse("Invalid verification code"));
+                    }
+
+                    user.IsEmailVerified = true;
+                    user.VerificationCode = null;
+                    await _service.UpdateUserAsync(user);
+                }
+
+                // 4️⃣ Generate JWT Token
+                var token = _tokenService.GenerateJwtToken(user); 
+
+                var response = new AuthResponseDto
+                {
+                    User = new UserResponseDto
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        FullName = user.FullName,
+                        IsEmailVerified = user.IsEmailVerified
+                    },
+                    Token = token
+                };
+
+                return Ok(ApiResponse<AuthResponseDto>.SuccessResponse(response, "Login successful"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Login error for {Email}", dto.Email);
+                return StatusCode(500, ApiResponse<AuthResponseDto>.ErrorResponse("Internal server error"));
+            }
+        }
+
     }
 }

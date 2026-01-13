@@ -1,4 +1,5 @@
 ﻿using MYCV.Application.DTOs;
+using MYCV.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,8 @@ namespace MYCV.Application.Services
         Task<List<UserResponseDto>> GetUsersAsync();
         Task<UserResponseDto> CreateUserAsync(UserCreateRequestDto dto);
         Task<UserResponseDto?> CheckEmailAsync(string email);
+        Task<User?> GetUserByEmailAsync(string email);
+        bool VerifyPassword(string plainPassword, string passwordHash);
+        Task UpdateUserAsync(User user);
     }
 }

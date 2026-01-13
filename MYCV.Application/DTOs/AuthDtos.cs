@@ -15,6 +15,7 @@ namespace MYCV.Application.DTOs
 
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; } = string.Empty;
+        public string? VerificationCode { get; set; }
     }
 
     public class AuthResponseDto

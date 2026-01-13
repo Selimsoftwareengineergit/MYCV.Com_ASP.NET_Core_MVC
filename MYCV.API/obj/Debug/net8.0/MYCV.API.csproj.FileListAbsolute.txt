@@ -294,3 +294,4 @@ G:\MYCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.pdb
 G:\MYCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.genruntimeconfig.cache
 G:\MYCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\ref\MYCV.API.dll
 G:\60_Projects\MYCV\MYCV\MYCV.API\bin\Debug\net8.0\EmailTemplates\EmailVerification.html
+G:\60_Projects\MYCV\MYCV\MYCV.API\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

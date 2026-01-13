@@ -101,5 +101,30 @@ namespace MYCV.Application.Services
             };
         }
 
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return await _repository.GetByEmailAsync(email); 
+        }
+
+        public bool VerifyPassword(string plainPassword, string passwordHash)
+        {
+            if (string.IsNullOrEmpty(plainPassword) || string.IsNullOrEmpty(passwordHash))
+                return false;
+
+            try
+            {
+                return BCrypt.Net.BCrypt.Verify(plainPassword, passwordHash);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "BCrypt verification failed");
+                return false;
+            }
+        }
+
+        public async Task UpdateUserAsync(User user)
+        {
+            await _repository.UpdateAsync(user);
+        }
     }
 }

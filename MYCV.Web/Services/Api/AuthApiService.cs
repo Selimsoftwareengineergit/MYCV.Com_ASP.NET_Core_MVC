@@ -22,7 +22,7 @@ namespace MYCV.Web.Services.Api
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/auth/login", dto);
+                var response = await _httpClient.PostAsJsonAsync("api/users/login", dto);
 
                 if (response.IsSuccessStatusCode)
                 {

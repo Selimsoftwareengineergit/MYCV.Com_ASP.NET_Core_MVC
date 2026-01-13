@@ -60,7 +60,8 @@ namespace MYCV.Web.Controllers
                 var loginRequest = new LoginRequestDto
                 {
                     Email = model.Email,
-                    Password = model.Password
+                    Password = model.Password,
+                    VerificationCode = model.VerificationCode
                 };
 
                 _logger.LogInformation("Attempting login for user: {Email}", model.Email);

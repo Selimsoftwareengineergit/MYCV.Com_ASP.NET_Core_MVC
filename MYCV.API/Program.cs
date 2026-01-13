@@ -3,6 +3,7 @@ using MYCV.Application.Interfaces;
 using MYCV.Application.Services;
 using MYCV.Infrastructure.Data;
 using MYCV.Infrastructure.Repositories;
+using MYCV.Infrastructure.Security;
 using MYCV.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +25,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 // 3️⃣ Configure Repositories
 // ============================
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // ============================
 // 4️⃣ Configure Application Services
