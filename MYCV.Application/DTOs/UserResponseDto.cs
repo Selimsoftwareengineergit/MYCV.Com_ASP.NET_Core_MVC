@@ -14,5 +14,6 @@ namespace MYCV.Application.DTOs
         public string Email { get; set; } = null!;
         public bool IsEmailVerified { get; set; }
         public DateTime CreatedDate { get; set; }
+        public string? VerificationCode { get; set; }
     }
 }

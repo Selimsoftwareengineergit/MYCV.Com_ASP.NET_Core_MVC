@@ -10,6 +10,7 @@ namespace MYCV.Application.Services
     public interface IUserService
     {
         Task<List<UserResponseDto>> GetUsersAsync();
-        Task<UserResponseDto> CreateUserAsync(UserCreateRequestDto dto); 
+        Task<UserResponseDto> CreateUserAsync(UserCreateRequestDto dto);
+        Task<UserResponseDto?> CheckEmailAsync(string email);
     }
 }

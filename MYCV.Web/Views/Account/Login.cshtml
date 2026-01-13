@@ -1,4 +1,5 @@
 ﻿@model MYCV.Web.ViewModels.LoginViewModel
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 
 @{
     ViewData["Title"] = "Login - MYCV";
@@ -24,7 +25,6 @@
     </div>
 </section>
 <!-- ========================= breadcrumb end ========================= -->
-
 <!-- ========================= login-section start ========================= -->
 <section class="login-section pt-30 pb-50">
     <div class="container">
@@ -34,20 +34,20 @@
                     <!-- Success/Error Messages -->
                     @if (TempData["SuccessMessage"] != null)
                     {
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <i class="lni lni-checkmark-circle me-2"></i>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="lni lni-checkmark-circle me-2"></i>
                             @TempData["SuccessMessage"]
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
                     }
 
                     @if (TempData["ErrorMessage"] != null)
                     {
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <i class="lni lni-cross-circle me-2"></i>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="lni lni-cross-circle me-2"></i>
                             @TempData["ErrorMessage"]
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
                     }
 
                     <!-- Login Card -->
@@ -63,19 +63,28 @@
                             </div>
 
                             <!-- Login Form -->
-                            <form asp-controller="Account" asp-action="Login" method="post" asp-route-returnUrl="@Model.ReturnUrl">
+                            <form asp-controller="Account" asp-action="Login" autocomplete="off" method="post" asp-route-returnUrl="@Model.ReturnUrl">
                                 @Html.AntiForgeryToken()
 
+                                <!-- Fake fields to block browser autocomplete -->
+                                <input type="text" name="fakeusername" id="fakeusername" style="display:none" autocomplete="username">
+                                <input type="password" name="fakepassword" id="fakepassword" style="display:none" autocomplete="new-password">
+
+                                <!-- Real Email -->
                                 <div class="mb-4">
                                     <label asp-for="Email" class="form-label fw-semibold">
                                         <i class="lni lni-envelope me-2"></i>Email Address
                                     </label>
-                                    <input asp-for="Email" 
-                                           class="form-control form-control-lg @(ViewData.ModelState["Email"]?.Errors.Any() == true ? "is-invalid" : "")" 
-                                           placeholder="Enter your email">
+                                    <input asp-for="Email"
+                                           id="email"
+                                           class="form-control form-control-lg @(ViewData.ModelState["Email"]?.Errors.Any() == true ? "is-invalid" : "")"
+                                           placeholder="Enter your email"
+                                           autocomplete="off"
+                                           value="">
                                     <span asp-validation-for="Email" class="invalid-feedback"></span>
                                 </div>
 
+                                <!-- Real Password -->
                                 <div class="mb-4">
                                     <div class="d-flex justify-content-between">
                                         <label asp-for="Password" class="form-label fw-semibold">
@@ -86,11 +95,13 @@
                                         </a>
                                     </div>
                                     <div class="input-group">
-                                        <input asp-for="Password" 
-                                               type="password" 
-                                               class="form-control form-control-lg @(ViewData.ModelState["Password"]?.Errors.Any() == true ? "is-invalid" : "")" 
+                                        <input asp-for="Password"
+                                               id="passwordInput"
+                                               type="password"
+                                               class="form-control form-control-lg @(ViewData.ModelState["Password"]?.Errors.Any() == true ? "is-invalid" : "")"
                                                placeholder="Enter your password"
-                                               id="passwordInput">
+                                               autocomplete="new-password"
+                                               value="">
                                         <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                             <i class="lni lni-eye" id="eyeIcon"></i>
                                         </button>
@@ -153,7 +164,6 @@
     </div>
 </section>
 <!-- ========================= login-section end ========================= -->
-
 <!-- ========================= feature-section start ========================= -->
 <section class="feature-section bg-light py-5">
     <div class="container">
@@ -206,7 +216,7 @@
             background: linear-gradient(135deg, #5a4fdc 0%, #6a5bff 100%);
             padding: 15px 0 10px;
             margin-bottom: 0;
-            min-height: 60px; 
+            min-height: 60px;
             display: flex;
             align-items: center;
         }
@@ -218,7 +228,7 @@
             .breadcrumb .breadcrumb-item a {
                 color: rgba(255,255,255,0.8);
                 text-decoration: none;
-                font-size: 0.9rem; 
+                font-size: 0.9rem;
             }
 
                 .breadcrumb .breadcrumb-item a:hover {
@@ -231,13 +241,13 @@
         }
 
         .breadcrumb h1.text-white {
-            font-size: 1.25rem; 
+            font-size: 1.25rem;
             margin-bottom: 0.1rem;
             font-weight: 600;
         }
 
         .breadcrumb .breadcrumb {
-            padding: 0.1rem 0; 
+            padding: 0.1rem 0;
             margin-bottom: 0;
         }
 
@@ -246,25 +256,25 @@
         }
 
         .login-wrapper {
-            margin-top: -5px; 
+            margin-top: -5px;
             position: relative;
             z-index: 1;
         }
 
         .card-body.p-5 {
-            padding: 1.5rem !important; 
+            padding: 1.5rem !important;
         }
 
         .login-icon {
-            margin-bottom: 1rem; 
+            margin-bottom: 1rem;
         }
 
             .login-icon i {
-                font-size: 3rem; 
+                font-size: 3rem;
             }
 
         .card {
-            border-radius: 10px; 
+            border-radius: 10px;
             border: none;
         }
 
@@ -283,16 +293,16 @@
         .btn-primary {
             background: linear-gradient(135deg, #5a4fdc 0%, #6a5bff 100%);
             border: none;
-            padding: 0.75rem 1.5rem; 
+            padding: 0.75rem 1.5rem;
             font-weight: 500;
             font-size: 0.9rem;
             border-radius: 8px;
         }
 
-        .btn-primary:hover {
-           transform: translateY(-1px);
-           box-shadow: 0 3px 10px rgba(90, 79, 220, 0.3);
-        }
+            .btn-primary:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 3px 10px rgba(90, 79, 220, 0.3);
+            }
 
         .divider {
             display: flex;
@@ -318,7 +328,7 @@
             border-radius: 10px;
             transition: all 0.3s;
             border: 1px solid #e9ecef;
-            padding: 1rem !important; 
+            padding: 1rem !important;
         }
 
             .feature-card:hover {
@@ -337,7 +347,7 @@
         }
 
             .feature-icon i {
-                font-size: 1.5rem; 
+                font-size: 1.5rem;
             }
 
         .input-group .btn-outline-secondary {
@@ -378,16 +388,16 @@
 
         @@media (max-width: 768px) {
             .login-wrapper {
-                margin-top: 0; 
+                margin-top: 0;
             }
 
             .breadcrumb {
-                padding: 10px 0 8px; 
+                padding: 10px 0 8px;
                 min-height: 50px;
             }
 
                 .breadcrumb h1.text-white {
-                    font-size: 1rem; 
+                    font-size: 1rem;
                     margin-bottom: 0.05rem;
                 }
 
@@ -418,40 +428,109 @@
 }
 
 @section Scripts {
-        <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
 
-        <script>
-            // Password visibility toggle
-            document.getElementById('togglePassword').addEventListener('click', function() {
-                const passwordInput = document.getElementById('passwordInput');
-                const eyeIcon = document.getElementById('eyeIcon');
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('passwordInput');
+            const eyeIcon = document.getElementById('eyeIcon');
 
-                if (passwordInput.type === 'password') {
-                    passwordInput.type = 'text';
-                    eyeIcon.classList.remove('lni-eye');
-                    eyeIcon.classList.add('lni-eye-off');
-                } else {
-                    passwordInput.type = 'password';
-                    eyeIcon.classList.remove('lni-eye-off');
-                    eyeIcon.classList.add('lni-eye');
-                }
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('lni-eye');
+                eyeIcon.classList.add('lni-eye-off');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('lni-eye-off');
+                eyeIcon.classList.add('lni-eye');
+            }
+        });
+
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
             });
+        }, 5000);
 
-            // Auto-hide alerts after 5 seconds
-            setTimeout(function() {
-                const alerts = document.querySelectorAll('.alert');
-                alerts.forEach(alert => {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                });
-            }, 5000);
+        // Focus on first invalid field
+        document.addEventListener('DOMContentLoaded', function() {
+            const invalidField = document.querySelector('.is-invalid');
+            if (invalidField) invalidField.focus();
+        });
 
-            // Focus on first invalid field
-            document.addEventListener('DOMContentLoaded', function() {
-                const invalidField = document.querySelector('.is-invalid');
-                if (invalidField) {
-                    invalidField.focus();
+        // Blank email and password fields on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailInput = document.getElementById("email");
+            const passwordInput = document.getElementById("passwordInput");
+            if(emailInput) emailInput.value = "";
+            if(passwordInput) passwordInput.value = "";
+            if(emailInput) emailInput.addEventListener("blur", onEmailBlur);
+        });
+
+        // Get API Base URL from appsettings
+        const apiBaseUrl = '@Configuration["ApiSettings:BaseUrl"]';
+
+        async function onEmailBlur() {
+            const email = document.getElementById("email").value.trim();
+            if (!email) return;
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/users/check-email?email=${encodeURIComponent(email)}`);
+                const result = await response.json();
+
+                console.log(result); 
+
+                if (!result.success) {
+                    showError("Server error");
+                    return;
                 }
-            });
-        </script>
+
+        if (!result.data.exists) {   
+            showError("This email is not registered");
+            hideVerificationCode();
+            return;
+        }
+
+        if (result.data.requireVerificationCode) {   
+            showVerificationCodeField();
+        } else {
+            hideVerificationCode();
+        }
+
+            } catch (err) {
+                console.error(err);
+                showError("Cannot connect to server");
+            }
+        }
+
+
+        function showVerificationCodeField() {
+            if (!document.getElementById("verificationCodeDiv")) {
+                const form = document.querySelector("form");
+                const div = document.createElement("div");
+                div.className = "mb-4";
+                div.id = "verificationCodeDiv";
+                div.innerHTML = `
+                    <label for="VerificationCode" class="form-label fw-semibold">
+                        <i class="lni lni-lock-alt me-2"></i>Verification Code
+                    </label>
+                    <input type="text" id="VerificationCode" name="VerificationCode" class="form-control form-control-lg" placeholder="Enter verification code">
+                `;
+                const passwordDiv = document.getElementById("passwordInput").closest(".mb-4");
+                passwordDiv.insertAdjacentElement("afterend", div);
+            }
+        }
+
+        function hideVerificationCode() {
+            const div = document.getElementById("verificationCodeDiv");
+            if (div) div.remove();
+        }
+
+        function showError(msg) {
+            alert(msg);
+        }
+    </script>
 }

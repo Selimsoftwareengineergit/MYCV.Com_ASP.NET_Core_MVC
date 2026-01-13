@@ -16,11 +16,8 @@ builder.Services.AddDbContext<MyCvDbContext>(options =>
 // ============================
 // 2️⃣ Configure Email Services
 // ============================
-// EmailTemplateService needs the project root path, so register as Singleton
 builder.Services.AddSingleton<EmailTemplateService>(sp =>
     new EmailTemplateService(builder.Environment.ContentRootPath));
-
-// EmailService depends on EmailTemplateService, registered as Scoped
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 // ============================
@@ -34,19 +31,28 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 // ============================
-// 5️⃣ Add Controllers & Swagger
+// 5️⃣ Add Controllers, Swagger, CORS
 // ============================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// ============================
-// 6️⃣ Build App
-// ============================
+// ✅ Add CORS Policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowWebApp", builder =>
+    {
+        builder
+            .WithOrigins("https://localhost:7167") // Your Web app origin
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 // ============================
-// 7️⃣ Configure Middleware
+// 6️⃣ Configure Middleware
 // ============================
 if (app.Environment.IsDevelopment())
 {
@@ -56,11 +62,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// ✅ Enable CORS BEFORE Authorization & Controllers
+app.UseCors("AllowWebApp");
+
 app.UseAuthorization();
 
 app.MapControllers();
 
-// ============================
-// 8️⃣ Run App
-// ============================
 app.Run();

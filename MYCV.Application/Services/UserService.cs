@@ -83,5 +83,23 @@ namespace MYCV.Application.Services
         {
             return RandomNumberGenerator.GetInt32(10000000, 100000000).ToString();
         }
+
+        public async Task<UserResponseDto?> CheckEmailAsync(string email)
+        {
+            var user = await _repository.GetByEmailAsync(email);
+
+            if (user == null)
+                return null;
+
+            return new UserResponseDto
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FullName = user.FullName,
+                IsEmailVerified = user.IsEmailVerified,
+                VerificationCode = user.VerificationCode
+            };
+        }
+
     }
 }
