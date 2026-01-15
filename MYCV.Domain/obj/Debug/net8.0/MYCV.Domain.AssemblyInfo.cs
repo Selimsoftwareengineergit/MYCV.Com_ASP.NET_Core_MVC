@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MYCV.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+78dff01c74d243b08a53ccbbd917a39877ae9444")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1b847d57d1067fee30b2c9670d43a25be19fcb21")]
 [assembly: System.Reflection.AssemblyProductAttribute("MYCV.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MYCV.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

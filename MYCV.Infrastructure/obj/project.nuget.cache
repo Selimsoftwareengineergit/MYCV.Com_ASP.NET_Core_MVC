@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "GxZ+nH59VUw=",
+  "dgSpecHash": "yVgT0B6XtsY=",
   "success": true,
-  "projectFilePath": "G:\\60_Projects\\MYCV\\MYCV\\MYCV.Infrastructure\\MYCV.Infrastructure.csproj",
+  "projectFilePath": "G:\\60_Projects\\MyCV\\MYCV.Com_ASP.NET_Core_MVC\\MYCV.Infrastructure\\MYCV.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\selim\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\selim\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

@@ -1,8 +1,142 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Online CV Builder";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- HERO SECTION -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="fw-bold display-5 mb-3">
+                    Build Your Professional CV
+                </h1>
+
+                <p class="lead text-muted mb-4">
+                    Choose from modern, recruiter-approved CV templates and
+                    create a job-ready resume in minutes.
+                </p>
+
+                <a asp-controller="Account" asp-action="Register"
+                   class="btn btn-primary btn-lg me-3">
+                    Create Your CV
+                </a>
+
+                <a asp-controller="Account" asp-action="Login"
+                   class="btn btn-outline-secondary btn-lg">
+                    Login
+                </a>
+            </div>
+
+            <div class="col-lg-6 text-center mt-4 mt-lg-0">
+                <img src="https://dummyimage.com/520x360/f3f4f6/6b7280&text=Professional+CV+Preview"
+                     class="img-fluid rounded shadow"
+                     alt="CV Preview">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CV TEMPLATES SECTION -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-semibold">Choose a CV Template</h2>
+            <p class="text-muted">
+                Professionally designed templates to impress recruiters
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <!-- TEMPLATE CARD -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="https://dummyimage.com/400x520/e5e7eb/6b7280&text=Modern+CV"
+                         class="card-img-top"
+                         alt="Modern CV Template">
+
+                    <div class="card-body text-center">
+                        <h5 class="fw-semibold">Modern</h5>
+                        <p class="text-muted small">
+                            Clean & minimal design
+                        </p>
+
+                        <a asp-controller="Account" asp-action="Register"
+                           class="btn btn-outline-primary w-100">
+                            Use This Template
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEMPLATE CARD -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="https://dummyimage.com/400x520/e5e7eb/6b7280&text=Professional+CV"
+                         class="card-img-top"
+                         alt="Professional CV Template">
+
+                    <div class="card-body text-center">
+                        <h5 class="fw-semibold">Professional</h5>
+                        <p class="text-muted small">
+                            Ideal for corporate jobs
+                        </p>
+
+                        <a asp-controller="Account" asp-action="Register"
+                           class="btn btn-outline-primary w-100">
+                            Use This Template
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEMPLATE CARD -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="https://dummyimage.com/400x520/e5e7eb/6b7280&text=Creative+CV"
+                         class="card-img-top"
+                         alt="Creative CV Template">
+
+                    <div class="card-body text-center">
+                        <h5 class="fw-semibold">Creative</h5>
+                        <p class="text-muted small">
+                            Perfect for designers & creatives
+                        </p>
+
+                        <a asp-controller="Account" asp-action="Register"
+                           class="btn btn-outline-primary w-100">
+                            Use This Template
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TRUST / VALUE SECTION -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <h4 class="fw-semibold">ATS Friendly</h4>
+                <p class="text-muted">
+                    Optimized for Applicant Tracking Systems
+                </p>
+            </div>
+
+            <div class="col-md-4">
+                <h4 class="fw-semibold">Secure & Private</h4>
+                <p class="text-muted">
+                    Your data is safe and confidential
+                </p>
+            </div>
+
+            <div class="col-md-4">
+                <h4 class="fw-semibold">Instant Download</h4>
+                <p class="text-muted">
+                    Export your CV as PDF anytime
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
