@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MYCV.Web.Models;
 using System.Diagnostics;
@@ -11,6 +12,12 @@ namespace MYCV.Web.Controllers
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
+        }
+
+        [Authorize]
+        public IActionResult Main()
+        {
+            return View();
         }
 
         public IActionResult Index()

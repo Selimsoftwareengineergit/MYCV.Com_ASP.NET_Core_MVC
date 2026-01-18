@@ -113,7 +113,11 @@ namespace MYCV.Web.Controllers
                 _logger.LogInformation("User {Email} logged in successfully", model.Email);
                 TempData["SuccessMessage"] = "Login successful! Welcome back.";
 
-                return RedirectToLocal(model.ReturnUrl);
+                if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                {
+                    return Redirect(model.ReturnUrl);
+                }
+                return RedirectToAction("Main", "Home");
             }
             catch (HttpRequestException ex)
             {
