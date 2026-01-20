@@ -1,4 +1,7 @@
-﻿@{
+﻿@using MYCV.Domain.Enums
+@model MYCV.Application.DTOs.UserCvPersonalInfoDto
+
+@{
     ViewData["Title"] = "CV Builder Dashboard";
 }
 
@@ -17,16 +20,30 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
                         <h5 class="fw-semibold mb-4">CV Progress</h5>
-
                         <ul class="list-unstyled cv-steps">
-                            <li class="step active"><span class="step-circle">1</span> <span class="step-text">Personal Information</span></li>
-                            <li class="step"><span class="step-circle">2</span> <span class="step-text">Education Qualification</span></li>
-                            <li class="step"><span class="step-circle">3</span> <span class="step-text">Work Experience</span></li>
-                            <li class="step"><span class="step-circle">4</span> <span class="step-text">Skills & Expertise</span></li>
-                            <li class="step"><span class="step-circle">5</span> <span class="step-text">Projects & Certifications</span></li>
-                            <li class="step"><span class="step-circle">6</span> <span class="step-text">Languages</span></li>
-                            <li class="step"><span class="step-circle">7</span> <span class="step-text">Summary & Objective</span></li>
-                            <li class="step"><span class="step-circle">8</span> <span class="step-text">Preview & Download</span></li>
+                            @foreach (CvStep step in Enum.GetValues(typeof(CvStep)))
+                            {
+                                var stepNumber = (int)step;
+                                var stepName = step switch
+                                {
+                                    CvStep.PersonalInformation => "Personal Information",
+                                    CvStep.ContactInformation => "Contact Information",
+                                    CvStep.SocialOnlinePresence => "Social & Online Presence",
+                                    CvStep.ProfessionalDetail => "Professional Detail",
+                                    CvStep.Education => "Education Qualification",
+                                    CvStep.WorkExperience => "Work Experience",
+                                    CvStep.Skills => "Skills & Expertise",
+                                    CvStep.Projects => "Projects & Certifications",
+                                    CvStep.Languages => "Languages",
+                                    CvStep.SummaryAndObjective => "Summary & Objective",
+                                    CvStep.PreviewDownload => "Preview & Download",
+                                    _ => step.ToString()
+                                };
+                                <li class="step" data-step="@stepNumber">
+                                    <span class="step-circle">@stepNumber</span>
+                                    <span class="step-text">@stepName</span>
+                                </li>
+                            }
                         </ul>
                     </div>
                 </div>
@@ -37,7 +54,7 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="fw-semibold mb-0">Step <span id="currentStepDisplay">1</span>: Personal Information</h4>
+                            <h4 class="fw-semibold mb-0">Step <span id="currentStepDisplay">1</span></h4>
                             <span class="badge bg-primary" id="stepBadge">In Progress</span>
                         </div>
 
@@ -53,24 +70,21 @@
                                     <div class="accordion-body">
                                         <div class="row g-3">
                                             <div class="col-md-6">
-                                                <label class="form-label">Full Name</label>
-                                                <input type="text" class="form-control" placeholder="Enter your full name" required>
+                                                <label asp-for="FullName" class="form-label">Full Name</label>
+                                                <input asp-for="FullName" class="form-control" placeholder="Enter your full name" required />
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label">Professional Title</label>
-                                                <input type="text" class="form-control" placeholder="Software Engineer, Graphic Designer, etc." required>
+                                                <label asp-for="ProfessionalTitle" class="form-label">Professional Title</label>
+                                                <input asp-for="ProfessionalTitle" class="form-control" placeholder="Software Engineer, Graphic Designer, etc." required />
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label">Date of Birth</label>
-                                                <input type="date" class="form-control" required>
+                                                <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                                                <input asp-for="DateOfBirth" type="date" class="form-control" required />
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label">Gender</label>
-                                                <select class="form-select" required>
+                                                <label asp-for="Gender" class="form-label">Gender</label>
+                                                <select asp-for="Gender" class="form-select" asp-items="Html.GetEnumSelectList<Gender>()" required>
                                                     <option value="">Choose...</option>
-                                                    <option>Male</option>
-                                                    <option>Female</option>
-                                                    <option>Other</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -89,30 +103,29 @@
                                     <div class="accordion-body">
                                         <div class="row g-3">
                                             <div class="col-md-6">
-                                                <label class="form-label">Email Address</label>
-                                                <input type="email" class="form-control" placeholder="example@email.com" required>
+                                                <label asp-for="Email" class="form-label">Email Address</label>
+                                                <input asp-for="Email" type="email" class="form-control" placeholder="example@email.com" required />
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label">Phone Number</label>
-                                                <input type="text" class="form-control" placeholder="+880 1XXXXXXXXX" required>
+                                                <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                                                <input asp-for="PhoneNumber" class="form-control" placeholder="+880 1XXXXXXXXX" required />
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label">Country</label>
-                                                <input type="text" class="form-control" placeholder="Bangladesh" required>
+                                                <label asp-for="Country" class="form-label">Country</label>
+                                                <input asp-for="Country" class="form-control" placeholder="Bangladesh" required />
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label">City</label>
-                                                <input type="text" class="form-control" placeholder="Dhaka" required>
+                                                <label asp-for="City" class="form-label">City</label>
+                                                <input asp-for="City" class="form-control" placeholder="Dhaka" required />
                                             </div>
                                             <div class="col-md-12">
-                                                <label class="form-label">Address</label>
-                                                <input type="text" class="form-control" placeholder="Street, Area, ZIP" required>
+                                                <label asp-for="Address" class="form-label">Address</label>
+                                                <input asp-for="Address" class="form-control" placeholder="Street, Area, ZIP" required />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                             <!-- Step 3: Social & Online Presence -->
                             <div class="accordion-item step-form" data-step="3">
                                 <h2 class="accordion-header" id="headingStep3">
@@ -184,11 +197,25 @@
     </div>
 </section>
 
+<!-- Modal for Saved Info -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-success">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Saved Successfully!</h5>
+            </div>
+            <div class="modal-body">
+                <div id="savedInfoContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Styles {
     <style>
         .cv-steps {
             list-style: none;
-            padding-left: 0;
+            padding: 0;
             margin: 0;
         }
 
@@ -200,7 +227,42 @@
                 color: #6c757d;
                 font-weight: 500;
                 cursor: pointer;
+                transition: 0.3s;
             }
+
+                .cv-steps .step .step-circle {
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    border: 2px solid #dee2e6;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-right: 12px;
+                    font-size: 14px;
+                    transition: 0.3s;
+                }
+
+                .cv-steps .step.active {
+                    color: #0d6efd;
+                    font-weight: 600;
+                }
+
+                    .cv-steps .step.active .step-circle {
+                        border-color: #0d6efd;
+                        background-color: #0d6efd;
+                        color: #fff;
+                    }
+
+                .cv-steps .step.completed {
+                    color: #198754;
+                }
+
+                    .cv-steps .step.completed .step-circle {
+                        border-color: #198754;
+                        background-color: #198754;
+                        color: #fff;
+                    }
 
                 .cv-steps .step:not(:last-child)::after {
                     content: '';
@@ -211,48 +273,13 @@
                     width: 2px;
                     background-color: #e9ecef;
                 }
-
-            .cv-steps .step-circle {
-                width: 28px;
-                height: 28px;
-                border-radius: 50%;
-                border: 2px solid #dee2e6;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-right: 12px;
-                font-size: 14px;
-                background-color: #fff;
-                color: #6c757d;
-            }
-
-            .cv-steps .step.active {
-                color: #0d6efd;
-                font-weight: 600;
-            }
-
-                .cv-steps .step.active .step-circle {
-                    border-color: #0d6efd;
-                    background-color: #0d6efd;
-                    color: #fff;
-                }
-
-            .cv-steps .step.completed {
-                color: #198754;
-            }
-
-                .cv-steps .step.completed .step-circle {
-                    border-color: #198754;
-                    background-color: #198754;
-                    color: #fff;
-                }
     </style>
 }
 
 @section Scripts {
     <script>
         let currentStep = 1;
-        const totalSteps = 8;
+        const totalSteps = Object.keys(@Html.Raw(Json.Serialize(Enum.GetValues(typeof(CvStep)))))?.length;
         let completedSteps = [];
 
         function updateSidebar() {
@@ -280,21 +307,71 @@
             const formSection = document.querySelector(`.step-form[data-step="${step}"]`);
             let valid = true;
             formSection.querySelectorAll('input[required], select[required], textarea[required]').forEach(input=>{
-                if(!input.value){
-                    valid=false;
-                    input.classList.add('is-invalid');
-                } else input.classList.remove('is-invalid');
+                if(!input.value){ valid=false; input.classList.add('is-invalid'); }
+                else input.classList.remove('is-invalid');
             });
             return valid;
         }
 
-        document.querySelector('.btn-next-step').addEventListener('click', function(e){
+        function showSavedInfoModal(savedData){
+            let content = "<ul class='list-group'>";
+            for(const key in savedData){
+                content += `<li class='list-group-item'><strong>${key}:</strong> ${savedData[key]}</li>`;
+            }
+            content += "</ul>";
+            document.getElementById("savedInfoContent").innerHTML = content;
+            const modalEl = new bootstrap.Modal(document.getElementById('infoModal'));
+            modalEl.show();
+            setTimeout(()=> modalEl.hide(), 5000);
+        }
+
+                document.querySelector('.btn-next-step').addEventListener('click', async function (e) {
             e.preventDefault();
-            if(!validateStep(currentStep)){ alert("Please complete all required fields."); return; }
-            if(!completedSteps.includes(currentStep)) completedSteps.push(currentStep);
-            if(currentStep < totalSteps) currentStep++;
+
+            if (!validateStep(currentStep)) {
+                alert("Please complete all required fields.");
+                return;
+            }
+
+            let formData = {
+                FullName: document.querySelector('input[name="FullName"]').value,
+                ProfessionalTitle: document.querySelector('input[name="ProfessionalTitle"]').value,
+                DateOfBirth: document.querySelector('input[name="DateOfBirth"]').value,
+                Gender: document.querySelector('select[name="Gender"]').value,
+                Email: document.querySelector('input[name="Email"]')?.value,
+                PhoneNumber: document.querySelector('input[name="PhoneNumber"]')?.value,
+                Country: document.querySelector('input[name="Country"]')?.value,
+                City: document.querySelector('input[name="City"]')?.value,
+                Address: document.querySelector('input[name="Address"]')?.value
+            };
+
+            try {
+                const response = await fetch('/CvBuilder/SavePersonalInfo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    alert(result.message || "Failed to save data!");
+                    return;
+                }
+
+                showSavedInfoModal(result.data);
+
+            } catch (err) {
+                console.error(err);
+                alert("Error saving data!");
+                return;
+            }
+
+            if (!completedSteps.includes(currentStep)) completedSteps.push(currentStep);
+            if (currentStep < totalSteps) currentStep++;
             updateSidebar();
         });
+
 
         document.querySelector('.btn-prev-step').addEventListener('click', function(e){
             e.preventDefault();
@@ -302,7 +379,6 @@
             updateSidebar();
         });
 
-        // Sidebar click
         document.querySelectorAll('.cv-steps .step').forEach((stepElem,index)=>{
             stepElem.addEventListener('click',()=>{
                 const stepNum = index+1;

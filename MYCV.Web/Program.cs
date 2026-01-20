@@ -1,15 +1,26 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using MYCV.Web.Services.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// -------------------------------
+// 1️⃣ Add services to the container
+// -------------------------------
 builder.Services.AddControllersWithViews();
 
-// Get API base URL
-var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7156";
+// -------------------------------
+// 2️⃣ Configure API base URL
+// -------------------------------
+var apiBaseUrl = builder.Configuration.GetValue<string>("ApiSettings:BaseUrl");
 
-// Register AuthApiService
+if (string.IsNullOrWhiteSpace(apiBaseUrl))
+{
+    throw new InvalidOperationException("API Base URL is not configured. Please set ApiSettings:BaseUrl in appsettings.json or environment variables.");
+}
+
+// -------------------------------
+// 3️⃣ Register AuthApiService
+// -------------------------------
 builder.Services.AddHttpClient<IAuthApiService, AuthApiService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
@@ -19,10 +30,26 @@ builder.Services.AddHttpClient<IAuthApiService, AuthApiService>(client =>
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
-// Add HttpContextAccessor
+// -------------------------------
+// 4️⃣ Register CvApiService (Step 3)
+// -------------------------------
+builder.Services.AddHttpClient<ICvApiService, CvApiService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+    client.DefaultRequestHeaders.Accept.Clear();
+    client.DefaultRequestHeaders.Accept.Add(
+        new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+// -------------------------------
+// 5️⃣ Add HttpContextAccessor
+// -------------------------------
 builder.Services.AddHttpContextAccessor();
 
-// Configure Cookie Authentication
+// -------------------------------
+// 6️⃣ Configure Cookie Authentication
+// -------------------------------
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -39,7 +66,9 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Configure HTTP request pipeline
+// -------------------------------
+// 7️⃣ Configure HTTP request pipeline
+// -------------------------------
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -56,6 +85,9 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// -------------------------------
+// 8️⃣ Map default route
+// -------------------------------
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

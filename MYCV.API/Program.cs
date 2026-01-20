@@ -25,27 +25,32 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 // 3️⃣ Configure Repositories
 // ============================
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUserCvRepository, UserCvRepository>();
 
 // ============================
 // 4️⃣ Configure Application Services
 // ============================
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserCvService, UserCvService>();
 
 // ============================
-// 5️⃣ Add Controllers, Swagger, CORS
+// 5️⃣ Configure Security Services
+// ============================
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+// ============================
+// 6️⃣ Add Controllers, Swagger, CORS
 // ============================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// ✅ Add CORS Policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowWebApp", builder =>
+    options.AddPolicy("AllowWebApp", policy =>
     {
-        builder
-            .WithOrigins("https://localhost:7167") // Your Web app origin
+        policy
+            .WithOrigins("https://localhost:7167") 
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -54,7 +59,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // ============================
-// 6️⃣ Configure Middleware
+// 7️⃣ Configure Middleware
 // ============================
 if (app.Environment.IsDevelopment())
 {
@@ -64,9 +69,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// ✅ Enable CORS BEFORE Authorization & Controllers
 app.UseCors("AllowWebApp");
 
+app.UseAuthentication();   // ✅ if JWT/cookies added later
 app.UseAuthorization();
 
 app.MapControllers();

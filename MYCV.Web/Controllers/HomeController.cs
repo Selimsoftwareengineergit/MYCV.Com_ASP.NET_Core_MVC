@@ -14,12 +14,6 @@ namespace MYCV.Web.Controllers
             _logger = logger;
         }
 
-        [Authorize]
-        public IActionResult Main()
-        {
-            return View();
-        }
-
         public IActionResult Index()
         {
             return View();

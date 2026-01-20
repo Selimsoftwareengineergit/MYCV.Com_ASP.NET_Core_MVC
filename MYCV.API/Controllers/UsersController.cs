@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MYCV.Application.DTOs;
-using MYCV.Application.Services;
+using MYCV.Application.Interfaces;
 using System.Net;
 
 namespace MYCV.API.Controllers

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using MYCV.Application.Services;
+using MYCV.Application.Interfaces;
 using MYCV.Domain.Entities;
 using System;
 using System.Collections.Generic;

@@ -117,7 +117,7 @@ namespace MYCV.Web.Controllers
                 {
                     return Redirect(model.ReturnUrl);
                 }
-                return RedirectToAction("Main", "Home");
+                return RedirectToAction("Index", "CvBuilder");
             }
             catch (HttpRequestException ex)
             {

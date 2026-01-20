@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MYCV.Application.Services
+namespace MYCV.Application.Interfaces
 {
     public interface IUserService
     {
