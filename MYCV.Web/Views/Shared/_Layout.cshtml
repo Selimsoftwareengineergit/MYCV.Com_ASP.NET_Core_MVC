@@ -11,15 +11,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Favicon -->
-    <link rel="icon" href="~/assets/img/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="~/assets/img/favicon.ico" asp-append-version="true" type="image/x-icon" />
 
     <!-- ========================= CSS here ========================= -->
-    <!-- Add ~/ for ASP.NET Core root path -->
-    <link rel="stylesheet" href="~/assets/css/bootstrap-5.0.0-beta1.min.css" />
-    <link rel="stylesheet" href="~/assets/css/LineIcons.2.0.css" />
-    <link rel="stylesheet" href="~/assets/css/tiny-slider.css" />
-    <link rel="stylesheet" href="~/assets/css/animate.css" />
-    <link rel="stylesheet" href="~/assets/css/lindy-uikit.css" />
+    <link rel="stylesheet" href="~/assets/css/bootstrap-5.0.0-beta1.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/assets/css/LineIcons.2.0.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/assets/css/tiny-slider.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/assets/css/animate.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/assets/css/lindy-uikit.css" asp-append-version="true" />
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -60,10 +59,11 @@
                 <div class="row align-items-center">
                     <div class="col-lg-12">
                         <nav class="navbar navbar-expand-lg">
-                            <!-- Logo with ASP.NET Core tag helper -->
+                            <!-- Logo with proper path -->
                             <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                                <img src="~/assets/img/logo/logo.svg" alt="MYCV Logo" />
+                                <img src="~/assets/img/logo/logo.svg" asp-append-version="true" alt="MYCV Logo" />
                             </a>
+
                             <!-- Mobile menu toggle -->
                             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#navbarSupportedContent6"
@@ -140,20 +140,14 @@
                                     }
                                 </ul>
                             </div>
-                            <!-- navbar collapse -->
                         </nav>
-                        <!-- navbar -->
                     </div>
                 </div>
-                <!-- row -->
             </div>
-            <!-- container -->
         </div>
-        <!-- navbar area -->
     </header>
     <!-- ========================= header-6 end ========================= -->
     <!-- ========================= MAIN CONTENT START ========================= -->
-    <!-- This is where your view content will be inserted -->
     <main role="main">
         @RenderBody()
     </main>
@@ -167,78 +161,57 @@
                         <div class="footer-widget wow fadeInUp" data-wow-delay=".2s">
                             <div class="logo">
                                 <a asp-controller="Home" asp-action="Index">
-                                    <img src="assets/img/logo/logo.svg" alt="Logo" />
+                                    <img src="~/assets/img/logo/logo.svg" asp-append-version="true" alt="Logo" />
                                 </a>
                             </div>
                             <p class="desc">Professional CV builder platform to create stunning resumes that get you hired. Build your career with us.</p>
                             <ul class="socials">
-                                <li>
-                                    <a href="https://facebook.com" target="_blank">
-                                        <i class="lni lni-facebook-filled"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://twitter.com" target="_blank">
-                                        <i class="lni lni-twitter-filled"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://instagram.com" target="_blank">
-                                        <i class="lni lni-instagram-filled"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://linkedin.com" target="_blank">
-                                        <i class="lni lni-linkedin-original"></i>
-                                    </a>
-                                </li>
+                                <li><a href="https://facebook.com" target="_blank"><i class="lni lni-facebook-filled"></i></a></li>
+                                <li><a href="https://twitter.com" target="_blank"><i class="lni lni-twitter-filled"></i></a></li>
+                                <li><a href="https://instagram.com" target="_blank"><i class="lni lni-instagram-filled"></i></a></li>
+                                <li><a href="https://linkedin.com" target="_blank"><i class="lni lni-linkedin-original"></i></a></li>
                             </ul>
                         </div>
                     </div>
+
                     <div class="col-xl-2 offset-xl-1 col-lg-2 col-md-6 col-sm-6">
                         <div class="footer-widget wow fadeInUp" data-wow-delay=".3s">
                             <h6>Quick Link</h6>
                             <ul class="links">
-                                <li> <a asp-controller="Home" asp-action="Index">Home</a> </li>
-                                <li> <a asp-controller="Home" asp-action="About">About</a> </li>
-                                <li> <a asp-controller="Home" asp-action="Features">Features</a> </li>
-                                <li> <a asp-controller="Home" asp-action="Pricing">Pricing</a> </li>
-                                <li> <a asp-controller="Home" asp-action="Contact">Contact</a> </li>
+                                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                                <li><a asp-controller="Home" asp-action="About">About</a></li>
+                                <li><a asp-controller="Home" asp-action="Features">Features</a></li>
+                                <li><a asp-controller="Home" asp-action="Pricing">Pricing</a></li>
+                                <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
                             </ul>
                         </div>
                     </div>
+
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
                         <div class="footer-widget wow fadeInUp" data-wow-delay=".4s">
                             <h6>Services</h6>
                             <ul class="links">
-                                <li> <a asp-controller="Services" asp-action="CVBuilder">CV Builder</a> </li>
-                                <li> <a asp-controller="Services" asp-action="ResumeTemplates">Resume Templates</a> </li>
-                                <li> <a asp-controller="Services" asp-action="CoverLetters">Cover Letters</a> </li>
-                                <li> <a asp-controller="Services" asp-action="CareerAdvice">Career Advice</a> </li>
+                                <li><a asp-controller="Services" asp-action="CVBuilder">CV Builder</a></li>
+                                <li><a asp-controller="Services" asp-action="ResumeTemplates">Resume Templates</a></li>
+                                <li><a asp-controller="Services" asp-action="CoverLetters">Cover Letters</a></li>
+                                <li><a asp-controller="Services" asp-action="CareerAdvice">Career Advice</a></li>
                             </ul>
                         </div>
                     </div>
+
                     <div class="col-xl-3 col-lg-3 col-md-6">
                         <div class="footer-widget wow fadeInUp" data-wow-delay=".5s">
                             <h6>Contact Us</h6>
                             <ul class="contact-info">
-                                <li>
-                                    <i class="lni lni-phone"></i>
-                                    <span>+880 1930192991</span>
-                                </li>
-                                <li>
-                                    <i class="lni lni-envelope"></i>
-                                    <span>support@mycv.com</span>
-                                </li>
-                                <li>
-                                    <i class="lni lni-map-marker"></i>
-                                    <span>123 Basila Road, Mohammadpur<br>Dhaka-1207, Bangladesh</span>
-                                </li>
+                                <li><i class="lni lni-phone"></i> <span>+880 1930192991</span></li>
+                                <li><i class="lni lni-envelope"></i> <span>support@mycv.com</span></li>
+                                <li><i class="lni lni-map-marker"></i> <span>123 Basila Road, Mohammadpur<br>Dhaka-1207, Bangladesh</span></li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="copyright-wrapper wow fadeInUp" data-wow-delay=".2s">
                 <p>
                     &copy; @DateTime.Now.Year MYCV. All rights reserved. |
@@ -255,13 +228,12 @@
     </a>
     <!-- ========================= scroll-top end ========================= -->
     <!-- ========================= JS here ========================= -->
-    <!-- Add ~/ for ASP.NET Core root path -->
-    <script src="~/assets/js/bootstrap-5.0.0-beta1.min.js"></script>
-    <script src="~/assets/js/tiny-slider.js"></script>
-    <script src="~/assets/js/wow.min.js"></script>
-    <script src="~/assets/js/main.js"></script>
+    <script src="~/assets/js/bootstrap-5.0.0-beta1.min.js" asp-append-version="true"></script>
+    <script src="~/assets/js/tiny-slider.js" asp-append-version="true"></script>
+    <script src="~/assets/js/wow.min.js" asp-append-version="true"></script>
+    <script src="~/assets/js/main.js" asp-append-version="true"></script>
 
-    <!-- jQuery (if needed by template) -->
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Custom JS -->
@@ -270,7 +242,7 @@
     <!-- View-specific scripts -->
     @await RenderSectionAsync("Scripts", required: false)
 
-    <!-- Initialize WOW.js -->
+    <!-- Initialize WOW.js and other scripts -->
     <script>
         new WOW().init();
 
@@ -282,10 +254,7 @@
                 if (targetId.startsWith('#')) {
                     const targetElement = document.querySelector(targetId);
                     if (targetElement) {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 70,
-                            behavior: 'smooth'
-                        });
+                        window.scrollTo({ top: targetElement.offsetTop - 70, behavior: 'smooth' });
                     }
                 }
             });
@@ -294,19 +263,11 @@
         // Scroll to top button
         const scrollTop = document.querySelector('.scroll-top');
         window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) {
-                scrollTop.classList.add('active');
-            } else {
-                scrollTop.classList.remove('active');
-            }
+            scrollTop.classList.toggle('active', window.pageYOffset > 300);
         });
-
-        scrollTop.addEventListener('click', (e) => {
+        scrollTop.addEventListener('click', e => {
             e.preventDefault();
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
         // Preloader
