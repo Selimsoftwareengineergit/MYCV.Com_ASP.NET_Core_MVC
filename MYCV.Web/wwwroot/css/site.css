@@ -232,3 +232,9 @@ body {
 .bg-gradient {
     background: linear-gradient(135deg, #4a6cf7 0%, #6a11cb 100%);
 }
+.brand-text {
+    font-size: 50px;
+    color: red;
+    font-weight: bold;
+    margin-left: 0.5rem; 
+}
