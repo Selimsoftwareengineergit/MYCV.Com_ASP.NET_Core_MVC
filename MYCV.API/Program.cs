@@ -1,10 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MYCV.Application.Interfaces;
 using MYCV.Application.Services;
 using MYCV.Infrastructure.Data;
 using MYCV.Infrastructure.Repositories;
 using MYCV.Infrastructure.Security;
 using MYCV.Infrastructure.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,16 +53,46 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowWebApp", policy =>
     {
         policy
-            .WithOrigins("https://localhost:7167") 
+            .WithOrigins("https://localhost:7167")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
 });
 
+// ============================
+// 7️⃣ Configure JWT Authentication
+// ============================
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+
+builder.Services.AddAuthorization();
+
+// ============================
+// 8️⃣ Build App
+// ============================
 var app = builder.Build();
 
 // ============================
-// 7️⃣ Configure Middleware
+// 9️⃣ Configure Middleware
 // ============================
 if (app.Environment.IsDevelopment())
 {
@@ -68,12 +101,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseCors("AllowWebApp");
 
-app.UseAuthentication();   // ✅ if JWT/cookies added later
+app.UseAuthentication();   
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();

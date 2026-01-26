@@ -12,43 +12,45 @@ builder.Services.AddControllersWithViews();
 // 2️⃣ Configure API base URL
 // -------------------------------
 var apiBaseUrl = builder.Configuration.GetValue<string>("ApiSettings:BaseUrl");
-
 if (string.IsNullOrWhiteSpace(apiBaseUrl))
 {
-    throw new InvalidOperationException("API Base URL is not configured. Please set ApiSettings:BaseUrl in appsettings.json or environment variables.");
+    throw new InvalidOperationException(
+        "API Base URL is not configured. Set ApiSettings:BaseUrl in appsettings.json");
 }
+Console.WriteLine("API Base URL: " + apiBaseUrl);
 
 // -------------------------------
-// 3️⃣ Register AuthApiService
-// -------------------------------
-builder.Services.AddHttpClient<IAuthApiService, AuthApiService>(client =>
-{
-    client.BaseAddress = new Uri(apiBaseUrl);
-    client.DefaultRequestHeaders.Accept.Clear();
-    client.DefaultRequestHeaders.Accept.Add(
-        new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
-
-// -------------------------------
-// 4️⃣ Register CvApiService (Step 3)
-// -------------------------------
-builder.Services.AddHttpClient<ICvApiService, CvApiService>(client =>
-{
-    client.BaseAddress = new Uri(apiBaseUrl);
-    client.DefaultRequestHeaders.Accept.Clear();
-    client.DefaultRequestHeaders.Accept.Add(
-        new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
-
-// -------------------------------
-// 5️⃣ Add HttpContextAccessor
+// 3️⃣ Add HttpContextAccessor
 // -------------------------------
 builder.Services.AddHttpContextAccessor();
 
 // -------------------------------
-// 6️⃣ Configure Cookie Authentication
+// 4️⃣ Register JwtTokenHandler
+// -------------------------------
+builder.Services.AddTransient<JwtTokenHandler>();
+
+// -------------------------------
+// 5️⃣ Register API services
+// -------------------------------
+builder.Services.AddHttpClient<IAuthApiService, AuthApiService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+    client.DefaultRequestHeaders.Accept.Add(
+        new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+builder.Services.AddHttpClient<ICvApiService, CvApiService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+    client.DefaultRequestHeaders.Accept.Add(
+        new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+    client.Timeout = TimeSpan.FromSeconds(30);
+})
+.AddHttpMessageHandler<JwtTokenHandler>();  // ✅ attach JWT automatically
+
+// -------------------------------
+// 6️⃣ Cookie Authentication
 // -------------------------------
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -67,7 +69,7 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // -------------------------------
-// 7️⃣ Configure HTTP request pipeline
+// 7️⃣ Middleware pipeline
 // -------------------------------
 if (app.Environment.IsDevelopment())
 {
@@ -86,7 +88,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // -------------------------------
-// 8️⃣ Map default route
+// 8️⃣ Routes
 // -------------------------------
 app.MapControllerRoute(
     name: "default",

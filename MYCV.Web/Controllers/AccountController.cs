@@ -44,7 +44,7 @@ namespace MYCV.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
         {
-            // Fix: Preserve ReturnUrl from parameter if model doesn't have it
+            // Preserve ReturnUrl
             model.ReturnUrl = returnUrl ?? model.ReturnUrl;
             ViewData["ReturnUrl"] = model.ReturnUrl;
 
@@ -66,10 +66,9 @@ namespace MYCV.Web.Controllers
 
                 _logger.LogInformation("Attempting login for user: {Email}", model.Email);
 
-                // Call API service (Web → API communication pattern)
+                // Call API service (Web → API)
                 var apiResponse = await _authApiService.LoginAsync(loginRequest);
 
-                // Check API response
                 if (!apiResponse.Success || apiResponse.Data == null)
                 {
                     _logger.LogWarning("Login failed for {Email}: {Message}", model.Email, apiResponse.Message);
@@ -79,29 +78,27 @@ namespace MYCV.Web.Controllers
 
                 var authData = apiResponse.Data;
 
+                // Create user claims (identity info only, no token here)
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, authData.User.Id.ToString()),
                     new Claim(ClaimTypes.Email, authData.User.Email),
-                    new Claim(ClaimTypes.Name, $"{authData.User.FullName}"),
-                    //new Claim(ClaimTypes.Role, authData.User.Role ?? "User"), // Role-based authorization
-                    new Claim("Token", authData.Token), // Store JWT token
+                    new Claim(ClaimTypes.Name, authData.User.FullName ?? ""),
                     new Claim("UserId", authData.User.Id.ToString())
+                    // You can add Role claim here if needed
                 };
 
                 var claimsIdentity = new ClaimsIdentity(
                     claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                // Create authentication properties with security settings
+                // Authentication properties
                 var authProperties = new AuthenticationProperties
                 {
                     IsPersistent = model.RememberMe,
                     ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8),
-                    RedirectUri = model.ReturnUrl ?? "/",
-
-                    // Security settings
                     AllowRefresh = true,
-                    IssuedUtc = DateTimeOffset.UtcNow
+                    IssuedUtc = DateTimeOffset.UtcNow,
+                    RedirectUri = model.ReturnUrl ?? "/"
                 };
 
                 // Sign in user with cookie authentication
@@ -111,12 +108,22 @@ namespace MYCV.Web.Controllers
                     authProperties);
 
                 _logger.LogInformation("User {Email} logged in successfully", model.Email);
+
+                // --- STEP 1: Store JWT Token in HttpOnly Cookie ---
+                Response.Cookies.Append("AuthToken", authData.Token, new CookieOptions
+                {
+                    HttpOnly = true,          
+                    Secure = true,            
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTimeOffset.UtcNow.AddHours(8)
+                });
+
                 TempData["SuccessMessage"] = "Login successful! Welcome back.";
 
+                // Redirect to returnUrl or default page
                 if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                {
                     return Redirect(model.ReturnUrl);
-                }
+
                 return RedirectToAction("Index", "CvBuilder");
             }
             catch (HttpRequestException ex)
@@ -132,6 +139,7 @@ namespace MYCV.Web.Controllers
                 return View(model);
             }
         }
+
 
         //GET:/Account/Register
         [HttpGet]

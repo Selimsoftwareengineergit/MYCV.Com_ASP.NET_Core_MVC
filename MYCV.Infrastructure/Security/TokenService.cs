@@ -26,11 +26,12 @@ namespace MYCV.Infrastructure.Security
             try
             {
                 var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Name, user.FullName)
-                };
+        {
+            new Claim("UserId", user.Id.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Name, user.FullName ?? "")
+        };
 
                 var keyString = _config["Jwt:Key"];
                 if (string.IsNullOrEmpty(keyString))
@@ -54,6 +55,5 @@ namespace MYCV.Infrastructure.Security
                 throw new Exception("Failed to generate JWT token: " + ex.Message, ex);
             }
         }
-
     }
 }

@@ -1,75 +1,81 @@
 ﻿using MYCV.Application.DTOs;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
 namespace MYCV.Web.Services.Api
 {
     public class CvApiService : ICvApiService
     {
         private readonly HttpClient _httpClient;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<CvApiService> _logger;
 
-        public CvApiService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor, ILogger<CvApiService> logger)
+        public CvApiService(HttpClient httpClient, ILogger<CvApiService> logger)
         {
             _httpClient = httpClient;
-            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get CV for a user by userId
+        /// </summary>
         public async Task<ApiResponse<UserCvPersonalInfoDto>> GetUserCvAsync(Guid userId)
         {
             try
             {
-                AddAuthHeader();
+                _logger.LogInformation("Fetching CV for user {UserId}", userId);
 
                 var response = await _httpClient.GetAsync($"api/cv/{userId}");
-                if (response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadFromJsonAsync<ApiResponse<UserCvPersonalInfoDto>>();
-                    return result ?? ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("Invalid response");
+                    var error = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning("GetUserCvAsync failed for user {UserId}: {Error}", userId, error);
+                    return ApiResponse<UserCvPersonalInfoDto>.ErrorResponse(error);
                 }
 
-                var error = await response.Content.ReadAsStringAsync();
-                _logger.LogWarning("GetUserCvAsync failed: {Error}", error);
-                return ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("Failed to fetch CV");
+                var result = await response.Content.ReadFromJsonAsync<ApiResponse<UserCvPersonalInfoDto>>();
+                if (result == null)
+                {
+                    _logger.LogWarning("GetUserCvAsync returned null for user {UserId}", userId);
+                    return ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("Invalid response from API");
+                }
+
+                _logger.LogInformation("Successfully fetched CV for user {UserId}", userId);
+                return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in GetUserCvAsync");
-                return ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("Network error");
+                _logger.LogError(ex, "Exception in GetUserCvAsync for user {UserId}", userId);
+                return ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("Network or API error");
             }
         }
 
+        /// <summary>
+        /// Save personal info for a user's CV
+        /// </summary>
         public async Task<ApiResponse<UserCvPersonalInfoDto>> SavePersonalInfoAsync(UserCvPersonalInfoDto dto)
         {
             try
             {
-                AddAuthHeader();
-
+                // This is the actual API call
                 var response = await _httpClient.PostAsJsonAsync("api/cv/personal-info", dto);
-                if (response.IsSuccessStatusCode)
+
+                // Log status for debugging
+                if (!response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadFromJsonAsync<ApiResponse<UserCvPersonalInfoDto>>();
-                    return result ?? ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("Invalid response");
+                    var content = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("API returned error. Status: {StatusCode}, Content: {Content}",
+                        response.StatusCode, content);
+                    return ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("API returned error: " + content);
                 }
 
-                var error = await response.Content.ReadAsStringAsync();
-                _logger.LogWarning("SavePersonalInfoAsync failed: {Error}", error);
-                return ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("Failed to save personal info");
+                // Deserialize response
+                var result = await response.Content.ReadFromJsonAsync<ApiResponse<UserCvPersonalInfoDto>>();
+                return result ?? ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("Invalid response from API");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in SavePersonalInfoAsync");
-                return ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("Network error");
-            }
-        }
-
-        private void AddAuthHeader()
-        {
-            var token = _httpContextAccessor.HttpContext?.Request.Cookies["AuthToken"];
-            if (!string.IsNullOrEmpty(token))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                _logger.LogError(ex, "Exception when calling API SavePersonalInfo");
+                return ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("Exception: " + ex.Message);
             }
         }
     }
