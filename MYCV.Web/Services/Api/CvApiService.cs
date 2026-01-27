@@ -56,19 +56,45 @@ namespace MYCV.Web.Services.Api
         {
             try
             {
-                // This is the actual API call
-                var response = await _httpClient.PostAsJsonAsync("api/cv/personal-info", dto);
+                // Prepare multipart/form-data content
+                using var content = new MultipartFormDataContent();
 
-                // Log status for debugging
-                if (!response.IsSuccessStatusCode)
+                // Add text fields
+                content.Add(new StringContent(dto.FullName ?? ""), "FullName");
+                content.Add(new StringContent(dto.ProfessionalTitle ?? ""), "ProfessionalTitle");
+                content.Add(new StringContent(dto.DateOfBirth?.ToString("yyyy-MM-dd") ?? ""), "DateOfBirth");
+                content.Add(new StringContent(dto.Gender ?? ""), "Gender");
+                content.Add(new StringContent(dto.Email ?? ""), "Email");
+                content.Add(new StringContent(dto.PhoneNumber ?? ""), "PhoneNumber");
+                content.Add(new StringContent(dto.Country ?? ""), "Country");
+                content.Add(new StringContent(dto.City ?? ""), "City");
+                content.Add(new StringContent(dto.Address ?? ""), "Address");
+                content.Add(new StringContent(dto.LinkedIn ?? ""), "LinkedIn");
+                content.Add(new StringContent(dto.GitHub ?? ""), "GitHub");
+                content.Add(new StringContent(dto.Portfolio ?? ""), "Portfolio");
+                content.Add(new StringContent(dto.Website ?? ""), "Website");
+                content.Add(new StringContent(dto.LinkedInHeadline ?? ""), "LinkedInHeadline");
+                content.Add(new StringContent(dto.Summary ?? ""), "Summary");
+
+                // Add Profile Picture if exists
+                if (dto.ProfilePicture != null)
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-                    _logger.LogError("API returned error. Status: {StatusCode}, Content: {Content}",
-                        response.StatusCode, content);
-                    return ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("API returned error: " + content);
+                    var streamContent = new StreamContent(dto.ProfilePicture.OpenReadStream());
+                    streamContent.Headers.ContentType = new MediaTypeHeaderValue(dto.ProfilePicture.ContentType);
+                    content.Add(streamContent, "ProfilePicture", dto.ProfilePicture.FileName);
                 }
 
-                // Deserialize response
+                // Send request
+                var response = await _httpClient.PostAsync("api/cv/personal-info", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var respContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("API returned error. Status: {StatusCode}, Content: {Content}",
+                        response.StatusCode, respContent);
+                    return ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("API returned error: " + respContent);
+                }
+
                 var result = await response.Content.ReadFromJsonAsync<ApiResponse<UserCvPersonalInfoDto>>();
                 return result ?? ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("Invalid response from API");
             }

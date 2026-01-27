@@ -37,12 +37,17 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserCvService, UserCvService>();
 
 // ============================
-// 5️⃣ Configure Security Services
+// 5️⃣ Configure File Service
+// ============================
+builder.Services.AddScoped<IFileService, FileService>();
+
+// ============================
+// 6️⃣ Configure Security Services
 // ============================
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 // ============================
-// 6️⃣ Add Controllers, Swagger, CORS
+// 7️⃣ Add Controllers, Swagger, CORS
 // ============================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -60,7 +65,7 @@ builder.Services.AddCors(options =>
 });
 
 // ============================
-// 7️⃣ Configure JWT Authentication
+// 8️⃣ Configure JWT Authentication
 // ============================
 builder.Services.AddAuthentication(options =>
 {
@@ -87,12 +92,12 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 // ============================
-// 8️⃣ Build App
+// 9️⃣ Build App
 // ============================
 var app = builder.Build();
 
 // ============================
-// 9️⃣ Configure Middleware
+// 🔟 Configure Middleware
 // ============================
 if (app.Environment.IsDevelopment())
 {
@@ -103,7 +108,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("AllowWebApp");
 
-app.UseAuthentication();   
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

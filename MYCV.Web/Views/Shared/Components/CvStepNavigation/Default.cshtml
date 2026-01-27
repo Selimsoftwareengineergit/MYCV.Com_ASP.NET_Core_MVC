@@ -1,0 +1,34 @@
+﻿@using MYCV.Domain.Enums
+@model MYCV.Web.ViewComponents.CvStepNavigationViewModel
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        <h5 class="fw-semibold mb-4">CV Progress</h5>
+        <ul class="list-unstyled cv-steps">
+            @foreach (var step in Model.Steps)
+            {
+                var stepNumber = (int)step;
+                var stepName = step switch
+                {
+                    CvStep.PersonalInformation => "Personal Information",
+                    CvStep.Education => "Education Qualification",
+                    CvStep.WorkExperience => "Work Experience",
+                    CvStep.Skills => "Skills & Expertise",
+                    CvStep.Projects => "Projects & Certifications",
+                    CvStep.Languages => "Languages",
+                    CvStep.SummaryAndObjective => "Summary & Objective",
+                    CvStep.PreviewDownload => "Preview & Download",
+                    _ => step.ToString()
+                };
+
+                var isActive = Model.CurrentStep == stepNumber;
+                var isCompleted = Model.CompletedSteps.Contains(stepNumber);
+
+                <li class="step @(isCompleted ? "completed" : isActive ? "active" : "")" data-step="@stepNumber">
+                    <span class="step-circle">@((isCompleted ? "✓" : stepNumber))</span>
+                    <span class="step-text">@stepName</span>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

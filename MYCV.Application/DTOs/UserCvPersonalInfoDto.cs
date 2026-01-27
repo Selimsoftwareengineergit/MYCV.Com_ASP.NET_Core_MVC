@@ -1,4 +1,7 @@
-﻿namespace MYCV.Application.DTOs
+﻿
+using Microsoft.AspNetCore.Http;
+
+namespace MYCV.Application.DTOs
 {
     public class UserCvPersonalInfoDto
     {
@@ -25,6 +28,8 @@
         // Optional Professional Detail
         public string? LinkedInHeadline { get; set; }
         public string? Summary { get; set; }
-        public string? ProfilePictureUrl { get; set; } 
+        public string? ProfilePictureUrl { get; set; }
+
+        public IFormFile? ProfilePicture { get; set; }
     }
 }

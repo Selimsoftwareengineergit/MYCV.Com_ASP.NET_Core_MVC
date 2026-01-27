@@ -26,7 +26,7 @@ namespace MYCV.API.Controllers
         /// <param name="dto">User CV personal info DTO</param>
         /// <returns>ApiResponse with saved CV data</returns>
         [HttpPost("personal-info")]
-        public async Task<IActionResult> SavePersonalInfo([FromBody] UserCvPersonalInfoDto dto)
+        public async Task<IActionResult> SavePersonalInfo([FromForm] UserCvPersonalInfoDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ApiResponse<UserCvResponseDto>.ErrorResponse("Please fill all required fields."));
@@ -40,13 +40,13 @@ namespace MYCV.API.Controllers
                     return Unauthorized(ApiResponse<UserCvResponseDto>.ErrorResponse("User not authorized"));
 
                 dto.UserId = int.Parse(userIdClaim);
-
                 var savedCv = await _cvService.SavePersonalInfoAsync(dto);
+
                 return Ok(ApiResponse<UserCvResponseDto>.SuccessResponse(savedCv, "Personal information saved successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving personal info");
+                _logger.LogError(ex, "Error saving personal info for user {UserId}", dto.UserId);
                 return StatusCode(500, ApiResponse<UserCvResponseDto>.ErrorResponse("Internal server error"));
             }
         }
