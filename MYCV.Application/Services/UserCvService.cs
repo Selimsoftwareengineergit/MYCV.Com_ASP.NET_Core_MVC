@@ -1,5 +1,6 @@
 ﻿using MYCV.Application.DTOs;
 using MYCV.Application.Interfaces;
+using MYCV.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,14 +20,13 @@ namespace MYCV.Application.Services
 
         public async Task<UserCvResponseDto> SavePersonalInfoAsync(UserCvPersonalInfoDto dto)
         {
-            // 1️⃣ Check if CV already exists for this email
-            var existingCv = await _cvRepository.GetByEmailAsync(dto.Email);
+            var existingCv = await _cvRepository.GetByUserIdAsync(dto.UserId);
 
             if (existingCv == null)
             {
-                // 2️⃣ Create new CV
                 var newCv = new UserCv
                 {
+                    UserId = dto.UserId,
                     FullName = dto.FullName,
                     ProfessionalTitle = dto.ProfessionalTitle,
                     DateOfBirth = dto.DateOfBirth,
@@ -52,7 +52,7 @@ namespace MYCV.Application.Services
                 return MapToResponseDto(newCv);
             }
 
-            // 3️⃣ Update existing CV
+            // Update existing
             existingCv.FullName = dto.FullName;
             existingCv.ProfessionalTitle = dto.ProfessionalTitle;
             existingCv.DateOfBirth = dto.DateOfBirth;

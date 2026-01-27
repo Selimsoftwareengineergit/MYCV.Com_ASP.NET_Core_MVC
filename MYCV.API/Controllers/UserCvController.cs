@@ -29,34 +29,25 @@ namespace MYCV.API.Controllers
         public async Task<IActionResult> SavePersonalInfo([FromBody] UserCvPersonalInfoDto dto)
         {
             if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid personal info submitted for user {User}", User.Identity?.Name);
                 return BadRequest(ApiResponse<UserCvResponseDto>.ErrorResponse("Please fill all required fields."));
-            }
 
             try
             {
-                // Extract UserId from JWT claims
-                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                                  ?? User.FindFirst("UserId")?.Value;
+
                 if (string.IsNullOrEmpty(userIdClaim))
                     return Unauthorized(ApiResponse<UserCvResponseDto>.ErrorResponse("User not authorized"));
 
                 dto.UserId = int.Parse(userIdClaim);
 
-                _logger.LogInformation("Saving personal info for user {UserId} ({Email})", dto.UserId, dto.Email);
-
-                // Call service to save personal info
                 var savedCv = await _cvService.SavePersonalInfoAsync(dto);
-
-                _logger.LogInformation("Personal info saved successfully with CV ID: {CvId} for user {UserId}", savedCv.Id, dto.UserId);
-
                 return Ok(ApiResponse<UserCvResponseDto>.SuccessResponse(savedCv, "Personal information saved successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving personal info for user {Email}", dto.Email);
-                return StatusCode((int)HttpStatusCode.InternalServerError,
-                    ApiResponse<UserCvResponseDto>.ErrorResponse("Internal server error"));
+                _logger.LogError(ex, "Error saving personal info");
+                return StatusCode(500, ApiResponse<UserCvResponseDto>.ErrorResponse("Internal server error"));
             }
         }
     }

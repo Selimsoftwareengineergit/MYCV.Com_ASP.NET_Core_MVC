@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MYCV.Application.Interfaces;
+using MYCV.Domain.Entities;
 using MYCV.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -18,13 +19,8 @@ namespace MYCV.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<UserCv?> GetByEmailAsync(string email)
+        public async Task<UserCv?> GetByUserIdAsync(int userId)
         {
-            if (string.IsNullOrWhiteSpace(email))
-                return null;
-
-            var normalizedEmail = email.Trim().ToLower();
-
             return await _context.UserCvs
                 .Include(x => x.Educations)
                 .Include(x => x.Experiences)
@@ -32,7 +28,7 @@ namespace MYCV.Infrastructure.Repositories
                 .Include(x => x.Projects)
                 .Include(x => x.Languages)
                 .FirstOrDefaultAsync(x =>
-                    x.Email.ToLower() == normalizedEmail &&
+                    x.UserId == userId &&
                     !x.IsDeleted &&
                     x.IsActive);
         }
