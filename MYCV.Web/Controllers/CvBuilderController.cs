@@ -6,6 +6,7 @@ using MYCV.Web.ViewModels;
 using MYCV.Domain.Entities;
 using System.Security.Claims;
 using MYCV.Web.Helpers;
+using MYCV.Domain.Enums;
 
 namespace MYCV.Web.Controllers
 {
@@ -28,30 +29,33 @@ namespace MYCV.Web.Controllers
             {
                 var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
                 if (string.IsNullOrEmpty(userIdClaim))
-                {
-                    _logger.LogWarning("UserId claim not found. Redirecting to login.");
                     return RedirectToAction("Login", "Account");
-                }
 
-                var userId = Guid.Parse(userIdClaim);
+                var userId = int.Parse(userIdClaim);
 
-                // Fetch existing CV data if available
-                var cvResponse = await _cvApiService.GetUserCvAsync(userId);
-                if (!cvResponse.Success)
-                {
-                    _logger.LogWarning("Failed to fetch CV for user {UserId}: {Message}", userId, cvResponse.Message);
-                    TempData["ErrorMessage"] = cvResponse.Message ?? "Unable to load CV data.";
-                    return View(new UserCvPersonalInfoDto());
-                }
+                // ✅ Check step completion
+                var personalInfoResponse = await _cvApiService.GetUserCvAsync(userId);
+                bool step1Completed = personalInfoResponse.Success && personalInfoResponse.Data != null;
 
-                _logger.LogInformation("Loaded CV data for user {UserId}", userId);
-                return View(cvResponse.Data ?? new UserCvPersonalInfoDto());
+                var educationResponse = await _cvApiService.GetUserEducationAsync(userId);
+                bool step2Completed = educationResponse.Success && educationResponse.Data != null && educationResponse.Data.Any();
+
+                //var experienceResponse = await _cvApiService.GetUserExperienceAsync(userId);
+                //bool step3Completed = experienceResponse.Success && experienceResponse.Data != null && experienceResponse.Data.Any();
+
+                // Determine first incomplete step
+                if (!step1Completed) return RedirectToAction("Step", new { stepNumber = (int)CvStep.PersonalInformation });
+                if (!step2Completed) return RedirectToAction("Step", new { stepNumber = (int)CvStep.Education });
+                //if (!step3Completed) return RedirectToAction("Step", new { stepNumber = (int)CvStep.WorkExperience });
+
+                // All steps completed → go to PreviewDownload
+                return RedirectToAction("Step", new { stepNumber = (int)CvStep.PreviewDownload });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error loading CV Builder for user {User}", User.Identity?.Name);
-                TempData["ErrorMessage"] = "An unexpected error occurred while loading your CV.";
-                return View(new UserCvPersonalInfoDto());
+                _logger.LogError(ex, "Error loading CV Builder for user {User}", User.Identity?.Name);
+                TempData["ErrorMessage"] = "Unexpected error loading CV Builder.";
+                return View();
             }
         }
 
@@ -91,7 +95,78 @@ namespace MYCV.Web.Controllers
         }
 
 
-        // GET: /CvBuilder/Step/{stepNumber}
+        [HttpGet]
+        public async Task<IActionResult> Education()
+        {
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return RedirectToAction("Login", "Account");
+
+                var userId = int.Parse(userIdClaim);
+
+                var response = await _cvApiService.GetUserEducationAsync(userId);
+
+                if (!response.Success)
+                {
+                    _logger.LogWarning("Failed to load education for user {UserId}: {Message}", userId, response.Message);
+                    TempData["ErrorMessage"] = response.Message ?? "Unable to load education data.";
+                    return View(new List<UserCvEducationDto>());
+                }
+
+                return View(response.Data ?? new List<UserCvEducationDto>());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading education for user {User}", User.Identity?.Name);
+                TempData["ErrorMessage"] = "An unexpected error occurred while loading education data.";
+                return View(new List<UserCvEducationDto>());
+            }
+        }
+
+        // POST: /CvBuilder/SaveEducation
+        [HttpPost]
+        public async Task<IActionResult> SaveEducation([FromBody] List<UserCvEducationDto> educationList)
+        {
+            if (educationList == null || !educationList.Any())
+            {
+                return BadRequest(new { Success = false, Message = "At least one education record is required." });
+            }
+
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized();
+
+                var userId = int.Parse(userIdClaim);
+
+                foreach (var edu in educationList)
+                {
+                    edu.UserId = userId;
+                }
+
+                var result = await _cvApiService.SaveEducationAsync(educationList);
+
+                if (!result.Success)
+                {
+                    _logger.LogWarning("Failed to save education for user {UserId}: {Message}", userId, result.Message);
+                    return BadRequest(new { Success = false, Message = result.Message });
+                }
+
+                _logger.LogInformation("Saved education successfully for user {UserId}", userId);
+                return Ok(new { Success = true, Data = result.Data, Message = "Education saved successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving education for user {User}", User.Identity?.Name);
+                return StatusCode(500, new { Success = false, Message = "Internal server error." });
+            }
+        }
+
+        GET: /CvBuilder/Step/{stepNumber}
+
         [HttpGet]
         public IActionResult Step(int stepNumber)
         {

@@ -30,7 +30,7 @@ namespace MYCV.Domain.Entities
         public string? LinkedInHeadline { get; set; }
 
         // Relationships
-        public ICollection<Education> Educations { get; set; } = new List<Education>();
+        public ICollection<UserEducation> UserEducations { get; set; } = new List<UserEducation>();
         public ICollection<WorkExperience> Experiences { get; set; } = new List<WorkExperience>();
         public ICollection<Skill> Skills { get; set; } = new List<Skill>();
         public ICollection<Project> Projects { get; set; } = new List<Project>();

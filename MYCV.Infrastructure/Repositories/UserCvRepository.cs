@@ -22,11 +22,6 @@ namespace MYCV.Infrastructure.Repositories
         public async Task<UserCv?> GetByUserIdAsync(int userId)
         {
             return await _context.UserCvs
-                .Include(x => x.Educations)
-                .Include(x => x.Experiences)
-                .Include(x => x.Skills)
-                .Include(x => x.Projects)
-                .Include(x => x.Languages)
                 .FirstOrDefaultAsync(x =>
                     x.UserId == userId &&
                     !x.IsDeleted &&
@@ -36,7 +31,7 @@ namespace MYCV.Infrastructure.Repositories
         public async Task<UserCv?> GetByIdAsync(int id)
         {
             return await _context.UserCvs
-                .Include(x => x.Educations)
+                .Include(x => x.UserEducations)
                 .Include(x => x.Experiences)
                 .Include(x => x.Skills)
                 .Include(x => x.Projects)

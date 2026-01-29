@@ -156,6 +156,10 @@
               "target": "Package",
               "version": "[4.0.3, )"
             },
+            "Google.Cloud.Storage.V1": {
+              "target": "Package",
+              "version": "[4.14.0, )"
+            },
             "Microsoft.AspNetCore.Http.Abstractions": {
               "target": "Package",
               "version": "[2.2.0, )"

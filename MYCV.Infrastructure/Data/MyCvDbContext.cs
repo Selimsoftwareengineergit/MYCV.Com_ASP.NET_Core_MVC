@@ -17,7 +17,7 @@ namespace MYCV.Infrastructure.Data
 
         // New CV-related tables
         public DbSet<UserCv> UserCvs { get; set; } = null!;
-        public DbSet<Education> Educations { get; set; } = null!;
+        public DbSet<UserEducation> UserEducations { get; set; } = null!;
         public DbSet<WorkExperience> WorkExperiences { get; set; } = null!;
         public DbSet<Skill> Skills { get; set; } = null!;
         public DbSet<Project> Projects { get; set; } = null!;
@@ -28,9 +28,9 @@ namespace MYCV.Infrastructure.Data
             base.OnModelCreating(modelBuilder);
 
             // Relationships: UserCv → Related entities
-            modelBuilder.Entity<Education>()
+            modelBuilder.Entity<UserEducation>()
                 .HasOne(e => e.UserCv)
-                .WithMany(u => u.Educations)
+                .WithMany(u => u.UserEducations)
                 .HasForeignKey(e => e.UserCvId)
                 .OnDelete(DeleteBehavior.Cascade);
 

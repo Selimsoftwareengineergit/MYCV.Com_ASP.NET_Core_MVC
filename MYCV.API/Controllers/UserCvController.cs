@@ -11,13 +11,42 @@ namespace MYCV.API.Controllers
     [Authorize] 
     public class UserCvController : ControllerBase
     {
-        private readonly IUserCvService _cvService;
         private readonly ILogger<UserCvController> _logger;
-
-        public UserCvController(IUserCvService cvService, ILogger<UserCvController> logger)
+        private readonly IUserCvService _cvService;
+        private readonly IUserEducationService _userEducationService;
+        public UserCvController(ILogger<UserCvController> logger,IUserCvService cvService, IUserEducationService userEducationService)
         {
-            _cvService = cvService;
             _logger = logger;
+            _cvService = cvService;
+            _userEducationService = userEducationService;
+        }
+
+        /// <summary>
+        /// Get CV for a user by userId (int)
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>ApiResponse with user's personal CV info</returns>
+        [HttpGet("{userId:int}")]
+        public async Task<IActionResult> GetUserCv(int userId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching CV for user {UserId}", userId);
+
+                var cv = await _cvService.GetUserCvAsync(userId);
+                if (cv == null)
+                {
+                    _logger.LogWarning("No CV found for user {UserId}", userId);
+                    return NotFound(ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("CV not found"));
+                }
+
+                return Ok(ApiResponse<UserCvPersonalInfoDto>.SuccessResponse(cv, "CV fetched successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching CV for user {UserId}", userId);
+                return StatusCode(500, ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("Internal server error"));
+            }
         }
 
         /// <summary>
@@ -50,5 +79,35 @@ namespace MYCV.API.Controllers
                 return StatusCode(500, ApiResponse<UserCvResponseDto>.ErrorResponse("Internal server error"));
             }
         }
+
+        /// <summary>
+        /// Get all education records for a user
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>ApiResponse with user's education list</returns>
+        [HttpGet("{userId:int}/education")]
+        public async Task<IActionResult> GetUserEducation(int userId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching education records for user {UserId}", userId);
+
+                var educationList = await _userEducationService.GetUserEducationAsync(userId);
+
+                if (educationList == null || !educationList.Any())
+                {
+                    _logger.LogWarning("No education records found for user {UserId}", userId);
+                    return NotFound(ApiResponse<List<UserEducationDto>>.ErrorResponse("No education records found"));
+                }
+
+                return Ok(ApiResponse<List<UserEducationDto>>.SuccessResponse(educationList, "Education records fetched successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching education records for user {UserId}", userId);
+                return StatusCode(500, ApiResponse<List<UserEducationDto>>.ErrorResponse("Internal server error"));
+            }
+        }
+
     }
 }

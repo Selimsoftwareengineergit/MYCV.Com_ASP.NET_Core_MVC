@@ -2,9 +2,6 @@
 using MYCV.Application.Interfaces;
 using MYCV.Domain.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MYCV.Application.Services
@@ -18,6 +15,9 @@ namespace MYCV.Application.Services
             _cvRepository = cvRepository;
         }
 
+        /// <summary>
+        /// Save or update user personal CV information
+        /// </summary>
         public async Task<UserCvResponseDto> SavePersonalInfoAsync(UserCvPersonalInfoDto dto)
         {
             var existingCv = await _cvRepository.GetByUserIdAsync(dto.UserId);
@@ -57,6 +57,7 @@ namespace MYCV.Application.Services
             existingCv.ProfessionalTitle = dto.ProfessionalTitle;
             existingCv.DateOfBirth = dto.DateOfBirth;
             existingCv.Gender = dto.Gender;
+            existingCv.Email = dto.Email;
             existingCv.PhoneNumber = dto.PhoneNumber;
             existingCv.Country = dto.Country;
             existingCv.City = dto.City;
@@ -74,6 +75,40 @@ namespace MYCV.Application.Services
             return MapToResponseDto(existingCv);
         }
 
+        /// <summary>
+        /// Get CV for a user by userId
+        /// </summary>
+        public async Task<UserCvPersonalInfoDto> GetUserCvAsync(int userId)
+        {
+            var cv = await _cvRepository.GetByUserIdAsync(userId);
+
+            if (cv == null) return null;
+
+            return new UserCvPersonalInfoDto
+            {
+                UserId = cv.UserId,
+                FullName = cv.FullName,
+                ProfessionalTitle = cv.ProfessionalTitle,
+                DateOfBirth = cv.DateOfBirth,
+                Gender = cv.Gender,
+                Email = cv.Email,
+                PhoneNumber = cv.PhoneNumber,
+                Country = cv.Country,
+                City = cv.City,
+                Address = cv.Address,
+                ProfilePictureUrl = cv.ProfilePictureUrl,
+                Summary = cv.Summary,
+                LinkedIn = cv.LinkedIn,
+                GitHub = cv.GitHub,
+                Portfolio = cv.Portfolio,
+                Website = cv.Website,
+                LinkedInHeadline = cv.LinkedInHeadline
+            };
+        }
+
+        /// <summary>
+        /// Map UserCv entity to response DTO
+        /// </summary>
         private static UserCvResponseDto MapToResponseDto(UserCv cv)
         {
             return new UserCvResponseDto

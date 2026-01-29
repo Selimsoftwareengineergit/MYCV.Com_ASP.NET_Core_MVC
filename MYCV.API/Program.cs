@@ -29,13 +29,14 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 // ============================
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserCvRepository, UserCvRepository>();
+builder.Services.AddScoped<IUserEducationRepository, UserEducationRepository>();
 
 // ============================
 // 4️⃣ Configure Application Services
 // ============================
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserCvService, UserCvService>();
-
+builder.Services.AddScoped<IUserEducationService, UserEducationService>();
 // ============================
 // 5️⃣ Configure File Service
 // ============================

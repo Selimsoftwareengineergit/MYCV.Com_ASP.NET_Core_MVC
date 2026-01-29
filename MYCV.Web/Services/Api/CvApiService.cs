@@ -16,14 +16,15 @@ namespace MYCV.Web.Services.Api
         }
 
         /// <summary>
-        /// Get CV for a user by userId
+        /// Get CV for a user by userId 
         /// </summary>
-        public async Task<ApiResponse<UserCvPersonalInfoDto>> GetUserCvAsync(Guid userId)
+        public async Task<ApiResponse<UserCvPersonalInfoDto>> GetUserCvAsync(int userId)
         {
             try
             {
                 _logger.LogInformation("Fetching CV for user {UserId}", userId);
 
+                // Convert int to string for API URL
                 var response = await _httpClient.GetAsync($"api/cv/{userId}");
                 if (!response.IsSuccessStatusCode)
                 {
@@ -102,6 +103,42 @@ namespace MYCV.Web.Services.Api
             {
                 _logger.LogError(ex, "Exception when calling API SavePersonalInfo");
                 return ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("Exception: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Get User Education by userId 
+        /// </summary>
+        public async Task<ApiResponse<List<UserEducationDto>>> GetUserEducationAsync(int userId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching education records for user {UserId}", userId);
+
+                var response = await _httpClient.GetAsync($"api/cv/{userId}/education");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning("GetUserEducationAsync failed for user {UserId}: {Error}", userId, error);
+                    return ApiResponse<List<UserEducationDto>>.ErrorResponse(error);
+                }
+
+                var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<UserEducationDto>>>();
+
+                if (result == null)
+                {
+                    _logger.LogWarning("GetUserEducationAsync returned null for user {UserId}", userId);
+                    return ApiResponse<List<UserEducationDto>>.ErrorResponse("Invalid response from API");
+                }
+
+                _logger.LogInformation("Successfully fetched education records for user {UserId}", userId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception in GetUserEducationAsync for user {UserId}", userId);
+                return ApiResponse<List<UserEducationDto>>.ErrorResponse("Network or API error");
             }
         }
     }

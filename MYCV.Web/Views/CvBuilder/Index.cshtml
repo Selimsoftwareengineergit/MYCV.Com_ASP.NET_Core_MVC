@@ -17,35 +17,12 @@
         <div class="row">
             <!-- LEFT STEP NAVIGATION -->
             <div class="col-lg-4 mb-4">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <h5 class="fw-semibold mb-4">CV Progress</h5>
-                        <ul class="list-unstyled cv-steps">
-                            @foreach (CvStep step in Enum.GetValues(typeof(CvStep)))
-                            {
-                                var stepNumber = (int)step;
-                                var stepName = step switch
-                                {
-                                    CvStep.PersonalInformation => "Personal Information",
-                                    CvStep.Education => "Education Qualification",
-                                    CvStep.WorkExperience => "Work Experience",
-                                    CvStep.Skills => "Skills & Expertise",
-                                    CvStep.Projects => "Projects & Certifications",
-                                    CvStep.Languages => "Languages",
-                                    CvStep.SummaryAndObjective => "Summary & Objective",
-                                    CvStep.PreviewDownload => "Preview & Download",
-                                    _ => step.ToString()
-                                };
-                                <li class="step" data-step="@stepNumber">
-                                    <span class="step-circle">@stepNumber</span>
-                                    <span class="step-text">@stepName</span>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </div>
+                @await Component.InvokeAsync("CvStepNavigation", new
+                    {
+                        currentStep = 1,
+                        completedSteps = new List<int>()
+                    })
             </div>
-
             <!-- RIGHT CONTENT AREA -->
             <div class="col-lg-8" style="max-height: 80vh; overflow-y: auto;">
                 <div class="card border-0 shadow-sm">

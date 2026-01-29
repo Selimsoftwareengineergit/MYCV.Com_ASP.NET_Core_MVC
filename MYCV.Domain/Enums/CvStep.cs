@@ -9,12 +9,12 @@ namespace MYCV.Domain.Enums
     public enum CvStep
     {
         PersonalInformation = 1,
-        Education = 5,
-        WorkExperience = 6,
-        Skills = 7,
-        Projects = 8,
-        Languages = 9,
-        SummaryAndObjective = 10,
-        PreviewDownload = 11
+        Education = 2,
+        WorkExperience = 3,
+        Skills = 4,
+        Projects = 5,
+        Languages = 6,
+        SummaryAndObjective = 7,
+        PreviewDownload = 8
     }
 }

@@ -1,0 +1,110 @@
+﻿@using MYCV.Domain.Enums
+@model List<MYCV.Application.DTOs.UserEducationDto>
+
+@{
+    ViewData["Title"] = "Education Qualification";
+}
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col text-center">
+                <h2 class="fw-bold">Education Qualification</h2>
+                <p class="text-muted">Complete your academic details step by step</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    // Add new education block dynamically
+    document.querySelector('.btn-add-edu').addEventListener('click', function(){
+        const accordion = document.getElementById('educationAccordion');
+        const index = accordion.children.length;
+        const newItem = document.createElement('div');
+        newItem.className = 'accordion-item mb-3';
+        newItem.dataset.index = index;
+        newItem.innerHTML = `
+            <h2 class="accordion-header" id="headingEdu${index}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEdu${index}" aria-expanded="false" aria-controls="collapseEdu${index}">
+                    Education ${index+1}
+                </button>
+            </h2>
+            <div id="collapseEdu${index}" class="accordion-collapse collapse" aria-labelledby="headingEdu${index}">
+                <div class="accordion-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Exam Name</label>
+                            <select class="form-select examName" required>
+                                <option value="">Select...</option>
+                                <option value="SSC">SSC</option>
+                                <option value="HSC">HSC</option>
+                                <option value="Diploma">Diploma</option>
+                                <option value="BSc/BCom">BSc/BCom</option>
+                                <option value="MSc/MCom">MSc/MCom</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Board / University</label>
+                            <input type="text" class="form-control board" placeholder="Dhaka Board, Rajshahi University..." required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">CGPA / GPA / Division</label>
+                            <input type="text" class="form-control cgpa" placeholder="4.50, 3.75, First Class..." required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Passing Year</label>
+                            <input type="number" class="form-control passingYear" placeholder="2020" required />
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Additional Notes</label>
+                            <textarea class="form-control notes" rows="2" placeholder="Optional details about achievements, awards, etc."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        accordion.appendChild(newItem);
+    });
+
+    // Save Education and go next step
+    document.querySelector('.btn-next-step').addEventListener('click', async function(){
+        const educationList = [];
+        document.querySelectorAll('#educationAccordion .accordion-item').forEach(item=>{
+            educationList.push({
+                ExamName: item.querySelector('.examName').value,
+                BoardOrUniversity: item.querySelector('.board').value,
+                CGPA: item.querySelector('.cgpa').value,
+                PassingYear: item.querySelector('.passingYear').value,
+                Notes: item.querySelector('.notes').value
+            });
+        });
+
+        try {
+            const response = await fetch('/CvBuilder/SaveEducation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(educationList)
+            });
+
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                alert(result.message || 'Failed to save education!');
+                return;
+            }
+
+            // ✅ Move to Work Experience (Step 3)
+            window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.WorkExperience);
+        } catch(err) {
+            console.error(err);
+            alert('Error saving education!');
+        }
+    });
+
+    // Previous Step
+    document.querySelector('.btn-prev-step').addEventListener('click', function(){
+        window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.PersonalInformation);
+    });
+</script>
+}
