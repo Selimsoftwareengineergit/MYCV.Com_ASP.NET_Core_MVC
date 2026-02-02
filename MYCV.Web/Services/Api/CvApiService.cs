@@ -141,5 +141,42 @@ namespace MYCV.Web.Services.Api
                 return ApiResponse<List<UserEducationDto>>.ErrorResponse("Network or API error");
             }
         }
+
+        /// <summary>
+        /// Save user education records
+        /// </summary>
+        public async Task<ApiResponse<List<UserEducationDto>>> SaveEducationAsync(List<UserEducationDto> educationList)
+        {
+            try
+            {
+                _logger.LogInformation("Saving education records. Count: {Count}", educationList.Count);
+
+                var response = await _httpClient.PostAsJsonAsync("api/cv/education", educationList);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning("SaveEducationAsync failed: {Error}", error);
+                    return ApiResponse<List<UserEducationDto>>.ErrorResponse(error);
+                }
+
+                var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<UserEducationDto>>>();
+
+                if (result == null)
+                {
+                    _logger.LogWarning("SaveEducationAsync returned null response");
+                    return ApiResponse<List<UserEducationDto>>.ErrorResponse("Invalid response from API");
+                }
+
+                _logger.LogInformation("Education records saved successfully");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception in SaveEducationAsync");
+                return ApiResponse<List<UserEducationDto>>.ErrorResponse("Network or API error");
+            }
+        }
+
     }
 }

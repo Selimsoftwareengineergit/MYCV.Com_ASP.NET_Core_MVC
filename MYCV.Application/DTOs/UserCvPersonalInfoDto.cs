@@ -5,6 +5,7 @@ namespace MYCV.Application.DTOs
 {
     public class UserCvPersonalInfoDto
     {
+        public int Id { get; set; }
         public int UserId { get; set; }
         // Personal Information
         public string FullName { get; set; } = null!;

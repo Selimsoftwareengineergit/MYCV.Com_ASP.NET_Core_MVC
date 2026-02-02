@@ -112,22 +112,23 @@ namespace MYCV.Web.Controllers
                 {
                     _logger.LogWarning("Failed to load education for user {UserId}: {Message}", userId, response.Message);
                     TempData["ErrorMessage"] = response.Message ?? "Unable to load education data.";
-                    return View(new List<UserCvEducationDto>());
+                    return View(new List<UserEducationDto>());
                 }
 
-                return View(response.Data ?? new List<UserCvEducationDto>());
+                return View(response.Data ?? new List<UserEducationDto>());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading education for user {User}", User.Identity?.Name);
                 TempData["ErrorMessage"] = "An unexpected error occurred while loading education data.";
-                return View(new List<UserCvEducationDto>());
+                return View(new List<UserEducationDto>());
             }
         }
 
+
         // POST: /CvBuilder/SaveEducation
         [HttpPost]
-        public async Task<IActionResult> SaveEducation([FromBody] List<UserCvEducationDto> educationList)
+        public async Task<IActionResult> SaveEducation([FromBody] List<UserEducationDto> educationList)
         {
             if (educationList == null || !educationList.Any())
             {
@@ -138,15 +139,30 @@ namespace MYCV.Web.Controllers
             {
                 var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
                 if (string.IsNullOrEmpty(userIdClaim))
-                    return Unauthorized();
+                    return Unauthorized(new { Success = false, Message = "User not authorized." });
 
                 var userId = int.Parse(userIdClaim);
 
-                foreach (var edu in educationList)
+                // 🔹 Get User CV first (because UserEducation requires UserCvId)
+                var cvResponse = await _cvApiService.GetUserCvAsync(userId);
+                if (!cvResponse.Success || cvResponse.Data == null)
                 {
-                    edu.UserId = userId;
+                    return BadRequest(new
+                    {
+                        Success = false,
+                        Message = "CV not found. Please complete personal information first."
+                    });
                 }
 
+                var userCvId = cvResponse.Data.Id;
+
+                // 🔹 Assign UserCvId to each education record
+                foreach (var edu in educationList)
+                {
+                    edu.UserCvId = userCvId;
+                }
+
+                // 🔹 Save education records
                 var result = await _cvApiService.SaveEducationAsync(educationList);
 
                 if (!result.Success)
@@ -156,7 +172,12 @@ namespace MYCV.Web.Controllers
                 }
 
                 _logger.LogInformation("Saved education successfully for user {UserId}", userId);
-                return Ok(new { Success = true, Data = result.Data, Message = "Education saved successfully!" });
+                return Ok(new
+                {
+                    Success = true,
+                    Data = result.Data,
+                    Message = "Education saved successfully!"
+                });
             }
             catch (Exception ex)
             {
@@ -165,7 +186,9 @@ namespace MYCV.Web.Controllers
             }
         }
 
-        GET: /CvBuilder/Step/{stepNumber}
+
+
+        //GET: /CvBuilder/Step/{stepNumber}
 
         [HttpGet]
         public IActionResult Step(int stepNumber)
