@@ -33,23 +33,19 @@ namespace MYCV.Web.Controllers
 
                 var userId = int.Parse(userIdClaim);
 
-                // ✅ Check step completion
                 var personalInfoResponse = await _cvApiService.GetUserCvAsync(userId);
                 bool step1Completed = personalInfoResponse.Success && personalInfoResponse.Data != null;
 
                 var educationResponse = await _cvApiService.GetUserEducationAsync(userId);
                 bool step2Completed = educationResponse.Success && educationResponse.Data != null && educationResponse.Data.Any();
 
-                //var experienceResponse = await _cvApiService.GetUserExperienceAsync(userId);
-                //bool step3Completed = experienceResponse.Success && experienceResponse.Data != null && experienceResponse.Data.Any();
+                //bool step3Completed = ...
 
-                // Determine first incomplete step
-                if (!step1Completed) return RedirectToAction("Step", new { stepNumber = (int)CvStep.PersonalInformation });
-                if (!step2Completed) return RedirectToAction("Step", new { stepNumber = (int)CvStep.Education });
-                //if (!step3Completed) return RedirectToAction("Step", new { stepNumber = (int)CvStep.WorkExperience });
+                if (!step1Completed) return RedirectToAction("Index");
+                if (!step2Completed) return RedirectToAction("Education");
+                //if (!step3Completed) return RedirectToAction("Experience");
 
-                // All steps completed → go to PreviewDownload
-                return RedirectToAction("Step", new { stepNumber = (int)CvStep.PreviewDownload });
+                return RedirectToAction("PreviewDownload");
             }
             catch (Exception ex)
             {
@@ -186,20 +182,46 @@ namespace MYCV.Web.Controllers
             }
         }
 
-
-
-        //GET: /CvBuilder/Step/{stepNumber}
-
         [HttpGet]
-        public IActionResult Step(int stepNumber)
+        public async Task<IActionResult> Step(int stepNumber)
         {
             if (!CvStepHelper.IsValidStep(stepNumber))
-            {
                 return NotFound();
-            }
 
-            ViewData["StepNumber"] = stepNumber;
-            return View();
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+                return RedirectToAction("Login", "Account");
+
+            var userId = int.Parse(userIdClaim);
+
+            // Check completion
+            var personalInfoResponse = await _cvApiService.GetUserCvAsync(userId);
+            bool step1Completed = personalInfoResponse.Success && personalInfoResponse.Data != null;
+
+            var educationResponse = await _cvApiService.GetUserEducationAsync(userId);
+            bool step2Completed = educationResponse.Success && educationResponse.Data != null && educationResponse.Data.Any();
+
+            //bool step3Completed = ...
+
+            // 🔐 Lock logic:
+            if (stepNumber == (int)CvStep.Education && !step1Completed)
+                return RedirectToAction("Index");
+
+            if (stepNumber == (int)CvStep.WorkExperience && !step2Completed)
+                return RedirectToAction("Education");
+
+            if (stepNumber == (int)CvStep.PreviewDownload && !step2Completed)
+                return RedirectToAction("Education");
+
+            // ✅ Allow navigation
+            return stepNumber switch
+            {
+                (int)CvStep.PersonalInformation => RedirectToAction("Index"),
+                (int)CvStep.Education => RedirectToAction("Education"),
+                //(int)CvStep.WorkExperience => RedirectToAction("Experience"),
+                (int)CvStep.PreviewDownload => RedirectToAction("PreviewDownload"),
+                _ => NotFound()
+            };
         }
     }
 }
