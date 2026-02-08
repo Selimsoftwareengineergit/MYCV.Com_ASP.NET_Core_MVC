@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MYCV.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+799f28eb65b4446fb02945e0806e810e6e6c8e9c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dc30cbb08ec229ce26920e79a0de7d5f9dce4e35")]
 [assembly: System.Reflection.AssemblyProductAttribute("MYCV.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MYCV.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

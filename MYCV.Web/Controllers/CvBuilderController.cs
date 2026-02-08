@@ -33,21 +33,29 @@ namespace MYCV.Web.Controllers
 
                 var userId = int.Parse(userIdClaim);
 
+                // Step 1: Personal Information
                 var personalInfoResponse = await _cvApiService.GetUserCvAsync(userId);
                 bool step1Completed = personalInfoResponse.Success && personalInfoResponse.Data != null;
 
+                // Step 2: Education
                 var educationResponse = await _cvApiService.GetUserEducationAsync(userId);
                 bool step2Completed = educationResponse.Success && educationResponse.Data != null && educationResponse.Data.Any();
 
+                // Step 3: Experience
+                var experienceResponse = await _cvApiService.GetUserExperiencesAsync(userId);
+                bool step3Completed = experienceResponse.Success && experienceResponse.Data != null && experienceResponse.Data.Any();
+
+                // 🔐 Step lock rules
                 if (!step1Completed)
-                    return View("Index"); 
+                    return View("Index"); // Step 1 not done, stay on personal info
 
                 if (!step2Completed)
-                    return RedirectToAction("Education");
+                    return RedirectToAction("Education"); // Step 2 not done, go to Education
 
-                //if (!step3Completed)
-                //    return RedirectToAction("Experience");
+                if (!step3Completed)
+                    return RedirectToAction("Experience"); // Step 3 not done, go to Experience
 
+                // All steps completed → go to preview/download
                 return RedirectToAction("PreviewDownload");
             }
             catch (Exception ex)
@@ -57,7 +65,6 @@ namespace MYCV.Web.Controllers
                 return View();
             }
         }
-
 
         [HttpPost]
         public async Task<IActionResult> SavePersonalInfo([FromBody] UserCvPersonalInfoDto model)
@@ -126,7 +133,6 @@ namespace MYCV.Web.Controllers
         }
 
 
-        // POST: /CvBuilder/SaveEducation
         [HttpPost]
         public async Task<IActionResult> SaveEducation([FromBody] List<UserEducationDto> educationList)
         {
@@ -143,7 +149,6 @@ namespace MYCV.Web.Controllers
 
                 var userId = int.Parse(userIdClaim);
 
-                // 🔹 Get User CV first (because UserEducation requires UserCvId)
                 var cvResponse = await _cvApiService.GetUserCvAsync(userId);
                 if (!cvResponse.Success || cvResponse.Data == null)
                 {
@@ -156,13 +161,11 @@ namespace MYCV.Web.Controllers
 
                 var userCvId = cvResponse.Data.Id;
 
-                // 🔹 Assign UserCvId to each education record
                 foreach (var edu in educationList)
                 {
                     edu.UserCvId = userCvId;
                 }
 
-                // 🔹 Save education records
                 var result = await _cvApiService.SaveEducationAsync(educationList);
 
                 if (!result.Success)
@@ -187,6 +190,96 @@ namespace MYCV.Web.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Experience()
+        {
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return RedirectToAction("Login", "Account");
+
+                var userId = int.Parse(userIdClaim);
+
+                // Get existing experiences
+                var response = await _cvApiService.GetUserExperiencesAsync(userId);
+
+                if (!response.Success)
+                {
+                    _logger.LogWarning("Failed to load experiences for user {UserId}: {Message}", userId, response.Message);
+                    TempData["ErrorMessage"] = response.Message ?? "Unable to load experience data.";
+                    return View(new List<UserExperienceDto>());
+                }
+
+                return View(response.Data ?? new List<UserExperienceDto>());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading experiences for user {User}", User.Identity?.Name);
+                TempData["ErrorMessage"] = "An unexpected error occurred while loading experience data.";
+                return View(new List<UserExperienceDto>());
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveExperience([FromBody] List<UserExperienceDto> experienceList)
+        {
+            if (experienceList == null || !experienceList.Any())
+            {
+                return BadRequest(new { Success = false, Message = "At least one experience record is required." });
+            }
+
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized(new { Success = false, Message = "User not authorized." });
+
+                var userId = int.Parse(userIdClaim);
+
+                // 🔹 Get User CV first (UserCvId is needed)
+                var cvResponse = await _cvApiService.GetUserCvAsync(userId);
+                if (!cvResponse.Success || cvResponse.Data == null)
+                {
+                    return BadRequest(new
+                    {
+                        Success = false,
+                        Message = "CV not found. Please complete personal information first."
+                    });
+                }
+
+                var userCvId = cvResponse.Data.Id;
+
+                // 🔹 Assign UserCvId to each experience record
+                foreach (var exp in experienceList)
+                {
+                    exp.UserCvId = userCvId;
+                }
+
+                // 🔹 Save experiences
+                var result = await _cvApiService.SaveUserExperiencesAsync(experienceList);
+
+                if (!result.Success)
+                {
+                    _logger.LogWarning("Failed to save experiences for user {UserId}: {Message}", userId, result.Message);
+                    return BadRequest(new { Success = false, Message = result.Message });
+                }
+
+                _logger.LogInformation("Saved experiences successfully for user {UserId}", userId);
+                return Ok(new
+                {
+                    Success = true,
+                    Data = result.Data,
+                    Message = "Work experience saved successfully!"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving experiences for user {User}", User.Identity?.Name);
+                return StatusCode(500, new { Success = false, Message = "Internal server error." });
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Step(int stepNumber)
         {
             if (!CvStepHelper.IsValidStep(stepNumber))
@@ -198,24 +291,34 @@ namespace MYCV.Web.Controllers
 
             var userId = int.Parse(userIdClaim);
 
+            // Step 1: Personal Info
             var personalInfoResponse = await _cvApiService.GetUserCvAsync(userId);
             bool step1Completed = personalInfoResponse.Success && personalInfoResponse.Data != null;
 
+            // Step 2: Education
             var educationResponse = await _cvApiService.GetUserEducationAsync(userId);
             bool step2Completed = educationResponse.Success && educationResponse.Data != null && educationResponse.Data.Any();
 
+            // Step 3: Experience
+            var experienceResponse = await _cvApiService.GetUserExperiencesAsync(userId);
+            bool step3Completed = experienceResponse.Success && experienceResponse.Data != null && experienceResponse.Data.Any();
+
             // 🔐 Lock rules
             if (stepNumber >= (int)CvStep.Education && !step1Completed)
-                return RedirectToAction("Index");
+                return RedirectToAction("Index"); // Can't go to education without personal info
 
             if (stepNumber >= (int)CvStep.WorkExperience && !step2Completed)
-                return RedirectToAction("Education");
+                return RedirectToAction("Education"); // Can't go to experience without education
 
+            if (stepNumber >= (int)CvStep.PreviewDownload && !step3Completed)
+                return RedirectToAction("Experience"); // Can't go to preview without experience
+
+            // Navigate to the requested step
             return stepNumber switch
             {
                 (int)CvStep.PersonalInformation => RedirectToAction("Index"),
                 (int)CvStep.Education => RedirectToAction("Education"),
-                //(int)CvStep.WorkExperience => RedirectToAction("Experience"),
+                (int)CvStep.WorkExperience => RedirectToAction("Experience"),
                 (int)CvStep.PreviewDownload => RedirectToAction("PreviewDownload"),
                 _ => NotFound()
             };

@@ -178,5 +178,77 @@ namespace MYCV.Web.Services.Api
             }
         }
 
+        /// <summary>
+        /// Get User Experiences by userId
+        /// </summary>
+        public async Task<ApiResponse<List<UserExperienceDto>>> GetUserExperiencesAsync(int userId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching work experience records for user {UserId}", userId);
+
+                var response = await _httpClient.GetAsync($"api/cv/{userId}/experiences");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning("GetUserExperiencesAsync failed for user {UserId}: {Error}", userId, error);
+                    return ApiResponse<List<UserExperienceDto>>.ErrorResponse(error);
+                }
+
+                var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<UserExperienceDto>>>();
+
+                if (result == null)
+                {
+                    _logger.LogWarning("GetUserExperiencesAsync returned null for user {UserId}", userId);
+                    return ApiResponse<List<UserExperienceDto>>.ErrorResponse("Invalid response from API");
+                }
+
+                _logger.LogInformation("Successfully fetched work experience records for user {UserId}", userId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception in GetUserExperiencesAsync for user {UserId}", userId);
+                return ApiResponse<List<UserExperienceDto>>.ErrorResponse("Network or API error");
+            }
+        }
+
+        /// <summary>
+        /// Save user work/experience records
+        /// </summary>
+        public async Task<ApiResponse<List<UserExperienceDto>>> SaveUserExperiencesAsync(List<UserExperienceDto> experienceList)
+        {
+            try
+            {
+                _logger.LogInformation("Saving user experiences. Count: {Count}", experienceList.Count);
+
+                // POST to API endpoint for saving experiences
+                var response = await _httpClient.PostAsJsonAsync("api/cv/experience", experienceList);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning("SaveUserExperiencesAsync failed: {Error}", error);
+                    return ApiResponse<List<UserExperienceDto>>.ErrorResponse(error);
+                }
+
+                var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<UserExperienceDto>>>();
+
+                if (result == null)
+                {
+                    _logger.LogWarning("SaveUserExperiencesAsync returned null response");
+                    return ApiResponse<List<UserExperienceDto>>.ErrorResponse("Invalid response from API");
+                }
+
+                _logger.LogInformation("User experiences saved successfully");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception in SaveUserExperiencesAsync");
+                return ApiResponse<List<UserExperienceDto>>.ErrorResponse("Network or API error");
+            }
+        }
     }
 }

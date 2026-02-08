@@ -18,7 +18,7 @@ namespace MYCV.Infrastructure.Data
         // New CV-related tables
         public DbSet<UserCv> UserCvs { get; set; } = null!;
         public DbSet<UserEducation> UserEducations { get; set; } = null!;
-        public DbSet<WorkExperience> WorkExperiences { get; set; } = null!;
+        public DbSet<UserExperiences> UserExperiences { get; set; } = null!;
         public DbSet<Skill> Skills { get; set; } = null!;
         public DbSet<Project> Projects { get; set; } = null!;
         public DbSet<Language> Languages { get; set; } = null!;
@@ -28,30 +28,36 @@ namespace MYCV.Infrastructure.Data
             base.OnModelCreating(modelBuilder);
 
             // Relationships: UserCv → Related entities
+
+            // UserEducation
             modelBuilder.Entity<UserEducation>()
                 .HasOne(e => e.UserCv)
                 .WithMany(u => u.UserEducations)
                 .HasForeignKey(e => e.UserCvId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<WorkExperience>()
+            // UserExperiences
+            modelBuilder.Entity<UserExperiences>()
                 .HasOne(w => w.UserCv)
-                .WithMany(u => u.Experiences)
+                .WithMany(u => u.UserExperiences)  
                 .HasForeignKey(w => w.UserCvId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Skills
             modelBuilder.Entity<Skill>()
                 .HasOne(s => s.UserCv)
                 .WithMany(u => u.Skills)
                 .HasForeignKey(s => s.UserCvId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Projects
             modelBuilder.Entity<Project>()
                 .HasOne(p => p.UserCv)
                 .WithMany(u => u.Projects)
                 .HasForeignKey(p => p.UserCvId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Languages
             modelBuilder.Entity<Language>()
                 .HasOne(l => l.UserCv)
                 .WithMany(u => u.Languages)

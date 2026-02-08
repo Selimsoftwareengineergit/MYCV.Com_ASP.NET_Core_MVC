@@ -32,7 +32,7 @@ namespace MYCV.Infrastructure.Repositories
         {
             return await _context.UserCvs
                 .Include(x => x.UserEducations)
-                .Include(x => x.Experiences)
+                .Include(x => x.UserExperiences)
                 .Include(x => x.Skills)
                 .Include(x => x.Projects)
                 .Include(x => x.Languages)

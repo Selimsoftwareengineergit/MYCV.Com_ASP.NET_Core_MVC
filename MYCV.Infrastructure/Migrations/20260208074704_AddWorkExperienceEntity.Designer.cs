@@ -4,6 +4,7 @@ using MYCV.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MYCV.Infrastructure.Migrations
 {
     [DbContext(typeof(MyCvDbContext))]
-    partial class MyCvDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260208074704_AddWorkExperienceEntity")]
+    partial class AddWorkExperienceEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -426,7 +429,7 @@ namespace MYCV.Infrastructure.Migrations
                     b.ToTable("UserEducations");
                 });
 
-            modelBuilder.Entity("MYCV.Domain.Entities.UserExperiences", b =>
+            modelBuilder.Entity("MYCV.Domain.Entities.WorkExperience", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -452,14 +455,6 @@ namespace MYCV.Infrastructure.Migrations
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Department")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("EmploymentType")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -469,27 +464,17 @@ namespace MYCV.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
                     b.Property<string>("Position")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Remarks")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("Responsibilities")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UpdatedBy")
@@ -505,7 +490,7 @@ namespace MYCV.Infrastructure.Migrations
 
                     b.HasIndex("UserCvId");
 
-                    b.ToTable("UserExperiences");
+                    b.ToTable("WorkExperiences");
                 });
 
             modelBuilder.Entity("MYCV.Domain.Entities.Language", b =>
@@ -563,10 +548,10 @@ namespace MYCV.Infrastructure.Migrations
                     b.Navigation("UserCv");
                 });
 
-            modelBuilder.Entity("MYCV.Domain.Entities.UserExperiences", b =>
+            modelBuilder.Entity("MYCV.Domain.Entities.WorkExperience", b =>
                 {
                     b.HasOne("MYCV.Domain.Entities.UserCv", "UserCv")
-                        .WithMany("UserExperiences")
+                        .WithMany("Experiences")
                         .HasForeignKey("UserCvId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -576,6 +561,8 @@ namespace MYCV.Infrastructure.Migrations
 
             modelBuilder.Entity("MYCV.Domain.Entities.UserCv", b =>
                 {
+                    b.Navigation("Experiences");
+
                     b.Navigation("Languages");
 
                     b.Navigation("Projects");
@@ -583,8 +570,6 @@ namespace MYCV.Infrastructure.Migrations
                     b.Navigation("Skills");
 
                     b.Navigation("UserEducations");
-
-                    b.Navigation("UserExperiences");
                 });
 #pragma warning restore 612, 618
         }

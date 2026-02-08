@@ -30,11 +30,11 @@ namespace MYCV.Domain.Entities
         public string? LinkedInHeadline { get; set; }
 
         // Relationships
-        public ICollection<UserEducation> UserEducations { get; set; } = new List<UserEducation>();
-        public ICollection<WorkExperience> Experiences { get; set; } = new List<WorkExperience>();
-        public ICollection<Skill> Skills { get; set; } = new List<Skill>();
-        public ICollection<Project> Projects { get; set; } = new List<Project>();
-        public ICollection<Language> Languages { get; set; } = new List<Language>();
+        public virtual ICollection<UserEducation> UserEducations { get; set; } = new List<UserEducation>();
+        public virtual ICollection<UserExperiences> UserExperiences { get; set; } = new List<UserExperiences>();
+        public virtual ICollection<Skill> Skills { get; set; } = new List<Skill>();
+        public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
+        public virtual ICollection<Language> Languages { get; set; } = new List<Language>();
 
         public int UserId { get; set; }
         [ForeignKey("UserId")]
