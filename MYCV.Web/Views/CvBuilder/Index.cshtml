@@ -23,6 +23,7 @@
                         completedSteps = new List<int>()
                     })
             </div>
+
             <!-- RIGHT CONTENT AREA -->
             <div class="col-lg-8" style="max-height: 80vh; overflow-y: auto;">
                 <div class="card border-0 shadow-sm">
@@ -100,6 +101,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <!-- Step 3: Social & Online Presence -->
                             <div class="accordion-item step-form" data-step="3">
                                 <h2 class="accordion-header" id="headingStep3">
@@ -259,11 +261,11 @@
         function updateSidebar() {
             document.querySelectorAll('.cv-steps .step').forEach((s, index) => {
                 const stepNum = index + 1;
-                if(completedSteps.includes(stepNum)){
+                if (completedSteps.includes(stepNum)) {
                     s.classList.add('completed');
                     s.classList.remove('active');
                     s.querySelector('.step-circle').textContent = '✓';
-                } else if(stepNum === currentStep){
+                } else if (stepNum === currentStep) {
                     s.classList.add('active');
                     s.classList.remove('completed');
                     s.querySelector('.step-circle').textContent = stepNum;
@@ -277,29 +279,33 @@
             document.querySelector('.btn-prev-step').disabled = currentStep === 1;
         }
 
-        function validateStep(step){
+        function validateStep(step) {
             const formSection = document.querySelector(`.step-form[data-step="${step}"]`);
             let valid = true;
-            formSection.querySelectorAll('input[required], select[required], textarea[required]').forEach(input=>{
-                if(!input.value){ valid=false; input.classList.add('is-invalid'); }
-                else input.classList.remove('is-invalid');
+            formSection.querySelectorAll('input[required], select[required], textarea[required]').forEach(input => {
+                if (!input.value) {
+                    valid = false;
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
+                }
             });
             return valid;
         }
 
-        function showSavedInfoModal(savedData){
+        function showSavedInfoModal(savedData) {
             let content = "<ul class='list-group'>";
-            for(const key in savedData){
+            for (const key in savedData) {
                 content += `<li class='list-group-item'><strong>${key}:</strong> ${savedData[key]}</li>`;
             }
             content += "</ul>";
             document.getElementById("savedInfoContent").innerHTML = content;
             const modalEl = new bootstrap.Modal(document.getElementById('infoModal'));
             modalEl.show();
-            setTimeout(()=> modalEl.hide(), 5000);
+            setTimeout(() => modalEl.hide(), 5000);
         }
 
-                document.querySelector('.btn-next-step').addEventListener('click', async function (e) {
+        document.querySelector('.btn-next-step').addEventListener('click', async function (e) {
             e.preventDefault();
 
             if (!validateStep(currentStep)) {
@@ -335,28 +341,28 @@
 
                 showSavedInfoModal(result.data);
 
+                // Redirect to next step (Education)
+                setTimeout(() => {
+                    window.location.href = '/CvBuilder/Education';
+                }, 1500);
+
             } catch (err) {
                 console.error(err);
                 alert("Error saving data!");
                 return;
             }
-
-            if (!completedSteps.includes(currentStep)) completedSteps.push(currentStep);
-            if (currentStep < totalSteps) currentStep++;
-            updateSidebar();
         });
 
-
-        document.querySelector('.btn-prev-step').addEventListener('click', function(e){
+        document.querySelector('.btn-prev-step').addEventListener('click', function (e) {
             e.preventDefault();
-            if(currentStep > 1) currentStep--;
+            if (currentStep > 1) currentStep--;
             updateSidebar();
         });
 
-        document.querySelectorAll('.cv-steps .step').forEach((stepElem,index)=>{
-            stepElem.addEventListener('click',()=>{
-                const stepNum = index+1;
-                if(stepNum <= Math.max(...completedSteps, currentStep)){
+        document.querySelectorAll('.cv-steps .step').forEach((stepElem, index) => {
+            stepElem.addEventListener('click', () => {
+                const stepNum = index + 1;
+                if (stepNum <= Math.max(...completedSteps, currentStep)) {
                     currentStep = stepNum;
                     updateSidebar();
                 } else alert("Complete previous steps first!");

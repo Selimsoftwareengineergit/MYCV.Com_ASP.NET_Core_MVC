@@ -39,11 +39,14 @@ namespace MYCV.Web.Controllers
                 var educationResponse = await _cvApiService.GetUserEducationAsync(userId);
                 bool step2Completed = educationResponse.Success && educationResponse.Data != null && educationResponse.Data.Any();
 
-                //bool step3Completed = ...
+                if (!step1Completed)
+                    return View("Index"); 
 
-                if (!step1Completed) return RedirectToAction("Index");
-                if (!step2Completed) return RedirectToAction("Education");
-                //if (!step3Completed) return RedirectToAction("Experience");
+                if (!step2Completed)
+                    return RedirectToAction("Education");
+
+                //if (!step3Completed)
+                //    return RedirectToAction("Experience");
 
                 return RedirectToAction("PreviewDownload");
             }
@@ -54,6 +57,7 @@ namespace MYCV.Web.Controllers
                 return View();
             }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> SavePersonalInfo([FromBody] UserCvPersonalInfoDto model)
@@ -194,26 +198,19 @@ namespace MYCV.Web.Controllers
 
             var userId = int.Parse(userIdClaim);
 
-            // Check completion
             var personalInfoResponse = await _cvApiService.GetUserCvAsync(userId);
             bool step1Completed = personalInfoResponse.Success && personalInfoResponse.Data != null;
 
             var educationResponse = await _cvApiService.GetUserEducationAsync(userId);
             bool step2Completed = educationResponse.Success && educationResponse.Data != null && educationResponse.Data.Any();
 
-            //bool step3Completed = ...
-
-            // 🔐 Lock logic:
-            if (stepNumber == (int)CvStep.Education && !step1Completed)
+            // 🔐 Lock rules
+            if (stepNumber >= (int)CvStep.Education && !step1Completed)
                 return RedirectToAction("Index");
 
-            if (stepNumber == (int)CvStep.WorkExperience && !step2Completed)
+            if (stepNumber >= (int)CvStep.WorkExperience && !step2Completed)
                 return RedirectToAction("Education");
 
-            if (stepNumber == (int)CvStep.PreviewDownload && !step2Completed)
-                return RedirectToAction("Education");
-
-            // ✅ Allow navigation
             return stepNumber switch
             {
                 (int)CvStep.PersonalInformation => RedirectToAction("Index"),

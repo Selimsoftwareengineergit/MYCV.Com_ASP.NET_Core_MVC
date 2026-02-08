@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Education Qualification";
     var currentStep = (int)CvStep.Education;
-    var completedSteps = new List<int> { (int)CvStep.PersonalInformation }; // completed Step 1
+    var completedSteps = new List<int> { (int)CvStep.PersonalInformation };
 }
 
 <section class="py-5 bg-light">
@@ -20,84 +20,146 @@
             <!-- LEFT STEP NAVIGATION -->
             <div class="col-lg-4 mb-4">
                 @await Component.InvokeAsync("CvStepNavigation", new
-                {
-                    currentStep = currentStep,
-                    completedSteps = completedSteps
-                })
+                    {
+                        currentStep = currentStep,
+                        completedSteps = completedSteps
+                    })
             </div>
 
             <!-- RIGHT CONTENT AREA -->
             <div class="col-lg-8" style="max-height: 80vh; overflow-y: auto;">
-                <div class="card border-0 shadow-sm p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="fw-semibold mb-0">Step <span id="currentStepDisplay">@currentStep</span></h4>
-                        <span class="badge bg-primary" id="stepBadge">In Progress</span>
-                    </div>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="fw-semibold mb-0">Step <span id="currentStepDisplay">@currentStep</span></h4>
+                            <span class="badge bg-primary" id="stepBadge">In Progress</span>
+                        </div>
 
-                    <div id="educationAccordion">
-                        @if (Model != null && Model.Any())
-                        {
-                            for (int i = 0; i < Model.Count; i++)
+                        <!-- Education Accordion -->
+                        <div class="accordion" id="educationAccordion">
+                            @if (Model != null && Model.Any())
                             {
-                                var edu = Model[i];
-                                <div class="accordion-item mb-3" data-index="@i">
-                                    <h2 class="accordion-header" id="headingEdu@i">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEdu@i" aria-expanded="false" aria-controls="collapseEdu@i">
-                                            Education @(@i + 1)
+                                for (int i = 0; i < Model.Count; i++)
+                                {
+                                    var edu = Model[i];
+                                    <div class="accordion-item step-form" data-step="@currentStep">
+                                        <h2 class="accordion-header" id="headingEdu@i">
+                                            <button class="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#collapseEdu@i"
+                                                    aria-expanded="false"
+                                                    aria-controls="collapseEdu@i">
+                                                Education @(@i + 1)
+                                            </button>
+                                        </h2>
+                                        <div id="collapseEdu@i" class="accordion-collapse collapse"
+                                             aria-labelledby="headingEdu@i">
+                                            <div class="accordion-body">
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Exam Name</label>
+                                                        <select class="form-select examName" required>
+                                                            <option value="">Select...</option>
+                                                            @foreach (EducationLevel level in Enum.GetValues(typeof(EducationLevel)))
+                                                            {
+                                                                var displayName = level switch
+                                                                {
+                                                                    EducationLevel.Secondary => "SSC",
+                                                                    EducationLevel.HigherSecondary => "HSC",
+                                                                    EducationLevel.Graduate => "BSc/BCom",
+                                                                    EducationLevel.PostGraduate => "MSc/MCom",
+                                                                    EducationLevel.Others => "Others",
+                                                                    _ => level.ToString()
+                                                                };
+                                                                <option value="@level">@displayName</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Board / University</label>
+                                                        <input type="text" class="form-control board"
+                                                               value="@edu.BoardOrUniversity"
+                                                               placeholder="Dhaka Board, Rajshahi University..." required />
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Passing Year</label>
+                                                        <input type="number" class="form-control passingYear"
+                                                               value="@edu.PassingYear"
+                                                               placeholder="2020" required />
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <label class="form-label">Additional Notes</label>
+                                                        <textarea class="form-control notes" rows="2"
+                                                                  placeholder="Optional details about achievements, awards, etc.">@edu.Remarks</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <!-- Default first education form if no data -->
+                                <div class="accordion-item step-form" data-step="@currentStep">
+                                    <h2 class="accordion-header" id="headingEdu0">
+                                        <button class="accordion-button" type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#collapseEdu0"
+                                                aria-expanded="true"
+                                                aria-controls="collapseEdu0">
+                                            Education 1
                                         </button>
                                     </h2>
-                                    <div id="collapseEdu@i" class="accordion-collapse collapse" aria-labelledby="headingEdu@i">
+                                    <div id="collapseEdu0" class="accordion-collapse collapse show"
+                                         aria-labelledby="headingEdu0">
                                         <div class="accordion-body">
                                             <div class="row g-3">
                                                 <div class="col-md-6">
                                                     <label class="form-label">Exam Name</label>
                                                     <select class="form-select examName" required>
                                                         <option value="">Select...</option>
-                                                        @foreach (EducationLevel level in Enum.GetValues(typeof(EducationLevel)))
-                                                        {
-                                                            var displayName = level switch
-                                                            {
-                                                                EducationLevel.Secondary => "SSC",
-                                                                EducationLevel.HigherSecondary => "HSC",
-                                                                EducationLevel.Graduate => "BSc/BCom",
-                                                                EducationLevel.PostGraduate => "MSc/MCom",
-                                                                EducationLevel.Others => "Others",
-                                                                _ => level.ToString()
-                                                            };
-
-                                                            <option value="@level">@displayName</option>
-                                                        }
+                                                        <option value="SSC">SSC</option>
+                                                        <option value="HSC">HSC</option>
+                                                        <option value="BSc/BCom">BSc/BCom</option>
+                                                        <option value="MSc/MCom">MSc/MCom</option>
+                                                        <option value="Others">Others</option>
                                                     </select>
-
                                                 </div>
+
                                                 <div class="col-md-6">
                                                     <label class="form-label">Board / University</label>
-                                                    <input type="text" class="form-control board" value="@edu.BoardOrUniversity" placeholder="Dhaka Board, Rajshahi University..." required />
+                                                    <input type="text" class="form-control board"
+                                                           placeholder="Dhaka Board, Rajshahi University..." required />
                                                 </div>
-@*                                                 <div class="col-md-6">
-                                                    <label class="form-label">CGPA / GPA / Division</label>
-                                                    <input type="text" class="form-control cgpa" value="@edu.CGPA" placeholder="4.50, 3.75, First Class..." required />
-                                                </div> *@
+
                                                 <div class="col-md-6">
                                                     <label class="form-label">Passing Year</label>
-                                                    <input type="number" class="form-control passingYear" value="@edu.PassingYear" placeholder="2020" required />
+                                                    <input type="number" class="form-control passingYear"
+                                                           placeholder="2020" required />
                                                 </div>
-@*                                                 <div class="col-md-12">
+
+                                                <div class="col-md-12">
                                                     <label class="form-label">Additional Notes</label>
-                                                    <textarea class="form-control notes" rows="2" placeholder="Optional details about achievements, awards, etc.">@edu.Notes</textarea>
-                                                </div> *@
+                                                    <textarea class="form-control notes" rows="2"
+                                                              placeholder="Optional details about achievements, awards, etc."></textarea>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             }
-                        }
-                    </div>
+                        </div>
 
-                    <div class="d-flex justify-content-between mt-4">
-                        <button type="button" class="btn btn-outline-secondary btn-prev-step">← Previous</button>
-                        <button type="button" class="btn btn-success btn-add-edu">+ Add Education</button>
-                        <button type="button" class="btn btn-primary btn-next-step">Save & Continue →</button>
+                        <!-- Navigation Buttons -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-outline-secondary btn-prev-step">← Previous</button>
+                            <button type="button" class="btn btn-success btn-add-edu">+ Add Education</button>
+                            <button type="button" class="btn btn-primary btn-next-step">Save & Continue →</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -105,120 +167,185 @@
     </div>
 </section>
 
-@section Scripts {
-<script>
-    let currentStep = @currentStep;
-    let completedSteps = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(completedSteps));
+<!-- Use same CSS as Index.cshtml -->
+@section Styles {
+    <style>
+        .cv-steps {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-    function updateSidebar() {
-        document.querySelectorAll('.cv-steps .step').forEach((s, index) => {
-            const stepNum = index + 1;
-            if (completedSteps.includes(stepNum)) {
-                s.classList.add('completed');
-                s.classList.remove('active');
-                s.querySelector('.step-circle').textContent = '✓';
-            } else if (stepNum === currentStep) {
-                s.classList.add('active');
-                s.classList.remove('completed');
-                s.querySelector('.step-circle').textContent = stepNum;
-            } else {
-                s.classList.remove('active', 'completed');
-                s.querySelector('.step-circle').textContent = stepNum;
+            .cv-steps .step {
+                display: flex;
+                align-items: center;
+                position: relative;
+                padding: 12px 0;
+                color: #6c757d;
+                font-weight: 500;
+                cursor: pointer;
+                transition: 0.3s;
             }
-        });
-        document.getElementById('currentStepDisplay').textContent = currentStep;
-        document.querySelector('.btn-prev-step').disabled = currentStep === 1;
-    }
 
-    // Add new education dynamically
-    document.querySelector('.btn-add-edu').addEventListener('click', function () {
-        const accordion = document.getElementById('educationAccordion');
-        const index = accordion.children.length;
-        const newItem = document.createElement('div');
-        newItem.className = 'accordion-item mb-3';
-        newItem.dataset.index = index;
-        newItem.innerHTML = `
-            <h2 class="accordion-header" id="headingEdu${index}">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEdu${index}" aria-expanded="false" aria-controls="collapseEdu${index}">
-                    Education ${index + 1}
-                </button>
-            </h2>
-            <div id="collapseEdu${index}" class="accordion-collapse collapse" aria-labelledby="headingEdu${index}">
-                <div class="accordion-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Exam Name</label>
-                            <select class="form-select examName" required>
-                                <option value="">Select...</option>
-                                <option value="SSC">SSC</option>
-                                <option value="HSC">HSC</option>
-                                <option value="Diploma">Diploma</option>
-                                <option value="BSc/BCom">BSc/BCom</option>
-                                <option value="MSc/MCom">MSc/MCom</option>
-                                <option value="Others">Others</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Board / University</label>
-                            <input type="text" class="form-control board" placeholder="Dhaka Board, Rajshahi University..." required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">CGPA / GPA / Division</label>
-                            <input type="text" class="form-control cgpa" placeholder="4.50, 3.75, First Class..." required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Passing Year</label>
-                            <input type="number" class="form-control passingYear" placeholder="2020" required />
-                        </div>
-                        <div class="col-md-12">
-                            <label class="form-label">Additional Notes</label>
-                            <textarea class="form-control notes" rows="2" placeholder="Optional details about achievements, awards, etc."></textarea>
+                .cv-steps .step .step-circle {
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    border: 2px solid #dee2e6;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-right: 12px;
+                    font-size: 14px;
+                    transition: 0.3s;
+                }
+
+                .cv-steps .step.active {
+                    color: #0d6efd;
+                    font-weight: 600;
+                }
+
+                    .cv-steps .step.active .step-circle {
+                        border-color: #0d6efd;
+                        background-color: #0d6efd;
+                        color: #fff;
+                    }
+
+                .cv-steps .step.completed {
+                    color: #198754;
+                }
+
+                    .cv-steps .step.completed .step-circle {
+                        border-color: #198754;
+                        background-color: #198754;
+                        color: #fff;
+                    }
+
+                .cv-steps .step:not(:last-child)::after {
+                    content: '';
+                    position: absolute;
+                    left: 14px;
+                    top: 42px;
+                    height: 100%;
+                    width: 2px;
+                    background-color: #e9ecef;
+                }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        let currentStep = @currentStep;
+        let completedSteps = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(completedSteps));
+
+        function updateSidebar() {
+            document.querySelectorAll('.cv-steps .step').forEach((s, index) => {
+                const stepNum = index + 1;
+                if (completedSteps.includes(stepNum)) {
+                    s.classList.add('completed');
+                    s.classList.remove('active');
+                    s.querySelector('.step-circle').textContent = '✓';
+                } else if (stepNum === currentStep) {
+                    s.classList.add('active');
+                    s.classList.remove('completed');
+                    s.querySelector('.step-circle').textContent = stepNum;
+                } else {
+                    s.classList.remove('active', 'completed');
+                    s.querySelector('.step-circle').textContent = stepNum;
+                }
+            });
+            document.getElementById('currentStepDisplay').textContent = currentStep;
+            document.querySelector('.btn-prev-step').disabled = currentStep === 1;
+        }
+
+        // Add new education dynamically
+        document.querySelector('.btn-add-edu').addEventListener('click', function () {
+            const accordion = document.getElementById('educationAccordion');
+            const index = accordion.children.length;
+            const newItem = document.createElement('div');
+            newItem.className = 'accordion-item step-form';
+            newItem.dataset.step = currentStep;
+            newItem.innerHTML = `
+                <h2 class="accordion-header" id="headingEdu${index}">
+                    <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseEdu${index}"
+                            aria-expanded="false"
+                            aria-controls="collapseEdu${index}">
+                        Education ${index + 1}
+                    </button>
+                </h2>
+                <div id="collapseEdu${index}" class="accordion-collapse collapse"
+                     aria-labelledby="headingEdu${index}">
+                    <div class="accordion-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Exam Name</label>
+                                <select class="form-select examName" required>
+                                    <option value="">Select...</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="HSC">HSC</option>
+                                    <option value="BSc/BCom">BSc/BCom</option>
+                                    <option value="MSc/MCom">MSc/MCom</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Board / University</label>
+                                <input type="text" class="form-control board"
+                                       placeholder="Dhaka Board, Rajshahi University..." required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Passing Year</label>
+                                <input type="number" class="form-control passingYear"
+                                       placeholder="2020" required />
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Additional Notes</label>
+                                <textarea class="form-control notes" rows="2"
+                                          placeholder="Optional details about achievements, awards, etc."></textarea>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>`;
-        accordion.appendChild(newItem);
-    });
-
-    // Save Education and go next
-    document.querySelector('.btn-next-step').addEventListener('click', async function () {
-        const educationList = [];
-        document.querySelectorAll('#educationAccordion .accordion-item').forEach(item => {
-            educationList.push({
-                ExamName: item.querySelector('.examName').value,
-                BoardOrUniversity: item.querySelector('.board').value,
-                CGPA: item.querySelector('.cgpa').value,
-                PassingYear: item.querySelector('.passingYear').value,
-                Notes: item.querySelector('.notes').value
-            });
+                </div>`;
+            accordion.appendChild(newItem);
         });
 
-        try {
-            const response = await fetch('/CvBuilder/SaveEducation', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(educationList)
+        // Save Education and go next
+        document.querySelector('.btn-next-step').addEventListener('click', async function () {
+            const educationList = [];
+            document.querySelectorAll('#educationAccordion .accordion-item').forEach(item => {
+                educationList.push({
+                    ExamName: item.querySelector('.examName').value,
+                    BoardOrUniversity: item.querySelector('.board').value,
+                    PassingYear: item.querySelector('.passingYear').value,
+                    Notes: item.querySelector('.notes').value
+                });
             });
-            const result = await response.json();
-            if (!response.ok || !result.success) {
-                alert(result.message || 'Failed to save education!');
-                return;
+
+            try {
+                const response = await fetch('/CvBuilder/SaveEducation', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(educationList)
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    alert(result.message || 'Failed to save education!');
+                    return;
+                }
+
+                window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.WorkExperience);
+            } catch (err) {
+                console.error(err);
+                alert('Error saving education!');
             }
-
-            if (!completedSteps.includes(currentStep)) completedSteps.push(currentStep);
-            // Go to next step (Work Experience)
-            window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.WorkExperience);
-        } catch (err) {
-            console.error(err);
-            alert('Error saving education!');
-        }
-    });
-
-        document.querySelector('.btn-prev-step').addEventListener('click', function(){
-            window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.PersonalInformation);
-            // Step 1 → Index
         });
 
-    updateSidebar();
-</script>
+        document.querySelector('.btn-prev-step').addEventListener('click', function () {
+            window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.PersonalInformation);
+        });
+
+        updateSidebar();
+    </script>
 }
