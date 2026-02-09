@@ -109,5 +109,39 @@ namespace MYCV.API.Controllers
             }
         }
 
+        [HttpPost("education")]
+        public async Task<IActionResult> SaveEducation([FromBody] List<UserEducationDto> dtoList)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ApiResponse<List<UserEducationDto>>.ErrorResponse("Please fill all required fields."));
+
+            try
+            {
+                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                                  ?? User.FindFirst("UserId")?.Value;
+
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized(ApiResponse<List<UserEducationDto>>.ErrorResponse("User not authorized"));
+
+                int userId = int.Parse(userIdClaim);
+
+                var savedList = new List<UserEducationDto>();
+
+                foreach (var dto in dtoList)
+                {
+                    dto.UserId = userId;
+                    var saved = await _userEducationService.SaveEducationAsync(dto);
+                    savedList.Add(saved);
+                }
+
+                return Ok(ApiResponse<List<UserEducationDto>>.SuccessResponse(savedList, "Education information saved successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving education info");
+                return StatusCode(500, ApiResponse<List<UserEducationDto>>.ErrorResponse("Internal server error"));
+            }
+        }
+
     }
 }

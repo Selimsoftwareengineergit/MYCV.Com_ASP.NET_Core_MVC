@@ -340,7 +340,8 @@ namespace MYCV.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("UserCvs");
                 });
@@ -416,12 +417,12 @@ namespace MYCV.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserCvId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserCvId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserEducations");
                 });
@@ -544,8 +545,8 @@ namespace MYCV.Infrastructure.Migrations
             modelBuilder.Entity("MYCV.Domain.Entities.UserCv", b =>
                 {
                     b.HasOne("MYCV.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                        .WithOne("UserCv")
+                        .HasForeignKey("MYCV.Domain.Entities.UserCv", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -554,13 +555,13 @@ namespace MYCV.Infrastructure.Migrations
 
             modelBuilder.Entity("MYCV.Domain.Entities.UserEducation", b =>
                 {
-                    b.HasOne("MYCV.Domain.Entities.UserCv", "UserCv")
+                    b.HasOne("MYCV.Domain.Entities.User", "User")
                         .WithMany("UserEducations")
-                        .HasForeignKey("UserCvId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
-                    b.Navigation("UserCv");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MYCV.Domain.Entities.UserExperiences", b =>
@@ -574,6 +575,13 @@ namespace MYCV.Infrastructure.Migrations
                     b.Navigation("UserCv");
                 });
 
+            modelBuilder.Entity("MYCV.Domain.Entities.User", b =>
+                {
+                    b.Navigation("UserCv");
+
+                    b.Navigation("UserEducations");
+                });
+
             modelBuilder.Entity("MYCV.Domain.Entities.UserCv", b =>
                 {
                     b.Navigation("Languages");
@@ -581,8 +589,6 @@ namespace MYCV.Infrastructure.Migrations
                     b.Navigation("Projects");
 
                     b.Navigation("Skills");
-
-                    b.Navigation("UserEducations");
 
                     b.Navigation("UserExperiences");
                 });

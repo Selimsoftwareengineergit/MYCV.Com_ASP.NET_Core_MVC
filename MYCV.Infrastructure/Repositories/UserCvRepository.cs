@@ -31,7 +31,6 @@ namespace MYCV.Infrastructure.Repositories
         public async Task<UserCv?> GetByIdAsync(int id)
         {
             return await _context.UserCvs
-                .Include(x => x.UserEducations)
                 .Include(x => x.UserExperiences)
                 .Include(x => x.Skills)
                 .Include(x => x.Projects)

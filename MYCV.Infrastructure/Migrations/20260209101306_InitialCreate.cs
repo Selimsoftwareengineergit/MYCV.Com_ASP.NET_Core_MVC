@@ -6,11 +6,37 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MYCV.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUserCvEntities : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsEmailVerified = table.Column<bool>(type: "bit", nullable: false),
+                    VerificationCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Role = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "UserCvs",
                 columns: table => new
@@ -34,6 +60,7 @@ namespace MYCV.Infrastructure.Migrations
                     Portfolio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Website = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LinkedInHeadline = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -46,20 +73,29 @@ namespace MYCV.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserCvs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserCvs_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Educations",
+                name: "UserEducations",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserCvId = table.Column<int>(type: "int", nullable: false),
-                    Degree = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Institution = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    EducationLevel = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ExamName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    BoardOrUniversity = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    GroupOrMajor = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Result = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    PassingYear = table.Column<int>(type: "int", nullable: false),
+                    CertificateFile = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -71,13 +107,12 @@ namespace MYCV.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Educations", x => x.Id);
+                    table.PrimaryKey("PK_UserEducations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Educations_UserCvs_UserCvId",
-                        column: x => x.UserCvId,
-                        principalTable: "UserCvs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_UserEducations_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -169,7 +204,7 @@ namespace MYCV.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WorkExperiences",
+                name: "UserExperiences",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -177,9 +212,13 @@ namespace MYCV.Infrastructure.Migrations
                     UserCvId = table.Column<int>(type: "int", nullable: false),
                     Company = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Position = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Department = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    EmploymentType = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Responsibilities = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -191,19 +230,14 @@ namespace MYCV.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WorkExperiences", x => x.Id);
+                    table.PrimaryKey("PK_UserExperiences", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WorkExperiences_UserCvs_UserCvId",
+                        name: "FK_UserExperiences_UserCvs_UserCvId",
                         column: x => x.UserCvId,
                         principalTable: "UserCvs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Educations_UserCvId",
-                table: "Educations",
-                column: "UserCvId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Languages_UserCvId",
@@ -221,17 +255,25 @@ namespace MYCV.Infrastructure.Migrations
                 column: "UserCvId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WorkExperiences_UserCvId",
-                table: "WorkExperiences",
+                name: "IX_UserCvs_UserId",
+                table: "UserCvs",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserEducations_UserId",
+                table: "UserEducations",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserExperiences_UserCvId",
+                table: "UserExperiences",
                 column: "UserCvId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Educations");
-
             migrationBuilder.DropTable(
                 name: "Languages");
 
@@ -242,10 +284,16 @@ namespace MYCV.Infrastructure.Migrations
                 name: "Skills");
 
             migrationBuilder.DropTable(
-                name: "WorkExperiences");
+                name: "UserEducations");
+
+            migrationBuilder.DropTable(
+                name: "UserExperiences");
 
             migrationBuilder.DropTable(
                 name: "UserCvs");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

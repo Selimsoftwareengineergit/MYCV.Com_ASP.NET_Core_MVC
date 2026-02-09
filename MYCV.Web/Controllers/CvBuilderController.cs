@@ -149,21 +149,9 @@ namespace MYCV.Web.Controllers
 
                 var userId = int.Parse(userIdClaim);
 
-                var cvResponse = await _cvApiService.GetUserCvAsync(userId);
-                if (!cvResponse.Success || cvResponse.Data == null)
-                {
-                    return BadRequest(new
-                    {
-                        Success = false,
-                        Message = "CV not found. Please complete personal information first."
-                    });
-                }
-
-                var userCvId = cvResponse.Data.Id;
-
                 foreach (var edu in educationList)
                 {
-                    edu.UserCvId = userCvId;
+                    edu.UserId = userId;
                 }
 
                 var result = await _cvApiService.SaveEducationAsync(educationList);

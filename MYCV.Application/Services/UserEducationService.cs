@@ -1,5 +1,6 @@
 ﻿using MYCV.Application.DTOs;
 using MYCV.Application.Interfaces;
+using MYCV.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace MYCV.Application.Services
             return educations.Select(e => new UserEducationDto
             {
                 Id = e.Id,
-                UserCvId = e.UserCvId,
+                UserId = e.UserId,
                 EducationLevel = e.EducationLevel,
                 ExamName = e.ExamName,
                 BoardOrUniversity = e.BoardOrUniversity,
@@ -36,6 +37,48 @@ namespace MYCV.Application.Services
                 CertificateFile = e.CertificateFile,
                 Remarks = e.Remarks
             }).ToList();
+        }
+
+        public async Task<UserEducationDto> SaveEducationAsync(UserEducationDto dto)
+        {
+            UserEducation? entity = null;
+
+            if (dto.Id > 0)
+                entity = await _userEducationRepository.GetByIdAsync(dto.Id);
+
+            if (entity == null)
+            {
+                entity = new UserEducation
+                {
+                    UserId = dto.UserId, 
+                    EducationLevel = dto.EducationLevel,
+                    ExamName = dto.ExamName,
+                    BoardOrUniversity = dto.BoardOrUniversity,
+                    GroupOrMajor = dto.GroupOrMajor,
+                    Result = dto.Result,
+                    PassingYear = dto.PassingYear,
+                    CertificateFile = dto.CertificateFile,
+                    Remarks = dto.Remarks
+                };
+
+                await _userEducationRepository.AddAsync(entity);
+            }
+            else
+            {
+                entity.EducationLevel = dto.EducationLevel;
+                entity.ExamName = dto.ExamName;
+                entity.BoardOrUniversity = dto.BoardOrUniversity;
+                entity.GroupOrMajor = dto.GroupOrMajor;
+                entity.Result = dto.Result;
+                entity.PassingYear = dto.PassingYear;
+                entity.CertificateFile = dto.CertificateFile;
+                entity.Remarks = dto.Remarks;
+
+                await _userEducationRepository.UpdateAsync(entity);
+            }
+
+            dto.Id = entity.Id;
+            return dto;
         }
     }
 }

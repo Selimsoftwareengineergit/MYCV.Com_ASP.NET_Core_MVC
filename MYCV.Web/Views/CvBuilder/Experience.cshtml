@@ -71,13 +71,19 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="form-label">Employment Type</label>
-@*                                                     <select name="Model[@i].EmploymentType" class="form-select" required>
+                                                    <select name="Model[@i].EmploymentType" class="form-select" required>
                                                         @foreach (EmploymentType type in Enum.GetValues(typeof(EmploymentType)))
                                                         {
-                                                            var selected = exp.EmploymentType == type ? "selected" : "";
-                                                            <option value="@type" @Html.Raw(selected)>@type</option>
+                                                            if (exp.EmploymentType == type)
+                                                            {
+                                                                <option value="@type" selected>@type</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@type">@type</option>
+                                                            }
                                                         }
-                                                    </select> *@
+                                                    </select>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="form-label">Start Date</label>

@@ -2,11 +2,6 @@
 using MYCV.Application.Interfaces;
 using MYCV.Domain.Entities;
 using MYCV.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MYCV.Infrastructure.Repositories
 {
@@ -19,18 +14,13 @@ namespace MYCV.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<UserEducation>> GetByUserCvIdAsync(int userCvId)
-        {
-            return await _context.UserEducations
-                .Where(e => e.UserCvId == userCvId && !e.IsDeleted)
-                .ToListAsync();
-        }
-
+        /// <summary>
+        /// Get all educations by UserId (direct, preferred)
+        /// </summary>
         public async Task<List<UserEducation>> GetByUserIdAsync(int userId)
         {
             return await _context.UserEducations
-                .Include(e => e.UserCv)
-                .Where(e => e.UserCv.UserId == userId && !e.IsDeleted)
+                .Where(e => e.UserId == userId && !e.IsDeleted)
                 .ToListAsync();
         }
 
@@ -60,5 +50,4 @@ namespace MYCV.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
     }
-
 }

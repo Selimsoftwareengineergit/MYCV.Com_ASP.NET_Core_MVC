@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MYCV.Domain.Entities
 {
-    public class User: BaseEntity
+    public class User : BaseEntity
     {
         public string FullName { get; set; } = null!;
         public string Email { get; set; } = null!;
@@ -15,5 +15,9 @@ namespace MYCV.Domain.Entities
         public bool IsEmailVerified { get; set; } = false;
         public string? VerificationCode { get; set; }
         public UserRole Role { get; set; } = UserRole.Client;
+
+        // Navigation properties
+        public virtual ICollection<UserEducation> UserEducations { get; set; } = new List<UserEducation>();
+        public virtual UserCv? UserCv { get; set; }
     }
 }
