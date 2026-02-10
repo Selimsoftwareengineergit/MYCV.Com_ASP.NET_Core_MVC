@@ -22,7 +22,6 @@ namespace MYCV.Web.Controllers
             _logger = logger;
         }
 
-        // GET: /CvBuilder
         public async Task<IActionResult> Index()
         {
             try
@@ -101,7 +100,6 @@ namespace MYCV.Web.Controllers
             }
         }
 
-
         [HttpGet]
         public async Task<IActionResult> Education()
         {
@@ -131,7 +129,6 @@ namespace MYCV.Web.Controllers
                 return View(new List<UserEducationDto>());
             }
         }
-
 
         [HttpPost]
         public async Task<IActionResult> SaveEducation([FromBody] List<UserEducationDto> educationList)
