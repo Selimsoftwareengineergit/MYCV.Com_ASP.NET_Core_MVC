@@ -66,7 +66,7 @@ namespace MYCV.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SavePersonalInfo([FromBody] UserCvPersonalInfoDto model)
+        public async Task<IActionResult> SavePersonalInfo([FromBody] UserPersonalDetailDto model)
         {
             if (!ModelState.IsValid)
             {

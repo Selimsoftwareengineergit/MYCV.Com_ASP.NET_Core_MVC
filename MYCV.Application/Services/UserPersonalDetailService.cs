@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace MYCV.Application.Services
 {
-    public class UserCvService : IUserCvService
+    public class UserPersonalDetailService : IUserPersonalDetailService
     {
-        private readonly IUserCvRepository _cvRepository;
+        private readonly IUserPersonalDetailRepository _cvRepository;
 
-        public UserCvService(IUserCvRepository cvRepository)
+        public UserPersonalDetailService(IUserPersonalDetailRepository cvRepository)
         {
             _cvRepository = cvRepository;
         }
@@ -18,13 +18,13 @@ namespace MYCV.Application.Services
         /// <summary>
         /// Save or update user personal CV information
         /// </summary>
-        public async Task<UserCvResponseDto> SavePersonalInfoAsync(UserCvPersonalInfoDto dto)
+        public async Task<UserPersonalDetailDto> SavePersonalInfoAsync(UserPersonalDetailDto dto)
         {
             var existingCv = await _cvRepository.GetByUserIdAsync(dto.UserId);
 
             if (existingCv == null)
             {
-                var newCv = new UserCv
+                var newCv = new UserPersonalDetail
                 {
                     UserId = dto.UserId,
                     FullName = dto.FullName,
@@ -78,13 +78,13 @@ namespace MYCV.Application.Services
         /// <summary>
         /// Get CV for a user by userId
         /// </summary>
-        public async Task<UserCvPersonalInfoDto> GetUserCvAsync(int userId)
+        public async Task<UserPersonalDetailDto> GetUserCvAsync(int userId)
         {
             var cv = await _cvRepository.GetByUserIdAsync(userId);
 
             if (cv == null) return null;
 
-            return new UserCvPersonalInfoDto
+            return new UserPersonalDetailDto
             {
                 UserId = cv.UserId,
                 FullName = cv.FullName,
@@ -109,9 +109,9 @@ namespace MYCV.Application.Services
         /// <summary>
         /// Map UserCv entity to response DTO
         /// </summary>
-        private static UserCvResponseDto MapToResponseDto(UserCv cv)
+        private static UserPersonalDetailDto MapToResponseDto(UserPersonalDetail cv)
         {
-            return new UserCvResponseDto
+            return new UserPersonalDetailDto
             {
                 Id = cv.Id,
                 FullName = cv.FullName,

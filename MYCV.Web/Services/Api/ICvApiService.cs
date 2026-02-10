@@ -4,8 +4,8 @@ namespace MYCV.Web.Services.Api
 {
     public interface ICvApiService
     {
-        Task<ApiResponse<UserCvPersonalInfoDto>> GetUserCvAsync(int userId);
-        Task<ApiResponse<UserCvPersonalInfoDto>> SavePersonalInfoAsync(UserCvPersonalInfoDto dto);
+        Task<ApiResponse<UserPersonalDetailDto>> GetUserCvAsync(int userId);
+        Task<ApiResponse<UserPersonalDetailDto>> SavePersonalInfoAsync(UserPersonalDetailDto dto);
         Task<ApiResponse<List<UserEducationDto>>> GetUserEducationAsync(int userId);
         Task<ApiResponse<List<UserEducationDto>>> SaveEducationAsync(List<UserEducationDto> educationList);
         Task<ApiResponse<List<UserExperienceDto>>> GetUserExperiencesAsync(int userId);

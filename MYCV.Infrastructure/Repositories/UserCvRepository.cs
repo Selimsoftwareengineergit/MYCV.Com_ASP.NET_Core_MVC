@@ -10,46 +10,42 @@ using System.Threading.Tasks;
 
 namespace MYCV.Infrastructure.Repositories
 {
-    public class UserCvRepository : IUserCvRepository
+    public class UserPersonalDetailRepository : IUserPersonalDetailRepository
     {
         private readonly MyCvDbContext _context;
 
-        public UserCvRepository(MyCvDbContext context)
+        public UserPersonalDetailRepository(MyCvDbContext context)
         {
             _context = context;
         }
 
-        public async Task<UserCv?> GetByUserIdAsync(int userId)
+        public async Task<UserPersonalDetail?> GetByUserIdAsync(int userId)
         {
-            return await _context.UserCvs
+            return await _context.UserPersonalDetails
                 .FirstOrDefaultAsync(x =>
                     x.UserId == userId &&
                     !x.IsDeleted &&
                     x.IsActive);
         }
 
-        public async Task<UserCv?> GetByIdAsync(int id)
+        public async Task<UserPersonalDetail?> GetByIdAsync(int id)
         {
-            return await _context.UserCvs
-                .Include(x => x.UserExperiences)
-                .Include(x => x.Skills)
-                .Include(x => x.Projects)
-                .Include(x => x.Languages)
+            return await _context.UserPersonalDetails
                 .FirstOrDefaultAsync(x =>
                     x.Id == id &&
                     !x.IsDeleted &&
                     x.IsActive);
         }
 
-        public async Task AddAsync(UserCv userCv)
+        public async Task AddAsync(UserPersonalDetail userCv)
         {
-            _context.UserCvs.Add(userCv);
+            _context.UserPersonalDetails.Add(userCv);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(UserCv userCv)
+        public async Task UpdateAsync(UserPersonalDetail userCv)
         {
-            _context.UserCvs.Update(userCv);
+            _context.UserPersonalDetails.Update(userCv);
             await _context.SaveChangesAsync();
         }
     }

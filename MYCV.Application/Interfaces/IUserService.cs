@@ -10,9 +10,9 @@ namespace MYCV.Application.Interfaces
 {
     public interface IUserService
     {
-        Task<List<UserResponseDto>> GetUsersAsync();
-        Task<UserResponseDto> CreateUserAsync(UserCreateRequestDto dto);
-        Task<UserResponseDto?> CheckEmailAsync(string email);
+        Task<List<UserDto>> GetUsersAsync();
+        Task<UserDto> CreateUserAsync(UserCreateRequestDto dto);
+        Task<UserDto?> CheckEmailAsync(string email);
         Task<User?> GetUserByEmailAsync(string email);
         bool VerifyPassword(string plainPassword, string passwordHash);
         Task UpdateUserAsync(User user);

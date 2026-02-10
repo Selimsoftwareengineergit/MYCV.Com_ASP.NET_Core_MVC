@@ -12,9 +12,9 @@ namespace MYCV.API.Controllers
     public class UserCvController : ControllerBase
     {
         private readonly ILogger<UserCvController> _logger;
-        private readonly IUserCvService _cvService;
+        private readonly IUserPersonalDetailService _cvService;
         private readonly IUserEducationService _userEducationService;
-        public UserCvController(ILogger<UserCvController> logger,IUserCvService cvService, IUserEducationService userEducationService)
+        public UserCvController(ILogger<UserCvController> logger, IUserPersonalDetailService cvService, IUserEducationService userEducationService)
         {
             _logger = logger;
             _cvService = cvService;
@@ -37,15 +37,15 @@ namespace MYCV.API.Controllers
                 if (cv == null)
                 {
                     _logger.LogWarning("No CV found for user {UserId}", userId);
-                    return NotFound(ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("CV not found"));
+                    return NotFound(ApiResponse<UserPersonalDetailDto>.ErrorResponse("CV not found"));
                 }
 
-                return Ok(ApiResponse<UserCvPersonalInfoDto>.SuccessResponse(cv, "CV fetched successfully"));
+                return Ok(ApiResponse<UserPersonalDetailDto>.SuccessResponse(cv, "CV fetched successfully"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching CV for user {UserId}", userId);
-                return StatusCode(500, ApiResponse<UserCvPersonalInfoDto>.ErrorResponse("Internal server error"));
+                return StatusCode(500, ApiResponse<UserPersonalDetailDto>.ErrorResponse("Internal server error"));
             }
         }
 
@@ -55,10 +55,10 @@ namespace MYCV.API.Controllers
         /// <param name="dto">User CV personal info DTO</param>
         /// <returns>ApiResponse with saved CV data</returns>
         [HttpPost("personal-info")]
-        public async Task<IActionResult> SavePersonalInfo([FromForm] UserCvPersonalInfoDto dto)
+        public async Task<IActionResult> SavePersonalInfo([FromForm] UserPersonalDetailDto dto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ApiResponse<UserCvResponseDto>.ErrorResponse("Please fill all required fields."));
+                return BadRequest(ApiResponse<UserPersonalDetailDto>.ErrorResponse("Please fill all required fields."));
 
             try
             {
@@ -66,17 +66,17 @@ namespace MYCV.API.Controllers
                                   ?? User.FindFirst("UserId")?.Value;
 
                 if (string.IsNullOrEmpty(userIdClaim))
-                    return Unauthorized(ApiResponse<UserCvResponseDto>.ErrorResponse("User not authorized"));
+                    return Unauthorized(ApiResponse<UserPersonalDetailDto>.ErrorResponse("User not authorized"));
 
                 dto.UserId = int.Parse(userIdClaim);
                 var savedCv = await _cvService.SavePersonalInfoAsync(dto);
 
-                return Ok(ApiResponse<UserCvResponseDto>.SuccessResponse(savedCv, "Personal information saved successfully"));
+                return Ok(ApiResponse<UserPersonalDetailDto>.SuccessResponse(savedCv, "Personal information saved successfully"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error saving personal info for user {UserId}", dto.UserId);
-                return StatusCode(500, ApiResponse<UserCvResponseDto>.ErrorResponse("Internal server error"));
+                return StatusCode(500, ApiResponse<UserPersonalDetailDto>.ErrorResponse("Internal server error"));
             }
         }
 

@@ -18,6 +18,8 @@ namespace MYCV.Domain.Entities
 
         // Navigation properties
         public virtual ICollection<UserEducation> UserEducations { get; set; } = new List<UserEducation>();
-        public virtual UserCv? UserCv { get; set; }
+        public virtual ICollection<UserExperience> UserExperiences { get; set; } = new List<UserExperience>();
+        public virtual ICollection<UserSkill> UserSkills { get; set; } = new List<UserSkill>();
+        public virtual UserPersonalDetail? UserPersonalDetails { get; set; }
     }
 }

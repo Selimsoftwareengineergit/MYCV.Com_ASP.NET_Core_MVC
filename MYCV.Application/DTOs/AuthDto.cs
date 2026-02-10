@@ -23,7 +23,7 @@ namespace MYCV.Application.DTOs
         public bool Success { get; set; }
         public string Token { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
-        public UserResponseDto User { get; set; } = null!;
+        public UserDto User { get; set; } = null!;
     }
 
     public class ResetPasswordRequestDto

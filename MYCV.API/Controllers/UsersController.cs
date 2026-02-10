@@ -26,12 +26,12 @@ namespace MYCV.API.Controllers
             try
             {
                 var users = await _service.GetUsersAsync();
-                return Ok(ApiResponse<List<UserResponseDto>>.SuccessResponse(users, "Users retrieved successfully"));
+                return Ok(ApiResponse<List<UserDto>>.SuccessResponse(users, "Users retrieved successfully"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting users");
-                return StatusCode(500, ApiResponse<List<UserResponseDto>>.ErrorResponse("Internal server error"));
+                return StatusCode(500, ApiResponse<List<UserDto>>.ErrorResponse("Internal server error"));
             }
         }
 
@@ -46,18 +46,18 @@ namespace MYCV.API.Controllers
 
                 _logger.LogInformation("User created successfully with ID: {UserId}", createdUser.Id);
 
-                return Ok(ApiResponse<UserResponseDto>.SuccessResponse(createdUser, "User created successfully"));
+                return Ok(ApiResponse<UserDto>.SuccessResponse(createdUser, "User created successfully"));
             }
             catch (Exception ex) when (ex.Message.Contains("Email already exists"))
             {
                 _logger.LogWarning("Email already exists: {Email}", dto.Email);
-                return Conflict(ApiResponse<UserResponseDto>.ErrorResponse("Email already exists"));
+                return Conflict(ApiResponse<UserDto>.ErrorResponse("Email already exists"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating user: {Email}", dto.Email);
                 return StatusCode((int)HttpStatusCode.InternalServerError,
-                    ApiResponse<UserResponseDto>.ErrorResponse($"Error creating user: {ex.Message}"));
+                    ApiResponse<UserDto>.ErrorResponse($"Error creating user: {ex.Message}"));
             }
         }
 
@@ -148,7 +148,7 @@ namespace MYCV.API.Controllers
 
                 var response = new AuthResponseDto
                 {
-                    User = new UserResponseDto
+                    User = new UserDto
                     {
                         Id = user.Id,
                         Email = user.Email,

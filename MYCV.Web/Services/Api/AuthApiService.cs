@@ -41,7 +41,7 @@ namespace MYCV.Web.Services.Api
             }
         }
 
-        public async Task<ApiResponse<UserResponseDto>> RegisterAsync(UserCreateRequestDto dto)
+        public async Task<ApiResponse<UserDto>> RegisterAsync(UserCreateRequestDto dto)
         {
             try
             {
@@ -49,15 +49,15 @@ namespace MYCV.Web.Services.Api
 
                 if (response.IsSuccessStatusCode) 
                 {
-                    var result = await response.Content.ReadFromJsonAsync<ApiResponse<UserResponseDto>>();
-                    return result ?? ApiResponse<UserResponseDto>.ErrorResponse("Invalid Response");
+                    var result = await response.Content.ReadFromJsonAsync<ApiResponse<UserDto>>();
+                    return result ?? ApiResponse<UserDto>.ErrorResponse("Invalid Response");
                 }
-                return ApiResponse<UserResponseDto>.ErrorResponse("Registration failed: {response.StatusCode}");
+                return ApiResponse<UserDto>.ErrorResponse("Registration failed: {response.StatusCode}");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Registration error");
-                return ApiResponse<UserResponseDto>.ErrorResponse("Network error");
+                return ApiResponse<UserDto>.ErrorResponse("Network error");
             }
         }
 

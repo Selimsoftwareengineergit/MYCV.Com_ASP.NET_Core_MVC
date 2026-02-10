@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MYCV.Application.Interfaces
 {
-    public interface IUserCvService
+    public interface IUserPersonalDetailService
     {
-        Task<UserCvResponseDto> SavePersonalInfoAsync(UserCvPersonalInfoDto dto);
-        Task<UserCvPersonalInfoDto> GetUserCvAsync(int userId);
+        Task<UserPersonalDetailDto> SavePersonalInfoAsync(UserPersonalDetailDto dto);
+        Task<UserPersonalDetailDto> GetUserCvAsync(int userId);
     }
 }

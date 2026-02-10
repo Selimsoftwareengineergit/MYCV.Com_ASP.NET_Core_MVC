@@ -26,11 +26,11 @@ namespace MYCV.Application.Services
             _emailService = emailService;  
         }
 
-        public async Task<List<UserResponseDto>> GetUsersAsync()
+        public async Task<List<UserDto>> GetUsersAsync()
         {
             var users = await _repository.GetAllAsync();
 
-            return users.Select(u => new UserResponseDto
+            return users.Select(u => new UserDto
             {
                 Id = u.Id,
                 FullName = u.FullName,
@@ -40,7 +40,7 @@ namespace MYCV.Application.Services
             }).ToList();
         }
 
-        public async Task<UserResponseDto> CreateUserAsync(UserCreateRequestDto dto)
+        public async Task<UserDto> CreateUserAsync(UserCreateRequestDto dto)
         {
             var existingUser = await _repository.GetByEmailAsync(dto.Email);
             if (existingUser != null)
@@ -65,7 +65,7 @@ namespace MYCV.Application.Services
             );
 
             // 3️⃣ Return response immediately
-            return new UserResponseDto
+            return new UserDto
             {
                 Id = user.Id,
                 FullName = user.FullName,
@@ -84,14 +84,14 @@ namespace MYCV.Application.Services
             return RandomNumberGenerator.GetInt32(10000000, 100000000).ToString();
         }
 
-        public async Task<UserResponseDto?> CheckEmailAsync(string email)
+        public async Task<UserDto?> CheckEmailAsync(string email)
         {
             var user = await _repository.GetByEmailAsync(email);
 
             if (user == null)
                 return null;
 
-            return new UserResponseDto
+            return new UserDto
             {
                 Id = user.Id,
                 Email = user.Email,
