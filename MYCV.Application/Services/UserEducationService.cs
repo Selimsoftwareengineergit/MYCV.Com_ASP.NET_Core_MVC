@@ -39,7 +39,7 @@ namespace MYCV.Application.Services
             }).ToList();
         }
 
-        public async Task<UserEducationDto> SaveEducationAsync(UserEducationDto dto)
+        public async Task<UserEducationDto> SaveUserEducationAsync(UserEducationDto dto)
         {
             UserEducation? entity = null;
 

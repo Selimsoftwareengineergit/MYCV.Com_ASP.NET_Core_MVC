@@ -18,7 +18,7 @@ namespace MYCV.Web.Services.Api
         /// <summary>
         /// Get CV for a user by userId 
         /// </summary>
-        public async Task<ApiResponse<UserPersonalDetailDto>> GetUserCvAsync(int userId)
+        public async Task<ApiResponse<UserPersonalDetailDto>> GetUserPersonalDetailAsync(int userId)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace MYCV.Web.Services.Api
         /// <summary>
         /// Save personal info for a user's CV
         /// </summary>
-        public async Task<ApiResponse<UserPersonalDetailDto>> SavePersonalInfoAsync(UserPersonalDetailDto dto)
+        public async Task<ApiResponse<UserPersonalDetailDto>> SaveUserPersonalDetailAsync(UserPersonalDetailDto dto)
         {
             try
             {
@@ -77,16 +77,18 @@ namespace MYCV.Web.Services.Api
                 content.Add(new StringContent(dto.LinkedInHeadline ?? ""), "LinkedInHeadline");
                 content.Add(new StringContent(dto.Summary ?? ""), "Summary");
 
-                //// Add Profile Picture if exists
-                //if (dto.ProfilePictureUrl != null)
-                //{
-                //    var streamContent = new StreamContent(dto.ProfilePictureUrl.OpenReadStream());
-                //    streamContent.Headers.ContentType = new MediaTypeHeaderValue(dto.ProfilePicture.ContentType);
-                //    content.Add(streamContent, "ProfilePicture", dto.ProfilePicture.FileName);
-                //}
+                // Add Profile Picture if exists
+                if (dto.ProfilePicture != null)
+                {
+                    var streamContent = new StreamContent(dto.ProfilePicture.OpenReadStream());
+                    streamContent.Headers.ContentType =
+                        new MediaTypeHeaderValue(dto.ProfilePicture.ContentType);
+
+                    content.Add(streamContent, "ProfilePicture", dto.ProfilePicture.FileName);
+                }
 
                 // Send request
-                var response = await _httpClient.PostAsync("api/cv/personal-info", content);
+                var response = await _httpClient.PostAsync("api/cv/personal-detail", content);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -101,7 +103,7 @@ namespace MYCV.Web.Services.Api
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception when calling API SavePersonalInfo");
+                _logger.LogError(ex, "Exception when calling API SavePersonalDetail");
                 return ApiResponse<UserPersonalDetailDto>.ErrorResponse("Exception: " + ex.Message);
             }
         }

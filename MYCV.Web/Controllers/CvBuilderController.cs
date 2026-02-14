@@ -33,7 +33,7 @@ namespace MYCV.Web.Controllers
                 var userId = int.Parse(userIdClaim);
 
                 // Step 1: Personal Information
-                var personalInfoResponse = await _cvApiService.GetUserCvAsync(userId);
+                var personalInfoResponse = await _cvApiService.GetUserPersonalDetailAsync(userId);
                 bool step1Completed = personalInfoResponse.Success && personalInfoResponse.Data != null;
 
                 // Step 2: Education
@@ -66,7 +66,7 @@ namespace MYCV.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SavePersonalInfo([FromBody] UserPersonalDetailDto model)
+        public async Task<IActionResult> SavePersonalDetail([FromBody] UserPersonalDetailDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -82,7 +82,7 @@ namespace MYCV.Web.Controllers
 
                 model.UserId = int.Parse(userIdClaim);
 
-                var result = await _cvApiService.SavePersonalInfoAsync(model);
+                var result = await _cvApiService.SaveUserPersonalDetailAsync(model);
 
                 if (!result.Success)
                 {
@@ -221,26 +221,11 @@ namespace MYCV.Web.Controllers
 
                 var userId = int.Parse(userIdClaim);
 
-                // 🔹 Get User CV first (UserCvId is needed)
-                var cvResponse = await _cvApiService.GetUserCvAsync(userId);
-                if (!cvResponse.Success || cvResponse.Data == null)
-                {
-                    return BadRequest(new
-                    {
-                        Success = false,
-                        Message = "CV not found. Please complete personal information first."
-                    });
-                }
-
-                var userCvId = cvResponse.Data.Id;
-
-                // 🔹 Assign UserCvId to each experience record
                 foreach (var exp in experienceList)
                 {
-                    exp.UserCvId = userCvId;
+                    exp.UserId = userId;
                 }
 
-                // 🔹 Save experiences
                 var result = await _cvApiService.SaveUserExperiencesAsync(experienceList);
 
                 if (!result.Success)
@@ -264,6 +249,7 @@ namespace MYCV.Web.Controllers
             }
         }
 
+
         [HttpGet]
         public async Task<IActionResult> Step(int stepNumber)
         {
@@ -277,7 +263,7 @@ namespace MYCV.Web.Controllers
             var userId = int.Parse(userIdClaim);
 
             // Step 1: Personal Info
-            var personalInfoResponse = await _cvApiService.GetUserCvAsync(userId);
+            var personalInfoResponse = await _cvApiService.GetUserPersonalDetailAsync(userId);
             bool step1Completed = personalInfoResponse.Success && personalInfoResponse.Data != null;
 
             // Step 2: Education

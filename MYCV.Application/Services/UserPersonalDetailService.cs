@@ -18,7 +18,7 @@ namespace MYCV.Application.Services
         /// <summary>
         /// Save or update user personal CV information
         /// </summary>
-        public async Task<UserPersonalDetailDto> SavePersonalInfoAsync(UserPersonalDetailDto dto)
+        public async Task<UserPersonalDetailDto> SaveUserPersonalDetailAsync(UserPersonalDetailDto dto)
         {
             var existingCv = await _cvRepository.GetByUserIdAsync(dto.UserId);
 
@@ -78,7 +78,7 @@ namespace MYCV.Application.Services
         /// <summary>
         /// Get CV for a user by userId
         /// </summary>
-        public async Task<UserPersonalDetailDto> GetUserCvAsync(int userId)
+        public async Task<UserPersonalDetailDto> GetUserPersonalDetailAsync(int userId)
         {
             var cv = await _cvRepository.GetByUserIdAsync(userId);
 

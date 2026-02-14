@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MYCV.Application.Interfaces
 {
-    public interface IUserEducationService
+    public interface IUserExperienceService
     {
-        Task<List<UserEducationDto>> GetUserEducationAsync(int userId);
-        Task<UserEducationDto> SaveUserEducationAsync(UserEducationDto dto);
+        Task<List<UserExperienceDto>> GetUserExperienceAsync(int userId);
+        Task<UserExperienceDto> SaveUserExperienceAsync(UserExperienceDto dto);
     }
 }

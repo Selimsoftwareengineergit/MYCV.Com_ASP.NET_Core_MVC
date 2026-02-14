@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,7 +30,7 @@ namespace MYCV.Application.DTOs
         // Professional Summary
         public string? Summary { get; set; }
         public string? Objective { get; set; }
-        public string? ProfilePictureUrl { get; set; }
+      
 
         // Social & Online Presence
         public string? LinkedIn { get; set; }
@@ -37,5 +38,11 @@ namespace MYCV.Application.DTOs
         public string? Portfolio { get; set; }
         public string? Website { get; set; }
         public string? LinkedInHeadline { get; set; }
+
+        // ✅ For Upload
+        public IFormFile? ProfilePicture { get; set; }
+
+        // ✅ For Returning Saved URL
+        public string? ProfilePictureUrl { get; set; }
     }
 }
