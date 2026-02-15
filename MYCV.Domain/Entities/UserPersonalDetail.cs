@@ -13,7 +13,7 @@ namespace MYCV.Domain.Entities
         public virtual User User { get; set; } = null!;
         public string FullName { get; set; } = null!;
         public string ProfessionalTitle { get; set; } = null!;
-        public DateTime? DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
         public string? Gender { get; set; }
         public string Email { get; set; } = null!;
         public string PhoneNumber { get; set; } = null!;

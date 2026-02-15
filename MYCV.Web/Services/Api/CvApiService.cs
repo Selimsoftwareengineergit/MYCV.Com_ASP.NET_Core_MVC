@@ -72,7 +72,7 @@ namespace MYCV.Web.Services.Api
                 // =========================
                 content.Add(new StringContent(dto.FullName ?? ""), "FullName");
                 content.Add(new StringContent(dto.ProfessionalTitle ?? ""), "ProfessionalTitle");
-                content.Add(new StringContent(dto.DateOfBirth?.ToString("yyyy-MM-dd") ?? ""), "DateOfBirth");
+                content.Add(new StringContent(dto.DateOfBirth.ToString("yyyy-MM-dd") ?? ""), "DateOfBirth");
                 content.Add(new StringContent(dto.Gender ?? ""), "Gender");
 
                 // =========================
