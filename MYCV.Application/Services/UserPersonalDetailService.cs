@@ -9,10 +9,14 @@ namespace MYCV.Application.Services
     public class UserPersonalDetailService : IUserPersonalDetailService
     {
         private readonly IUserPersonalDetailRepository _cvRepository;
+        private readonly IFileService _fileService;
 
-        public UserPersonalDetailService(IUserPersonalDetailRepository cvRepository)
+        public UserPersonalDetailService(
+            IUserPersonalDetailRepository cvRepository,
+            IFileService fileService)
         {
             _cvRepository = cvRepository;
+            _fileService = fileService;
         }
 
         /// <summary>
@@ -20,8 +24,18 @@ namespace MYCV.Application.Services
         /// </summary>
         public async Task<UserPersonalDetailDto> SaveUserPersonalDetailAsync(UserPersonalDetailDto dto)
         {
+            // ✅ Upload profile picture if provided
+            if (dto.ProfilePicture != null)
+            {
+                dto.ProfilePictureUrl =
+                    await _fileService.UploadProfilePictureAsync(dto.ProfilePicture, dto.UserId);
+            }
+
             var existingCv = await _cvRepository.GetByUserIdAsync(dto.UserId);
 
+            // =========================
+            // CREATE
+            // =========================
             if (existingCv == null)
             {
                 var newCv = new UserPersonalDetail
@@ -38,6 +52,7 @@ namespace MYCV.Application.Services
                     Address = dto.Address,
                     ProfilePictureUrl = dto.ProfilePictureUrl,
                     Summary = dto.Summary,
+                    Objective = dto.Objective, // ✅ FIXED
                     LinkedIn = dto.LinkedIn,
                     GitHub = dto.GitHub,
                     Portfolio = dto.Portfolio,
@@ -52,7 +67,9 @@ namespace MYCV.Application.Services
                 return MapToResponseDto(newCv);
             }
 
-            // Update existing
+            // =========================
+            // UPDATE
+            // =========================
             existingCv.FullName = dto.FullName;
             existingCv.ProfessionalTitle = dto.ProfessionalTitle;
             existingCv.DateOfBirth = dto.DateOfBirth;
@@ -62,13 +79,17 @@ namespace MYCV.Application.Services
             existingCv.Country = dto.Country;
             existingCv.City = dto.City;
             existingCv.Address = dto.Address;
-            existingCv.ProfilePictureUrl = dto.ProfilePictureUrl;
             existingCv.Summary = dto.Summary;
+            existingCv.Objective = dto.Objective; 
             existingCv.LinkedIn = dto.LinkedIn;
             existingCv.GitHub = dto.GitHub;
             existingCv.Portfolio = dto.Portfolio;
             existingCv.Website = dto.Website;
             existingCv.LinkedInHeadline = dto.LinkedInHeadline;
+
+            if (!string.IsNullOrEmpty(dto.ProfilePictureUrl))
+                existingCv.ProfilePictureUrl = dto.ProfilePictureUrl;
+
             existingCv.UpdatedDate = DateTime.UtcNow;
 
             await _cvRepository.UpdateAsync(existingCv);
@@ -82,38 +103,21 @@ namespace MYCV.Application.Services
         {
             var cv = await _cvRepository.GetByUserIdAsync(userId);
 
-            if (cv == null) return null;
+            if (cv == null)
+                return null;
 
-            return new UserPersonalDetailDto
-            {
-                UserId = cv.UserId,
-                FullName = cv.FullName,
-                ProfessionalTitle = cv.ProfessionalTitle,
-                DateOfBirth = cv.DateOfBirth,
-                Gender = cv.Gender,
-                Email = cv.Email,
-                PhoneNumber = cv.PhoneNumber,
-                Country = cv.Country,
-                City = cv.City,
-                Address = cv.Address,
-                ProfilePictureUrl = cv.ProfilePictureUrl,
-                Summary = cv.Summary,
-                LinkedIn = cv.LinkedIn,
-                GitHub = cv.GitHub,
-                Portfolio = cv.Portfolio,
-                Website = cv.Website,
-                LinkedInHeadline = cv.LinkedInHeadline
-            };
+            return MapToResponseDto(cv);
         }
 
         /// <summary>
-        /// Map UserCv entity to response DTO
+        /// Map Entity to DTO
         /// </summary>
         private static UserPersonalDetailDto MapToResponseDto(UserPersonalDetail cv)
         {
             return new UserPersonalDetailDto
             {
                 Id = cv.Id,
+                UserId = cv.UserId, 
                 FullName = cv.FullName,
                 ProfessionalTitle = cv.ProfessionalTitle,
                 DateOfBirth = cv.DateOfBirth,
@@ -125,6 +129,7 @@ namespace MYCV.Application.Services
                 Address = cv.Address,
                 ProfilePictureUrl = cv.ProfilePictureUrl,
                 Summary = cv.Summary,
+                Objective = cv.Objective, 
                 LinkedIn = cv.LinkedIn,
                 GitHub = cv.GitHub,
                 Portfolio = cv.Portfolio,

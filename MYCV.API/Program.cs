@@ -30,6 +30,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserPersonalDetailRepository, UserPersonalDetailRepository>();
 builder.Services.AddScoped<IUserEducationRepository, UserEducationRepository>();
+builder.Services.AddScoped<IUserExperienceRepository, UserExperienceRepository>();
 
 // ============================
 // 4️⃣ Configure Application Services
@@ -37,6 +38,7 @@ builder.Services.AddScoped<IUserEducationRepository, UserEducationRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserPersonalDetailService, UserPersonalDetailService>();
 builder.Services.AddScoped<IUserEducationService, UserEducationService>();
+builder.Services.AddScoped<IUserExperienceService, UserExperienceService>();
 // ============================
 // 5️⃣ Configure File Service
 // ============================

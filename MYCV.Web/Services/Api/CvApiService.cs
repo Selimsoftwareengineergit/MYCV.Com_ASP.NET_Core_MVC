@@ -57,27 +57,51 @@ namespace MYCV.Web.Services.Api
         {
             try
             {
-                // Prepare multipart/form-data content
                 using var content = new MultipartFormDataContent();
 
-                // Add text fields
+                // =========================
+                // REQUIRED
+                // =========================
+                content.Add(new StringContent(dto.UserId.ToString()), "UserId");
+
+                // Optional (for update)
+                content.Add(new StringContent(dto.Id.ToString()), "Id");
+
+                // =========================
+                // Personal Info
+                // =========================
                 content.Add(new StringContent(dto.FullName ?? ""), "FullName");
                 content.Add(new StringContent(dto.ProfessionalTitle ?? ""), "ProfessionalTitle");
                 content.Add(new StringContent(dto.DateOfBirth?.ToString("yyyy-MM-dd") ?? ""), "DateOfBirth");
                 content.Add(new StringContent(dto.Gender ?? ""), "Gender");
+
+                // =========================
+                // Contact
+                // =========================
                 content.Add(new StringContent(dto.Email ?? ""), "Email");
                 content.Add(new StringContent(dto.PhoneNumber ?? ""), "PhoneNumber");
                 content.Add(new StringContent(dto.Country ?? ""), "Country");
                 content.Add(new StringContent(dto.City ?? ""), "City");
                 content.Add(new StringContent(dto.Address ?? ""), "Address");
+
+                // =========================
+                // Professional
+                // =========================
+                content.Add(new StringContent(dto.Summary ?? ""), "Summary");
+                content.Add(new StringContent(dto.Objective ?? ""), "Objective");
+
+                // =========================
+                // Social
+                // =========================
                 content.Add(new StringContent(dto.LinkedIn ?? ""), "LinkedIn");
                 content.Add(new StringContent(dto.GitHub ?? ""), "GitHub");
                 content.Add(new StringContent(dto.Portfolio ?? ""), "Portfolio");
                 content.Add(new StringContent(dto.Website ?? ""), "Website");
                 content.Add(new StringContent(dto.LinkedInHeadline ?? ""), "LinkedInHeadline");
-                content.Add(new StringContent(dto.Summary ?? ""), "Summary");
 
-                // Add Profile Picture if exists
+                // =========================
+                // Profile Picture
+                // =========================
                 if (dto.ProfilePicture != null)
                 {
                     var streamContent = new StreamContent(dto.ProfilePicture.OpenReadStream());
@@ -87,7 +111,9 @@ namespace MYCV.Web.Services.Api
                     content.Add(streamContent, "ProfilePicture", dto.ProfilePicture.FileName);
                 }
 
-                // Send request
+                // =========================
+                // Send Request
+                // =========================
                 var response = await _httpClient.PostAsync("api/cv/personal-detail", content);
 
                 if (!response.IsSuccessStatusCode)
@@ -95,18 +121,27 @@ namespace MYCV.Web.Services.Api
                     var respContent = await response.Content.ReadAsStringAsync();
                     _logger.LogError("API returned error. Status: {StatusCode}, Content: {Content}",
                         response.StatusCode, respContent);
-                    return ApiResponse<UserPersonalDetailDto>.ErrorResponse("API returned error: " + respContent);
+
+                    return ApiResponse<UserPersonalDetailDto>
+                        .ErrorResponse("API returned error: " + respContent);
                 }
 
-                var result = await response.Content.ReadFromJsonAsync<ApiResponse<UserPersonalDetailDto>>();
-                return result ?? ApiResponse<UserPersonalDetailDto>.ErrorResponse("Invalid response from API");
+                var result = await response
+                    .Content
+                    .ReadFromJsonAsync<ApiResponse<UserPersonalDetailDto>>();
+
+                return result ?? ApiResponse<UserPersonalDetailDto>
+                    .ErrorResponse("Invalid response from API");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception when calling API SavePersonalDetail");
-                return ApiResponse<UserPersonalDetailDto>.ErrorResponse("Exception: " + ex.Message);
+
+                return ApiResponse<UserPersonalDetailDto>
+                    .ErrorResponse("Exception: " + ex.Message);
             }
         }
+
 
         /// <summary>
         /// Get User Education by userId 

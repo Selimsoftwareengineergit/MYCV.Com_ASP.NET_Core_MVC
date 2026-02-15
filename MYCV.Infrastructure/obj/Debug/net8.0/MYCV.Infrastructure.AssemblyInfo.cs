@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MYCV.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+00acf7918018d1330f4113fef6a057d41de64340")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+739ae2cff0b1e854f926bbd6695fdcbf0bfb2e9d")]
 [assembly: System.Reflection.AssemblyProductAttribute("MYCV.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MYCV.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

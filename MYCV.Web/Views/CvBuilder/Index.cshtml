@@ -34,6 +34,7 @@
                         </div>
 
                         <div class="accordion" id="cvFormAccordion">
+
                             <!-- Step 1: Personal Information -->
                             <div class="accordion-item step-form" data-step="1">
                                 <h2 class="accordion-header" id="headingStep1">
@@ -45,19 +46,19 @@
                                     <div class="accordion-body">
                                         <div class="row g-3">
                                             <div class="col-md-6">
-                                                <label asp-for="FullName" class="form-label">Full Name</label>
+                                                <label asp-for="FullName" class="form-label">Full Name <span class="text-danger">*</span></label>
                                                 <input asp-for="FullName" class="form-control" placeholder="Enter your full name" required />
                                             </div>
                                             <div class="col-md-6">
-                                                <label asp-for="ProfessionalTitle" class="form-label">Professional Title</label>
+                                                <label asp-for="ProfessionalTitle" class="form-label">Professional Title <span class="text-danger">*</span></label>
                                                 <input asp-for="ProfessionalTitle" class="form-control" placeholder="Software Engineer, Graphic Designer, etc." required />
                                             </div>
                                             <div class="col-md-6">
-                                                <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                                                <label asp-for="DateOfBirth" class="form-label">Date of Birth <span class="text-danger">*</span></label>
                                                 <input asp-for="DateOfBirth" type="date" class="form-control" required />
                                             </div>
                                             <div class="col-md-6">
-                                                <label asp-for="Gender" class="form-label">Gender</label>
+                                                <label asp-for="Gender" class="form-label">Gender <span class="text-danger">*</span></label>
                                                 <select asp-for="Gender" class="form-select" asp-items="Html.GetEnumSelectList<Gender>()" required>
                                                     <option value="">Choose...</option>
                                                 </select>
@@ -78,23 +79,23 @@
                                     <div class="accordion-body">
                                         <div class="row g-3">
                                             <div class="col-md-6">
-                                                <label asp-for="Email" class="form-label">Email Address</label>
+                                                <label asp-for="Email" class="form-label">Email <span class="text-danger">*</span></label>
                                                 <input asp-for="Email" type="email" class="form-control" placeholder="example@email.com" required />
                                             </div>
                                             <div class="col-md-6">
-                                                <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                                                <label asp-for="PhoneNumber" class="form-label">Phone Number <span class="text-danger">*</span></label>
                                                 <input asp-for="PhoneNumber" class="form-control" placeholder="+880 1XXXXXXXXX" required />
                                             </div>
                                             <div class="col-md-6">
-                                                <label asp-for="Country" class="form-label">Country</label>
+                                                <label asp-for="Country" class="form-label">Country <span class="text-danger">*</span></label>
                                                 <input asp-for="Country" class="form-control" placeholder="Bangladesh" required />
                                             </div>
                                             <div class="col-md-6">
-                                                <label asp-for="City" class="form-label">City</label>
+                                                <label asp-for="City" class="form-label">City <span class="text-danger">*</span></label>
                                                 <input asp-for="City" class="form-control" placeholder="Dhaka" required />
                                             </div>
                                             <div class="col-md-12">
-                                                <label asp-for="Address" class="form-label">Address</label>
+                                                <label asp-for="Address" class="form-label">Address <span class="text-danger">*</span></label>
                                                 <input asp-for="Address" class="form-control" placeholder="Street, Area, ZIP" required />
                                             </div>
                                         </div>
@@ -113,20 +114,20 @@
                                     <div class="accordion-body">
                                         <div class="row g-3">
                                             <div class="col-md-6">
-                                                <label class="form-label">LinkedIn</label>
-                                                <input type="url" class="form-control" placeholder="https://linkedin.com/in/username">
+                                                <label asp-for="LinkedIn" class="form-label">LinkedIn</label>
+                                                <input asp-for="LinkedIn" type="url" class="form-control" placeholder="https://linkedin.com/in/username" />
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label">GitHub</label>
-                                                <input type="url" class="form-control" placeholder="https://github.com/username">
+                                                <label asp-for="GitHub" class="form-label">GitHub</label>
+                                                <input asp-for="GitHub" type="url" class="form-control" placeholder="https://github.com/username" />
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label">Portfolio</label>
-                                                <input type="url" class="form-control" placeholder="https://myportfolio.com">
+                                                <label asp-for="Portfolio" class="form-label">Portfolio</label>
+                                                <input asp-for="Portfolio" type="url" class="form-control" placeholder="https://myportfolio.com" />
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label">Website / Blog</label>
-                                                <input type="url" class="form-control" placeholder="https://example.com">
+                                                <label asp-for="Website" class="form-label">Website / Blog</label>
+                                                <input asp-for="Website" type="url" class="form-control" placeholder="https://example.com" />
                                             </div>
                                         </div>
                                     </div>
@@ -144,21 +145,26 @@
                                     <div class="accordion-body">
                                         <div class="row g-3">
                                             <div class="col-md-6">
-                                                <label class="form-label">Profile Picture</label>
-                                                <input type="file" class="form-control">
+                                                <label asp-for="ProfilePictureUrl" class="form-label">Profile Picture</label>
+                                                <input asp-for="ProfilePictureUrl" type="file" class="form-control" />
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label">LinkedIn Headline</label>
-                                                <input type="text" class="form-control" placeholder="Software Engineer | Full Stack Developer">
+                                                <label asp-for="LinkedInHeadline" class="form-label">LinkedIn Headline</label>
+                                                <input asp-for="LinkedInHeadline" type="text" class="form-control" placeholder="Software Engineer | Full Stack Developer" />
                                             </div>
                                             <div class="col-md-12">
-                                                <label class="form-label">About Me / Summary</label>
-                                                <textarea class="form-control" rows="3" placeholder="Brief professional summary"></textarea>
+                                                <label asp-for="Summary" class="form-label">Summary / About Me</label>
+                                                <textarea asp-for="Summary" class="form-control" rows="3" placeholder="Brief professional summary"></textarea>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label asp-for="Objective" class="form-label">Career Objective</label>
+                                                <textarea asp-for="Objective" class="form-control" rows="3" placeholder="Career goals and objectives"></textarea>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
 
                         <!-- Navigation Buttons -->
@@ -255,21 +261,23 @@
 @section Scripts {
     <script>
         let currentStep = 1;
-        const totalSteps = Object.keys(@Html.Raw(Json.Serialize(Enum.GetValues(typeof(CvStep)))))?.length;
         let completedSteps = [];
 
         function updateSidebar() {
             document.querySelectorAll('.cv-steps .step').forEach((s, index) => {
                 const stepNum = index + 1;
+
                 if (completedSteps.includes(stepNum)) {
                     s.classList.add('completed');
                     s.classList.remove('active');
                     s.querySelector('.step-circle').textContent = '✓';
-                } else if (stepNum === currentStep) {
+                }
+                else if (stepNum === currentStep) {
                     s.classList.add('active');
                     s.classList.remove('completed');
                     s.querySelector('.step-circle').textContent = stepNum;
-                } else {
+                }
+                else {
                     s.classList.remove('active', 'completed');
                     s.querySelector('.step-circle').textContent = stepNum;
                 }
@@ -280,94 +288,130 @@
         }
 
         function validateStep(step) {
-            const formSection = document.querySelector(`.step-form[data-step="${step}"]`);
+            const section = document.querySelector(`.step-form[data-step="${step}"]`);
             let valid = true;
-            formSection.querySelectorAll('input[required], select[required], textarea[required]').forEach(input => {
+
+            section.querySelectorAll('[required]').forEach(input => {
                 if (!input.value) {
-                    valid = false;
                     input.classList.add('is-invalid');
+                    valid = false;
                 } else {
                     input.classList.remove('is-invalid');
                 }
             });
+
             return valid;
         }
 
-        function showSavedInfoModal(savedData) {
-            let content = "<ul class='list-group'>";
-            for (const key in savedData) {
-                content += `<li class='list-group-item'><strong>${key}:</strong> ${savedData[key]}</li>`;
+        function buildFormData() {
+
+            const formData = new FormData();
+
+            // ============================
+            // Required Fields
+            // ============================
+            formData.append("FullName", document.querySelector('[name="FullName"]').value);
+            formData.append("ProfessionalTitle", document.querySelector('[name="ProfessionalTitle"]').value);
+            formData.append("DateOfBirth", document.querySelector('[name="DateOfBirth"]').value);
+            formData.append("Gender", document.querySelector('[name="Gender"]').value);
+            formData.append("Email", document.querySelector('[name="Email"]').value);
+            formData.append("PhoneNumber", document.querySelector('[name="PhoneNumber"]').value);
+            formData.append("Country", document.querySelector('[name="Country"]').value);
+            formData.append("City", document.querySelector('[name="City"]').value);
+            formData.append("Address", document.querySelector('[name="Address"]').value);
+
+            // ============================
+            // Optional Fields
+            // ============================
+            formData.append("LinkedIn", document.querySelector('[name="LinkedIn"]')?.value || "");
+            formData.append("GitHub", document.querySelector('[name="GitHub"]')?.value || "");
+            formData.append("Portfolio", document.querySelector('[name="Portfolio"]')?.value || "");
+            formData.append("Website", document.querySelector('[name="Website"]')?.value || "");
+            formData.append("LinkedInHeadline", document.querySelector('[name="LinkedInHeadline"]')?.value || "");
+            formData.append("Summary", document.querySelector('[name="Summary"]')?.value || "");
+            formData.append("Objective", document.querySelector('[name="Objective"]')?.value || "");
+
+            // ============================
+            // Profile Picture Upload
+            // ============================
+            const fileInput = document.querySelector('[type="file"]');
+            if (fileInput && fileInput.files.length > 0) {
+                formData.append("ProfilePicture", fileInput.files[0]);
             }
-            content += "</ul>";
-            document.getElementById("savedInfoContent").innerHTML = content;
-            const modalEl = new bootstrap.Modal(document.getElementById('infoModal'));
-            modalEl.show();
-            setTimeout(() => modalEl.hide(), 5000);
+
+            return formData;
         }
 
-        document.querySelector('.btn-next-step').addEventListener('click', async function (e) {
-            e.preventDefault();
+        async function savePersonalDetail() {
 
             if (!validateStep(currentStep)) {
                 alert("Please complete all required fields.");
                 return;
             }
 
-            let formData = {
-                FullName: document.querySelector('input[name="FullName"]').value,
-                ProfessionalTitle: document.querySelector('input[name="ProfessionalTitle"]').value,
-                DateOfBirth: document.querySelector('input[name="DateOfBirth"]').value,
-                Gender: document.querySelector('select[name="Gender"]').value,
-                Email: document.querySelector('input[name="Email"]')?.value,
-                PhoneNumber: document.querySelector('input[name="PhoneNumber"]')?.value,
-                Country: document.querySelector('input[name="Country"]')?.value,
-                City: document.querySelector('input[name="City"]')?.value,
-                Address: document.querySelector('input[name="Address"]')?.value
-            };
+            const formData = buildFormData();
 
             try {
                 const response = await fetch('/CvBuilder/SavePersonalDetail', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
+                    body: formData
                 });
 
                 const result = await response.json();
 
                 if (!response.ok || !result.success) {
-                    alert(result.message || "Failed to save data!");
+                    alert(result.message || "Failed to save data.");
                     return;
                 }
 
-                showSavedInfoModal(result.data);
+                showSuccessModal(result.data);
 
-                // Redirect to next step (Education)
+                completedSteps.push(currentStep);
+
                 setTimeout(() => {
                     window.location.href = '/CvBuilder/Education';
                 }, 1500);
 
-            } catch (err) {
-                console.error(err);
-                alert("Error saving data!");
-                return;
+            } catch (error) {
+                console.error(error);
+                alert("Something went wrong.");
             }
-        });
+        }
 
-        document.querySelector('.btn-prev-step').addEventListener('click', function (e) {
-            e.preventDefault();
-            if (currentStep > 1) currentStep--;
-            updateSidebar();
-        });
+        function showSuccessModal(savedData) {
 
-        document.querySelectorAll('.cv-steps .step').forEach((stepElem, index) => {
-            stepElem.addEventListener('click', () => {
-                const stepNum = index + 1;
-                if (stepNum <= Math.max(...completedSteps, currentStep)) {
-                    currentStep = stepNum;
-                    updateSidebar();
-                } else alert("Complete previous steps first!");
+            let content = "<ul class='list-group'>";
+
+            for (const key in savedData) {
+                if (savedData[key]) {
+                    content += `<li class='list-group-item'>
+                                    <strong>${key}:</strong> ${savedData[key]}
+                                </li>`;
+                }
+            }
+
+            content += "</ul>";
+
+            document.getElementById("savedInfoContent").innerHTML = content;
+
+            const modal = new bootstrap.Modal(document.getElementById('infoModal'));
+            modal.show();
+
+            setTimeout(() => modal.hide(), 4000);
+        }
+
+        document.querySelector('.btn-next-step')
+            .addEventListener('click', function (e) {
+                e.preventDefault();
+                savePersonalDetail();
             });
-        });
+
+        document.querySelector('.btn-prev-step')
+            .addEventListener('click', function (e) {
+                e.preventDefault();
+                if (currentStep > 1) currentStep--;
+                updateSidebar();
+            });
 
         updateSidebar();
     </script>

@@ -66,7 +66,7 @@ namespace MYCV.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SavePersonalDetail([FromBody] UserPersonalDetailDto model)
+        public async Task<IActionResult> SavePersonalDetail([FromForm] UserPersonalDetailDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -248,7 +248,6 @@ namespace MYCV.Web.Controllers
                 return StatusCode(500, new { Success = false, Message = "Internal server error." });
             }
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Step(int stepNumber)

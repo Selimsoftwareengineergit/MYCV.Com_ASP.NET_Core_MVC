@@ -81,7 +81,7 @@ namespace MYCV.API.Controllers
                 _logger.LogError(ex, "Error saving personal info for user {UserId}", dto.UserId);
                 return StatusCode(500, ApiResponse<UserPersonalDetailDto>.ErrorResponse("Internal server error"));
             }
-        }
+       }
 
         /// <summary>
         /// Get all education records for a user
