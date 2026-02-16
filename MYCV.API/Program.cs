@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MYCV.Application.Configuration;
 using MYCV.Application.Interfaces;
 using MYCV.Application.Services;
 using MYCV.Infrastructure.Data;
@@ -39,10 +40,31 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserPersonalDetailService, UserPersonalDetailService>();
 builder.Services.AddScoped<IUserEducationService, UserEducationService>();
 builder.Services.AddScoped<IUserExperienceService, UserExperienceService>();
+
 // ============================
 // 5️⃣ Configure File Service
 // ============================
-builder.Services.AddScoped<IFileService, FileService>();
+
+builder.Services.Configure<FileStorageSettings>(
+    builder.Configuration.GetSection("FileStorage"));
+
+builder.Services.AddScoped<IFileService>(sp =>
+{
+    var options = sp.GetRequiredService<
+        Microsoft.Extensions.Options.IOptions<FileStorageSettings>>();
+
+    var rootFolder = options.Value.ProfileImagesPath;
+
+    if (string.IsNullOrWhiteSpace(rootFolder))
+        throw new Exception("ProfileImagesPath is not configured in appsettings.json");
+
+    // Ensure folder exists
+    if (!Directory.Exists(rootFolder))
+        Directory.CreateDirectory(rootFolder);
+
+    return new FileService(rootFolder);
+});
+
 
 // ============================
 // 6️⃣ Configure Security Services
@@ -61,7 +83,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowWebApp", policy =>
     {
         policy
-            .WithOrigins("https://localhost:7167")
+            .WithOrigins("https://localhost:7167") // front-end
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -115,4 +137,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
 app.Run();

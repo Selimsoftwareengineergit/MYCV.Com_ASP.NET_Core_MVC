@@ -310,6 +310,7 @@ G:\MYCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\runtimes\win\lib\net
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\appsettings.Development.json
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\appsettings.json
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\EmailTemplates\EmailVerification.html
+G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.API.staticwebassets.runtime.json
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.API.staticwebassets.endpoints.json
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.API.exe
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.API.deps.json

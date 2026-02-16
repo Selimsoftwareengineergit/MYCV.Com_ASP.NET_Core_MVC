@@ -1,5 +1,5 @@
-﻿using MYCV.Application.DTOs;
-using MYCV.Application.Interfaces;
+﻿using MYCV.Application.Interfaces;
+using MYCV.Application.DTOs;
 using MYCV.Domain.Entities;
 using System;
 using System.Threading.Tasks;
@@ -15,28 +15,31 @@ namespace MYCV.Application.Services
             IUserPersonalDetailRepository cvRepository,
             IFileService fileService)
         {
-            _cvRepository = cvRepository;
-            _fileService = fileService;
+            _cvRepository = cvRepository ?? throw new ArgumentNullException(nameof(cvRepository));
+            _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
         }
 
-        /// <summary>
-        /// Save or update user personal CV information
-        /// </summary>
         public async Task<UserPersonalDetailDto> SaveUserPersonalDetailAsync(UserPersonalDetailDto dto)
         {
-            // ✅ Upload profile picture if provided
+            // Fetch existing CV (nullable)
+            var existingCv = await _cvRepository.GetByUserIdAsync(dto.UserId);
+            bool isNew = existingCv is null;
+
+            // =========================
+            // Upload profile picture if provided
+            // =========================
             if (dto.ProfilePicture != null)
             {
-                dto.ProfilePictureUrl =
-                    await _fileService.UploadProfilePictureAsync(dto.ProfilePicture, dto.UserId);
+                dto.ProfilePictureUrl = await _fileService.UploadProfilePictureAsync(
+                    dto.ProfilePicture,
+                    dto.UserId,
+                    isNew);
             }
 
-            var existingCv = await _cvRepository.GetByUserIdAsync(dto.UserId);
-
             // =========================
-            // CREATE
+            // CREATE new CV
             // =========================
-            if (existingCv == null)
+            if (isNew)
             {
                 var newCv = new UserPersonalDetail
                 {
@@ -52,7 +55,7 @@ namespace MYCV.Application.Services
                     Address = dto.Address,
                     ProfilePictureUrl = dto.ProfilePictureUrl,
                     Summary = dto.Summary,
-                    Objective = dto.Objective, // ✅ FIXED
+                    Objective = dto.Objective,
                     LinkedIn = dto.LinkedIn,
                     GitHub = dto.GitHub,
                     Portfolio = dto.Portfolio,
@@ -64,13 +67,13 @@ namespace MYCV.Application.Services
                 };
 
                 await _cvRepository.AddAsync(newCv);
-                return MapToResponseDto(newCv);
+                return MapToDto(newCv);
             }
 
             // =========================
-            // UPDATE
+            // UPDATE existing CV
             // =========================
-            existingCv.FullName = dto.FullName;
+            existingCv!.FullName = dto.FullName;
             existingCv.ProfessionalTitle = dto.ProfessionalTitle;
             existingCv.DateOfBirth = dto.DateOfBirth;
             existingCv.Gender = dto.Gender;
@@ -80,44 +83,36 @@ namespace MYCV.Application.Services
             existingCv.City = dto.City;
             existingCv.Address = dto.Address;
             existingCv.Summary = dto.Summary;
-            existingCv.Objective = dto.Objective; 
+            existingCv.Objective = dto.Objective;
             existingCv.LinkedIn = dto.LinkedIn;
             existingCv.GitHub = dto.GitHub;
             existingCv.Portfolio = dto.Portfolio;
             existingCv.Website = dto.Website;
             existingCv.LinkedInHeadline = dto.LinkedInHeadline;
 
+            // Update profile picture only if a new one was uploaded
             if (!string.IsNullOrEmpty(dto.ProfilePictureUrl))
                 existingCv.ProfilePictureUrl = dto.ProfilePictureUrl;
 
             existingCv.UpdatedDate = DateTime.UtcNow;
 
             await _cvRepository.UpdateAsync(existingCv);
-            return MapToResponseDto(existingCv);
+
+            return MapToDto(existingCv);
         }
 
-        /// <summary>
-        /// Get CV for a user by userId
-        /// </summary>
-        public async Task<UserPersonalDetailDto> GetUserPersonalDetailAsync(int userId)
+        public async Task<UserPersonalDetailDto?> GetUserPersonalDetailAsync(int userId)
         {
             var cv = await _cvRepository.GetByUserIdAsync(userId);
-
-            if (cv == null)
-                return null;
-
-            return MapToResponseDto(cv);
+            return cv is null ? null : MapToDto(cv);
         }
 
-        /// <summary>
-        /// Map Entity to DTO
-        /// </summary>
-        private static UserPersonalDetailDto MapToResponseDto(UserPersonalDetail cv)
+        private static UserPersonalDetailDto MapToDto(UserPersonalDetail cv)
         {
             return new UserPersonalDetailDto
             {
                 Id = cv.Id,
-                UserId = cv.UserId, 
+                UserId = cv.UserId,
                 FullName = cv.FullName,
                 ProfessionalTitle = cv.ProfessionalTitle,
                 DateOfBirth = cv.DateOfBirth,
@@ -129,7 +124,7 @@ namespace MYCV.Application.Services
                 Address = cv.Address,
                 ProfilePictureUrl = cv.ProfilePictureUrl,
                 Summary = cv.Summary,
-                Objective = cv.Objective, 
+                Objective = cv.Objective,
                 LinkedIn = cv.LinkedIn,
                 GitHub = cv.GitHub,
                 Portfolio = cv.Portfolio,

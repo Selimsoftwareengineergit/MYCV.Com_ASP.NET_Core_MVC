@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using MYCV.Application.Interfaces;
+﻿using MYCV.Application.Interfaces;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
 using System.Linq;
@@ -9,11 +9,20 @@ namespace MYCV.Infrastructure.Services
 {
     public class FileService : IFileService
     {
-        private const string BaseFolder = @"C:\MYCV\ProfilePictures";
+        private readonly string _rootFolder;
+
+        public FileService(string rootFolder)
+        {
+            if (string.IsNullOrWhiteSpace(rootFolder))
+                throw new ArgumentNullException(nameof(rootFolder));
+
+            _rootFolder = rootFolder;
+        }
 
         public async Task<string> UploadProfilePictureAsync(
             IFormFile file,
             int userId,
+            bool isNewUser,
             string allowedExtensions = ".jpg,.jpeg,.png",
             int maxFileSizeMB = 2)
         {
@@ -21,9 +30,11 @@ namespace MYCV.Infrastructure.Services
                 throw new ArgumentException("No file uploaded.");
 
             var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-            var allowed = allowedExtensions.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                           .Select(e => e.Trim())
-                                           .ToArray();
+
+            var allowed = allowedExtensions
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(e => e.Trim())
+                .ToArray();
 
             if (!allowed.Contains(extension))
                 throw new ArgumentException($"Invalid file type. Allowed: {allowedExtensions}");
@@ -31,10 +42,27 @@ namespace MYCV.Infrastructure.Services
             if (file.Length > maxFileSizeMB * 1024 * 1024)
                 throw new ArgumentException($"File size cannot exceed {maxFileSizeMB} MB.");
 
-            // Create user folder: C:\MYCV\ProfilePictures\{UserId}\
-            var userFolder = Path.Combine(BaseFolder, userId.ToString());
+            // Final physical folder:
+            // C:\MYCV\PersonalImage\<UserId>
+            var userFolder = Path.Combine(_rootFolder, userId.ToString());
+
+            // If new user → delete full folder
+            if (isNewUser && Directory.Exists(userFolder))
+            {
+                Directory.Delete(userFolder, true);
+            }
+
             if (!Directory.Exists(userFolder))
                 Directory.CreateDirectory(userFolder);
+
+            // If updating existing → delete only files
+            if (!isNewUser && Directory.Exists(userFolder))
+            {
+                foreach (var existingFile in Directory.GetFiles(userFolder))
+                {
+                    File.Delete(existingFile);
+                }
+            }
 
             var fileName = $"{Guid.NewGuid()}{extension}";
             var filePath = Path.Combine(userFolder, fileName);
@@ -42,8 +70,9 @@ namespace MYCV.Infrastructure.Services
             await using var stream = new FileStream(filePath, FileMode.Create);
             await file.CopyToAsync(stream);
 
-            // Return local file path (you can also return a relative URL if needed)
-            return filePath;
+            // IMPORTANT:
+            // Return relative path (store in DB)
+            return $"{userId}/{fileName}";
         }
     }
 }

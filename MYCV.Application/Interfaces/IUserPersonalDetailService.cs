@@ -9,7 +9,7 @@ namespace MYCV.Application.Interfaces
 {
     public interface IUserPersonalDetailService
     {
-        Task<UserPersonalDetailDto> GetUserPersonalDetailAsync(int userId);
+        Task<UserPersonalDetailDto?> GetUserPersonalDetailAsync(int userId);
         Task<UserPersonalDetailDto> SaveUserPersonalDetailAsync(UserPersonalDetailDto dto);
 
     }

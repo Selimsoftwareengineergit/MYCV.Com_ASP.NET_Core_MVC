@@ -1,12 +1,20 @@
 {
   "Version": 1,
-  "Hash": "m7EK2ULgZDDqThPDCfUCefpesJPJDz1e0dvv8YDMTi0=",
+  "Hash": "SDrDwaAsQFxkOg7yynfYe8nPsVKxonwcSn03gcVTak4=",
   "Source": "MYCV.API",
   "BasePath": "_content/MYCV.API",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "MYCV.API\\wwwroot",
+      "Source": "MYCV.API",
+      "ContentRoot": "G:\\60_Projects\\MyCV\\MYCV.Com_ASP.NET_Core_MVC\\MYCV.API\\wwwroot\\",
+      "BasePath": "_content/MYCV.API",
+      "Pattern": "**"
+    }
+  ],
   "Assets": [],
   "Endpoints": []
 }
