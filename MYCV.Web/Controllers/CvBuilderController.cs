@@ -151,7 +151,7 @@ namespace MYCV.Web.Controllers
                     edu.UserId = userId;
                 }
 
-                var result = await _cvApiService.SaveEducationAsync(educationList);
+                var result = await _cvApiService.SaveuserEducationAsync(educationList);
 
                 if (!result.Success)
                 {

@@ -113,7 +113,7 @@ namespace MYCV.API.Controllers
         }
 
         [HttpPost("education")]
-        public async Task<IActionResult> SaveEducation([FromBody] List<UserEducationDto> dtoList)
+        public async Task<IActionResult> SaveUserEducation([FromBody] List<UserEducationDto> dtoList)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ApiResponse<List<UserEducationDto>>.ErrorResponse("Please fill all required fields."));

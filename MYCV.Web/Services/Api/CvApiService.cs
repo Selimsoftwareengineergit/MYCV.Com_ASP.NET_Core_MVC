@@ -182,7 +182,7 @@ namespace MYCV.Web.Services.Api
         /// <summary>
         /// Save multiple user education records
         /// </summary>
-        public async Task<ApiResponse<List<UserEducationDto>>> SaveEducationAsync(List<UserEducationDto> educationList)
+        public async Task<ApiResponse<List<UserEducationDto>>> SaveuserEducationAsync(List<UserEducationDto> educationList)
         {
             try
             {
