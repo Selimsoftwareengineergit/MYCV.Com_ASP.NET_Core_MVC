@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MYCV.API.Extensions;
 using MYCV.Application.DTOs;
 using MYCV.Application.Interfaces;
 using System.Net;
@@ -12,14 +13,14 @@ namespace MYCV.API.Controllers
     public class UserCvController : ControllerBase
     {
         private readonly ILogger<UserCvController> _logger;
-        private readonly IUserPersonalDetailService _cvService;
+        private readonly IUserPersonalDetailService _userPersonalDetail;
         private readonly IUserEducationService _userEducationService;
         private readonly IUserExperienceService _userExperienceService;
-        public UserCvController(ILogger<UserCvController> logger, IUserPersonalDetailService cvService,
+        public UserCvController(ILogger<UserCvController> logger, IUserPersonalDetailService userPersonalDetail,
             IUserEducationService userEducationService, IUserExperienceService userExperienceService)
         {
             _logger = logger;
-            _cvService = cvService;
+            _userPersonalDetail = userPersonalDetail;
             _userEducationService = userEducationService;
             _userExperienceService = userExperienceService;
         }
@@ -36,7 +37,7 @@ namespace MYCV.API.Controllers
             {
                 _logger.LogInformation("Fetching CV for user {UserId}", userId);
 
-                var cv = await _cvService.GetUserPersonalDetailAsync(userId);
+                var cv = await _userPersonalDetail.GetUserPersonalDetailAsync(userId);
                 if (cv == null)
                 {
                     _logger.LogWarning("No CV found for user {UserId}", userId);
@@ -55,33 +56,35 @@ namespace MYCV.API.Controllers
         /// <summary>
         /// Save user CV personal information
         /// </summary>
-        /// <param name="dto">User CV personal info DTO</param>
-        /// <returns>ApiResponse with saved CV data</returns>
         [HttpPost("personal-detail")]
         public async Task<IActionResult> SaveUserPersonalDetail([FromForm] UserPersonalDetailDto dto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ApiResponse<UserPersonalDetailDto>.ErrorResponse("Please fill all required fields."));
+                return BadRequest(ApiResponse<UserPersonalDetailDto>
+                    .ErrorResponse("Please fill all required fields."));
 
             try
             {
-                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
-                                  ?? User.FindFirst("UserId")?.Value;
+                dto.UserId = User.GetUserId();
 
-                if (string.IsNullOrEmpty(userIdClaim))
-                    return Unauthorized(ApiResponse<UserPersonalDetailDto>.ErrorResponse("User not authorized"));
+                var savedCv = await _userPersonalDetail.SaveUserPersonalDetailAsync(dto);
 
-                dto.UserId = int.Parse(userIdClaim);
-                var savedCv = await _cvService.SaveUserPersonalDetailAsync(dto);
-
-                return Ok(ApiResponse<UserPersonalDetailDto>.SuccessResponse(savedCv, "Personal information saved successfully"));
+                return Ok(ApiResponse<UserPersonalDetailDto>
+                    .SuccessResponse(savedCv, "Personal information saved successfully"));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(ApiResponse<UserPersonalDetailDto>
+                    .ErrorResponse("User not authorized"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error saving personal info for user {UserId}", dto.UserId);
-                return StatusCode(500, ApiResponse<UserPersonalDetailDto>.ErrorResponse("Internal server error"));
+                return StatusCode(500,
+                    ApiResponse<UserPersonalDetailDto>
+                        .ErrorResponse("Internal server error"));
             }
-       }
+        }
 
         /// <summary>
         /// Get all education records for a user
@@ -112,39 +115,40 @@ namespace MYCV.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Save user education information
+        /// </summary>
         [HttpPost("education")]
         public async Task<IActionResult> SaveUserEducation([FromBody] List<UserEducationDto> dtoList)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ApiResponse<List<UserEducationDto>>.ErrorResponse("Please fill all required fields."));
+                return BadRequest(ApiResponse<List<UserEducationDto>>
+                    .ErrorResponse("Please fill all required fields."));
 
             try
             {
-                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
-                                  ?? User.FindFirst("UserId")?.Value;
+                int userId = User.GetUserId();
 
-                if (string.IsNullOrEmpty(userIdClaim))
-                    return Unauthorized(ApiResponse<List<UserEducationDto>>.ErrorResponse("User not authorized"));
+                var savedList = await _userEducationService
+                    .SaveUserEducationsAsync(dtoList, userId);
 
-                int userId = int.Parse(userIdClaim);
-
-                var savedList = new List<UserEducationDto>();
-
-                foreach (var dto in dtoList)
-                {
-                    dto.UserId = userId;
-                    var saved = await _userEducationService.SaveUserEducationAsync(dto);
-                    savedList.Add(saved);
-                }
-
-                return Ok(ApiResponse<List<UserEducationDto>>.SuccessResponse(savedList, "Education information saved successfully"));
+                return Ok(ApiResponse<List<UserEducationDto>>
+                    .SuccessResponse(savedList, "Education information saved successfully"));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(ApiResponse<List<UserEducationDto>>
+                    .ErrorResponse("User not authorized"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving education info");
-                return StatusCode(500, ApiResponse<List<UserEducationDto>>.ErrorResponse("Internal server error"));
+                _logger.LogError(ex, "Error saving education info for user {UserId}", User.Identity?.Name);
+                return StatusCode(500,
+                    ApiResponse<List<UserEducationDto>>
+                        .ErrorResponse("Internal server error"));
             }
         }
+
 
         [HttpPost("experience")]
         public async Task<IActionResult> SaveExperience([FromBody] List<UserExperienceDto> dtoList)

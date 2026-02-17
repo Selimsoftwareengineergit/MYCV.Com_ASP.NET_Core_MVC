@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 
 namespace MYCV.Application.Services
 {
-    public class UserEducationService: IUserEducationService
+    public class UserEducationService : IUserEducationService
     {
         private readonly IUserEducationRepository _userEducationRepository;
+
         public UserEducationService(IUserEducationRepository userEducationRepository)
         {
             _userEducationRepository = userEducationRepository;
@@ -24,22 +25,28 @@ namespace MYCV.Application.Services
             if (educations == null || !educations.Any())
                 return new List<UserEducationDto>();
 
-            return educations.Select(e => new UserEducationDto
-            {
-                Id = e.Id,
-                UserId = e.UserId,
-                EducationLevel = e.EducationLevel,
-                ExamName = e.ExamName,
-                BoardOrUniversity = e.BoardOrUniversity,
-                GroupOrMajor = e.GroupOrMajor,
-                Result = e.Result,
-                PassingYear = e.PassingYear,
-                CertificateFile = e.CertificateFile,
-                Remarks = e.Remarks
-            }).ToList();
+            return educations.Select(MapToDto).ToList();
         }
 
-        public async Task<UserEducationDto> SaveUserEducationAsync(UserEducationDto dto)
+        public async Task<List<UserEducationDto>> SaveUserEducationsAsync(
+            List<UserEducationDto> dtoList,
+            int userId)
+        {
+            var result = new List<UserEducationDto>();
+
+            foreach (var dto in dtoList)
+            {
+                dto.UserId = userId;
+
+                var savedEntity = await SaveOrUpdateAsync(dto);
+
+                result.Add(MapToDto(savedEntity));
+            }
+
+            return result;
+        }
+
+        private async Task<UserEducation> SaveOrUpdateAsync(UserEducationDto dto)
         {
             UserEducation? entity = null;
 
@@ -50,7 +57,7 @@ namespace MYCV.Application.Services
             {
                 entity = new UserEducation
                 {
-                    UserId = dto.UserId, 
+                    UserId = dto.UserId,
                     EducationLevel = dto.EducationLevel,
                     ExamName = dto.ExamName,
                     BoardOrUniversity = dto.BoardOrUniversity,
@@ -77,8 +84,24 @@ namespace MYCV.Application.Services
                 await _userEducationRepository.UpdateAsync(entity);
             }
 
-            dto.Id = entity.Id;
-            return dto;
+            return entity;
+        }
+
+        private static UserEducationDto MapToDto(UserEducation entity)
+        {
+            return new UserEducationDto
+            {
+                Id = entity.Id,
+                UserId = entity.UserId,
+                EducationLevel = entity.EducationLevel,
+                ExamName = entity.ExamName,
+                BoardOrUniversity = entity.BoardOrUniversity,
+                GroupOrMajor = entity.GroupOrMajor,
+                Result = entity.Result,
+                PassingYear = entity.PassingYear,
+                CertificateFile = entity.CertificateFile,
+                Remarks = entity.Remarks
+            };
         }
     }
 }

@@ -10,6 +10,9 @@ namespace MYCV.Application.Interfaces
     public interface IUserEducationService
     {
         Task<List<UserEducationDto>> GetUserEducationAsync(int userId);
-        Task<UserEducationDto> SaveUserEducationAsync(UserEducationDto dto);
+
+        Task<List<UserEducationDto>> SaveUserEducationsAsync(
+            List<UserEducationDto> dtoList,
+            int userId);
     }
 }

@@ -11,6 +11,5 @@ namespace MYCV.Application.Interfaces
     {
         Task<UserPersonalDetailDto?> GetUserPersonalDetailAsync(int userId);
         Task<UserPersonalDetailDto> SaveUserPersonalDetailAsync(UserPersonalDetailDto dto);
-
     }
 }
