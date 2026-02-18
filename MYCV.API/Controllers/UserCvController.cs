@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MYCV.API.Extensions;
+using MYCV.Shared.Extensions;
 using MYCV.Application.DTOs;
 using MYCV.Application.Interfaces;
 using System.Net;

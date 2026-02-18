@@ -1802,6 +1802,16 @@
         "runtime": {
           "bin/placeholder/MYCV.Infrastructure.dll": {}
         }
+      },
+      "MYCV.Shared/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MYCV.Shared.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MYCV.Shared.dll": {}
+        }
       }
     }
   },
@@ -4782,6 +4792,11 @@
       "type": "project",
       "path": "../MYCV.Infrastructure/MYCV.Infrastructure.csproj",
       "msbuildProject": "../MYCV.Infrastructure/MYCV.Infrastructure.csproj"
+    },
+    "MYCV.Shared/1.0.0": {
+      "type": "project",
+      "path": "../MYCV.Shared/MYCV.Shared.csproj",
+      "msbuildProject": "../MYCV.Shared/MYCV.Shared.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -4790,6 +4805,7 @@
       "MYCV.Application >= 1.0.0",
       "MYCV.Domain >= 1.0.0",
       "MYCV.Infrastructure >= 1.0.0",
+      "MYCV.Shared >= 1.0.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 8.0.0",
       "Microsoft.EntityFrameworkCore.Design >= 8.0.6",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.6",
@@ -4836,6 +4852,9 @@
             },
             "G:\\60_Projects\\MyCV\\MYCV.Com_ASP.NET_Core_MVC\\MYCV.Infrastructure\\MYCV.Infrastructure.csproj": {
               "projectPath": "G:\\60_Projects\\MyCV\\MYCV.Com_ASP.NET_Core_MVC\\MYCV.Infrastructure\\MYCV.Infrastructure.csproj"
+            },
+            "G:\\60_Projects\\MyCV\\MYCV.Com_ASP.NET_Core_MVC\\MYCV.Shared\\MYCV.Shared.csproj": {
+              "projectPath": "G:\\60_Projects\\MyCV\\MYCV.Com_ASP.NET_Core_MVC\\MYCV.Shared\\MYCV.Shared.csproj"
             }
           }
         }

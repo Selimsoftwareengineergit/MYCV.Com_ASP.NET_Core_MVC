@@ -30,6 +30,7 @@
     <ProjectReference Include="..\MYCV.Application\MYCV.Application.csproj" />
     <ProjectReference Include="..\MYCV.Domain\MYCV.Domain.csproj" />
     <ProjectReference Include="..\MYCV.Infrastructure\MYCV.Infrastructure.csproj" />
+    <ProjectReference Include="..\MYCV.Shared\MYCV.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

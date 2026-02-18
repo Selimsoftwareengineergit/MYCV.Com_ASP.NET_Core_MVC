@@ -7,6 +7,7 @@ using MYCV.Domain.Entities;
 using System.Security.Claims;
 using MYCV.Web.Helpers;
 using MYCV.Domain.Enums;
+using MYCV.Shared.Extensions;
 
 namespace MYCV.Web.Controllers
 {
@@ -76,22 +77,30 @@ namespace MYCV.Web.Controllers
 
             try
             {
-                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-                if (string.IsNullOrEmpty(userIdClaim))
-                    return Unauthorized();
-
-                model.UserId = int.Parse(userIdClaim);
+                model.UserId = User.GetUserId();
 
                 var result = await _cvApiService.SaveUserPersonalDetailAsync(model);
 
                 if (!result.Success)
                 {
-                    _logger.LogWarning("Failed to save personal info for user {UserId}: {Message}", model.UserId, result.Message);
+                    _logger.LogWarning("Failed to save personal info for user {UserId}: {Message}",
+                        model.UserId, result.Message);
+
                     return BadRequest(new { Success = false, Message = result.Message });
                 }
 
                 _logger.LogInformation("Saved personal info successfully for user {UserId}", model.UserId);
-                return Ok(new { Success = true, Data = result.Data, Message = "Personal info saved successfully!" });
+
+                return Ok(new
+                {
+                    Success = true,
+                    Data = result.Data,
+                    Message = "Personal info saved successfully!"
+                });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(new { Success = false, Message = "User not authorized." });
             }
             catch (Exception ex)
             {
@@ -135,16 +144,16 @@ namespace MYCV.Web.Controllers
         {
             if (educationList == null || !educationList.Any())
             {
-                return BadRequest(new { Success = false, Message = "At least one education record is required." });
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "At least one education record is required."
+                });
             }
 
             try
             {
-                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-                if (string.IsNullOrEmpty(userIdClaim))
-                    return Unauthorized(new { Success = false, Message = "User not authorized." });
-
-                var userId = int.Parse(userIdClaim);
+                int userId = User.GetUserId();
 
                 foreach (var edu in educationList)
                 {
@@ -155,17 +164,24 @@ namespace MYCV.Web.Controllers
 
                 if (!result.Success)
                 {
-                    _logger.LogWarning("Failed to save education for user {UserId}: {Message}", userId, result.Message);
+                    _logger.LogWarning("Failed to save education for user {UserId}: {Message}",
+                        userId, result.Message);
+
                     return BadRequest(new { Success = false, Message = result.Message });
                 }
 
                 _logger.LogInformation("Saved education successfully for user {UserId}", userId);
+
                 return Ok(new
                 {
                     Success = true,
                     Data = result.Data,
                     Message = "Education saved successfully!"
                 });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(new { Success = false, Message = "User not authorized." });
             }
             catch (Exception ex)
             {

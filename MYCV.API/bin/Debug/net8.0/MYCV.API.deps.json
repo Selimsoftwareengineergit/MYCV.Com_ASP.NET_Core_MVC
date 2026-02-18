@@ -12,6 +12,7 @@
           "MYCV.Application": "1.0.0",
           "MYCV.Domain": "1.0.0",
           "MYCV.Infrastructure": "1.0.0",
+          "MYCV.Shared": "1.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
           "Microsoft.EntityFrameworkCore.Design": "8.0.6",
           "Microsoft.EntityFrameworkCore.Tools": "8.0.6",
@@ -1064,6 +1065,14 @@
             "fileVersion": "1.0.0.0"
           }
         }
+      },
+      "MYCV.Shared/1.0.0": {
+        "runtime": {
+          "MYCV.Shared.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -1714,6 +1723,11 @@
       "sha512": ""
     },
     "MYCV.Infrastructure/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MYCV.Shared/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

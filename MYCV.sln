@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MYCV.Infrastructure", "MYCV
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MYCV.Web", "MYCV.Web\MYCV.Web.csproj", "{B1FFF54D-3A04-40E3-B274-15B22D86C3DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MYCV.Shared", "MYCV.Shared\MYCV.Shared.csproj", "{0BD03511-EE9C-4CAC-B652-2873E61633F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{B1FFF54D-3A04-40E3-B274-15B22D86C3DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1FFF54D-3A04-40E3-B274-15B22D86C3DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1FFF54D-3A04-40E3-B274-15B22D86C3DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BD03511-EE9C-4CAC-B652-2873E61633F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BD03511-EE9C-4CAC-B652-2873E61633F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BD03511-EE9C-4CAC-B652-2873E61633F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BD03511-EE9C-4CAC-B652-2873E61633F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -31,77 +31,152 @@
                             <span class="badge bg-primary" id="stepBadge">In Progress</span>
                         </div>
 
+                        <!-- Experience Accordion -->
                         <div class="accordion" id="experienceAccordion">
-                            @for (int i = 0; i < Model.Count; i++)
+                            @if (Model != null && Model.Any())
                             {
-                                var exp = Model[i];
+                                for (int i = 0; i < Model.Count; i++)
+                                {
+                                    var exp = Model[i];
+                                    var isFirst = i == 0;
+                                    <div class="accordion-item step-form" data-step="@currentStep">
+                                        <h2 class="accordion-header" id="headingExp@i">
+                                            <button class="accordion-button @(isFirst ? "" : "collapsed")" type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#collapseExp@i"
+                                                    aria-expanded="@(isFirst.ToString().ToLower())"
+                                                    aria-controls="collapseExp@i">
+                                                Experience @(@i + 1)
+                                            </button>
+                                        </h2>
+                                        <div id="collapseExp@i" class="accordion-collapse collapse @(isFirst ? "show" : "")"
+                                             aria-labelledby="headingExp@i">
+                                            <div class="accordion-body">
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Company</label>
+                                                        <input type="text" class="form-control company" value="@exp.Company" required />
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Position</label>
+                                                        <input type="text" class="form-control position" value="@exp.Position" required />
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Department</label>
+                                                        <input type="text" class="form-control department" value="@exp.Department" />
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Location</label>
+                                                        <input type="text" class="form-control location" value="@exp.Location" />
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Employment Type</label>
+                                                        <select class="form-select employmentType" required>
+                                                            <option value="">Select...</option>
+                                                            @foreach (EmploymentType type in Enum.GetValues(typeof(EmploymentType)))
+                                                            {
+                                                                <option value="@type" selected="@(exp.EmploymentType == type)">
+                                                                    @type
+                                                                </option>
+                                                            }
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Start Date</label>
+                                                        <input type="date" class="form-control startDate" value="@exp.StartDate.ToString("yyyy-MM-dd")" required />
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">End Date</label>
+                                                        <input type="date" class="form-control endDate" value="@(exp.EndDate.HasValue ? exp.EndDate.Value.ToString("yyyy-MM-dd") : "")" />
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <label class="form-label">Responsibilities</label>
+                                                        <textarea class="form-control responsibilities" rows="2">@exp.Responsibilities</textarea>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <label class="form-label">Remarks</label>
+                                                        <textarea class="form-control remarks" rows="2">@exp.Remarks</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <!-- Default first experience form -->
                                 <div class="accordion-item step-form" data-step="@currentStep">
-                                    <h2 class="accordion-header" id="headingExp@i">
-                                        <button class="accordion-button collapsed" type="button"
+                                    <h2 class="accordion-header" id="headingExp0">
+                                        <button class="accordion-button" type="button"
                                                 data-bs-toggle="collapse"
-                                                data-bs-target="#collapseExp@i"
-                                                aria-expanded="false"
-                                                aria-controls="collapseExp@i">
-                                            Experience @(@i + 1)
+                                                data-bs-target="#collapseExp0"
+                                                aria-expanded="true"
+                                                aria-controls="collapseExp0">
+                                            Experience 1
                                         </button>
                                     </h2>
-                                    <div id="collapseExp@i" class="accordion-collapse collapse"
-                                         aria-labelledby="headingExp@i">
+                                    <div id="collapseExp0" class="accordion-collapse collapse show"
+                                         aria-labelledby="headingExp0">
                                         <div class="accordion-body">
                                             <div class="row g-3">
                                                 <div class="col-md-6">
                                                     <label class="form-label">Company</label>
-                                                    <input type="text" name="Model[@i].Company" class="form-control"
-                                                           value="@exp.Company" required />
+                                                    <input type="text" class="form-control company" required />
                                                 </div>
+
                                                 <div class="col-md-6">
                                                     <label class="form-label">Position</label>
-                                                    <input type="text" name="Model[@i].Position" class="form-control"
-                                                           value="@exp.Position" required />
+                                                    <input type="text" class="form-control position" required />
                                                 </div>
+
                                                 <div class="col-md-6">
                                                     <label class="form-label">Department</label>
-                                                    <input type="text" name="Model[@i].Department" class="form-control"
-                                                           value="@exp.Department" />
+                                                    <input type="text" class="form-control department" />
                                                 </div>
+
                                                 <div class="col-md-6">
                                                     <label class="form-label">Location</label>
-                                                    <input type="text" name="Model[@i].Location" class="form-control"
-                                                           value="@exp.Location" />
+                                                    <input type="text" class="form-control location" />
                                                 </div>
+
                                                 <div class="col-md-6">
                                                     <label class="form-label">Employment Type</label>
-                                                    <select name="Model[@i].EmploymentType" class="form-select" required>
-                                                        @foreach (EmploymentType type in Enum.GetValues(typeof(EmploymentType)))
-                                                        {
-                                                            if (exp.EmploymentType == type)
-                                                            {
-                                                                <option value="@type" selected>@type</option>
-                                                            }
-                                                            else
-                                                            {
-                                                                <option value="@type">@type</option>
-                                                            }
-                                                        }
+                                                    <select class="form-select employmentType" required>
+                                                        <option value="">Select...</option>
+                                                        <option value="FullTime">FullTime</option>
+                                                        <option value="PartTime">PartTime</option>
+                                                        <option value="Contract">Contract</option>
+                                                        <option value="Internship">Internship</option>
                                                     </select>
                                                 </div>
+
                                                 <div class="col-md-6">
                                                     <label class="form-label">Start Date</label>
-                                                    <input type="date" name="Model[@i].StartDate" class="form-control"
-                                                           value="@exp.StartDate.ToString("yyyy-MM-dd")" required />
+                                                    <input type="date" class="form-control startDate" required />
                                                 </div>
+
                                                 <div class="col-md-6">
                                                     <label class="form-label">End Date</label>
-                                                    <input type="date" name="Model[@i].EndDate" class="form-control"
-                                                           value="@(exp.EndDate.HasValue ? exp.EndDate.Value.ToString("yyyy-MM-dd") : "")" />
+                                                    <input type="date" class="form-control endDate" />
                                                 </div>
+
                                                 <div class="col-md-12">
                                                     <label class="form-label">Responsibilities</label>
-                                                    <textarea name="Model[@i].Responsibilities" class="form-control" rows="2">@exp.Responsibilities</textarea>
+                                                    <textarea class="form-control responsibilities" rows="2"></textarea>
                                                 </div>
+
                                                 <div class="col-md-12">
                                                     <label class="form-label">Remarks</label>
-                                                    <textarea name="Model[@i].Remarks" class="form-control" rows="2">@exp.Remarks</textarea>
+                                                    <textarea class="form-control remarks" rows="2"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -189,87 +264,138 @@
 }
 
 @section Scripts {
-<script>
-    let currentStep = @currentStep;
+    <script>
+        let currentStep = @currentStep;
+        let completedSteps = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(completedSteps));
 
-    // Add new experience dynamically
-    document.querySelector('.btn-add-exp').addEventListener('click', function () {
-        const accordion = document.getElementById('experienceAccordion');
-        const index = accordion.children.length;
-        const newItem = document.createElement('div');
-        newItem.className = 'accordion-item step-form';
-        newItem.dataset.step = currentStep;
-        newItem.innerHTML = `
-            <h2 class="accordion-header" id="headingExp${index}">
-                <button class="accordion-button collapsed" type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseExp${index}"
-                        aria-expanded="false"
-                        aria-controls="collapseExp${index}">
-                    Experience ${index + 1}
-                </button>
-            </h2>
-            <div id="collapseExp${index}" class="accordion-collapse collapse"
-                 aria-labelledby="headingExp${index}">
-                <div class="accordion-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Company</label>
-                            <input type="text" name="Model[${index}].Company" class="form-control" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Position</label>
-                            <input type="text" name="Model[${index}].Position" class="form-control" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Department</label>
-                            <input type="text" name="Model[${index}].Department" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Location</label>
-                            <input type="text" name="Model[${index}].Location" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Employment Type</label>
-                            <select name="Model[${index}].EmploymentType" class="form-select" required>
-                                <option value="">Select...</option>
-                                <option value="FullTime">FullTime</option>
-                                <option value="PartTime">PartTime</option>
-                                <option value="Contract">Contract</option>
-                                <option value="Internship">Internship</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Start Date</label>
-                            <input type="date" name="Model[${index}].StartDate" class="form-control" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">End Date</label>
-                            <input type="date" name="Model[${index}].EndDate" class="form-control" />
-                        </div>
-                        <div class="col-md-12">
-                            <label class="form-label">Responsibilities</label>
-                            <textarea name="Model[${index}].Responsibilities" class="form-control" rows="2"></textarea>
-                        </div>
-                        <div class="col-md-12">
-                            <label class="form-label">Remarks</label>
-                            <textarea name="Model[${index}].Remarks" class="form-control" rows="2"></textarea>
+        function updateSidebar() {
+            document.querySelectorAll('.cv-steps .step').forEach((s, index) => {
+                const stepNum = index + 1;
+                if (completedSteps.includes(stepNum)) {
+                    s.classList.add('completed');
+                    s.classList.remove('active');
+                    s.querySelector('.step-circle').textContent = '✓';
+                } else if (stepNum === currentStep) {
+                    s.classList.add('active');
+                    s.classList.remove('completed');
+                    s.querySelector('.step-circle').textContent = stepNum;
+                } else {
+                    s.classList.remove('active', 'completed');
+                    s.querySelector('.step-circle').textContent = stepNum;
+                }
+            });
+            document.getElementById('currentStepDisplay').textContent = currentStep;
+            document.querySelector('.btn-prev-step').disabled = currentStep === 1;
+        }
+
+        // Add new Experience dynamically
+        document.querySelector('.btn-add-exp').addEventListener('click', function () {
+            const accordion = document.getElementById('experienceAccordion');
+            const index = accordion.children.length;
+            const newItem = document.createElement('div');
+            newItem.className = 'accordion-item step-form';
+            newItem.dataset.step = currentStep;
+            newItem.innerHTML = `
+                <h2 class="accordion-header" id="headingExp${index}">
+                    <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseExp${index}"
+                            aria-expanded="false"
+                            aria-controls="collapseExp${index}">
+                        Experience ${index + 1}
+                    </button>
+                </h2>
+                <div id="collapseExp${index}" class="accordion-collapse collapse"
+                     aria-labelledby="headingExp${index}">
+                    <div class="accordion-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Company</label>
+                                <input type="text" class="form-control company" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Position</label>
+                                <input type="text" class="form-control position" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Department</label>
+                                <input type="text" class="form-control department" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Location</label>
+                                <input type="text" class="form-control location" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Employment Type</label>
+                                <select class="form-select employmentType" required>
+                                    <option value="">Select...</option>
+                                    <option value="FullTime">FullTime</option>
+                                    <option value="PartTime">PartTime</option>
+                                    <option value="Contract">Contract</option>
+                                    <option value="Internship">Internship</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Start Date</label>
+                                <input type="date" class="form-control startDate" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">End Date</label>
+                                <input type="date" class="form-control endDate" />
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Responsibilities</label>
+                                <textarea class="form-control responsibilities" rows="2"></textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Remarks</label>
+                                <textarea class="form-control remarks" rows="2"></textarea>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        `;
-        accordion.appendChild(newItem);
-    });
+                </div>`;
+            accordion.appendChild(newItem);
+        });
 
-    // TODO: Add Save & Continue logic here (POST to controller)
-    document.querySelector('.btn-next-step').addEventListener('click', function () {
-        // Collect data from the accordion and POST via fetch/ajax
-    });
+        // Save Experience and go next
+        document.querySelector('.btn-next-step').addEventListener('click', async function () {
+            const experienceList = [];
+            document.querySelectorAll('#experienceAccordion .accordion-item').forEach(item => {
+                experienceList.push({
+                    Company: item.querySelector('.company')?.value,
+                    Position: item.querySelector('.position')?.value,
+                    Department: item.querySelector('.department')?.value,
+                    Location: item.querySelector('.location')?.value,
+                    EmploymentType: item.querySelector('.employmentType')?.value,
+                    StartDate: item.querySelector('.startDate')?.value,
+                    EndDate: item.querySelector('.endDate')?.value,
+                    Responsibilities: item.querySelector('.responsibilities')?.value,
+                    Remarks: item.querySelector('.remarks')?.value
+                });
+            });
 
-    // Previous Step
-    document.querySelector('.btn-prev-step').addEventListener('click', function () {
-        window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.Education);
-    });
-</script>
+            try {
+                const response = await fetch('/CvBuilder/SaveExperience', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(experienceList)
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    alert(result.message || 'Failed to save experience!');
+                    return;
+                }
+                window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.Skills);
+            } catch (err) {
+                console.error(err);
+                alert('Error saving experience!');
+            }
+        });
+
+        document.querySelector('.btn-prev-step').addEventListener('click', function () {
+            window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.Education);
+        });
+
+        updateSidebar();
+    </script>
 }
