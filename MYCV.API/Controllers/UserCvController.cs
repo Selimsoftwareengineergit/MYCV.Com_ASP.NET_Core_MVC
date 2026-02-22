@@ -149,38 +149,69 @@ namespace MYCV.API.Controllers
             }
         }
 
-
-        [HttpPost("experience")]
-        public async Task<IActionResult> SaveExperience([FromBody] List<UserExperienceDto> dtoList)
+        /// <summary>
+        /// Get all work experience records for a user
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>ApiResponse with user's experience list</returns>
+        [HttpGet("{userId:int}/experience")]
+        public async Task<IActionResult> GetUserExperience(int userId)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ApiResponse<List<UserExperienceDto>>.ErrorResponse("Please fill all required fields."));
-
             try
             {
-                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
-                                  ?? User.FindFirst("UserId")?.Value;
+                _logger.LogInformation("Fetching work experience records for user {UserId}", userId);
 
-                if (string.IsNullOrEmpty(userIdClaim))
-                    return Unauthorized(ApiResponse<List<UserExperienceDto>>.ErrorResponse("User not authorized"));
+                var experienceList = await _userExperienceService.GetUserExperiencesAsync(userId);
 
-                int userId = int.Parse(userIdClaim);
-
-                var savedList = new List<UserExperienceDto>();
-
-                foreach (var dto in dtoList)
+                if (experienceList == null || !experienceList.Any())
                 {
-                    dto.UserId = userId;
-                    var saved = await _userExperienceService.SaveUserExperienceAsync(dto);
-                    savedList.Add(saved);
+                    _logger.LogWarning("No work experience records found for user {UserId}", userId);
+                    return NotFound(ApiResponse<List<UserExperienceDto>>
+                        .ErrorResponse("No work experience records found"));
                 }
 
-                return Ok(ApiResponse<List<UserExperienceDto>>.SuccessResponse(savedList, "Work experience saved successfully"));
+                return Ok(ApiResponse<List<UserExperienceDto>>
+                    .SuccessResponse(experienceList, "Work experience records fetched successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving work experience info");
-                return StatusCode(500, ApiResponse<List<UserExperienceDto>>.ErrorResponse("Internal server error"));
+                _logger.LogError(ex, "Error fetching work experience records for user {UserId}", userId);
+                return StatusCode(500, ApiResponse<List<UserExperienceDto>>
+                    .ErrorResponse("Internal server error"));
+            }
+        }
+
+        /// <summary>
+        /// Save user experience information
+        /// </summary>
+        [HttpPost("experience")]
+        public async Task<IActionResult> SaveUserExperience([FromBody] List<UserExperienceDto> dtoList)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ApiResponse<List<UserExperienceDto>>
+                    .ErrorResponse("Please fill all required fields."));
+
+            try
+            {
+                int userId = User.GetUserId(); 
+
+                var savedList = await _userExperienceService
+                    .SaveUserExperiencesAsync(dtoList, userId); 
+
+                return Ok(ApiResponse<List<UserExperienceDto>>
+                    .SuccessResponse(savedList, "Work experience saved successfully"));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(ApiResponse<List<UserExperienceDto>>
+                    .ErrorResponse("User not authorized"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving experience info for user {UserId}", User.Identity?.Name);
+                return StatusCode(500,
+                    ApiResponse<List<UserExperienceDto>>
+                        .ErrorResponse("Internal server error"));
             }
         }
     }

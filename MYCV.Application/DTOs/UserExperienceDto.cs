@@ -30,7 +30,6 @@ namespace MYCV.Application.DTOs
 
         public string Remarks { get; set; } = string.Empty;
 
-        // Optional fields
         public string? ProjectLink { get; set; }
 
         public int Priority { get; set; } = 1;

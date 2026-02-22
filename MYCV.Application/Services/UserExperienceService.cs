@@ -1,48 +1,61 @@
 ﻿using MYCV.Application.DTOs;
 using MYCV.Application.Interfaces;
 using MYCV.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MYCV.Application.Services
 {
     public class UserExperienceService : IUserExperienceService
     {
         private readonly IUserExperienceRepository _userExperienceRepository;
+
         public UserExperienceService(IUserExperienceRepository userExperienceRepository)
         {
             _userExperienceRepository = userExperienceRepository;
         }
 
-        public async Task<List<UserExperienceDto>> GetUserExperienceAsync(int userId)
+        /// <summary>
+        /// Get all work experience records for a user
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>List of UserExperienceDto</returns>
+        public async Task<List<UserExperienceDto>> GetUserExperiencesAsync(int userId)
         {
             var experiences = await _userExperienceRepository.GetByUserIdAsync(userId);
 
             if (experiences == null || !experiences.Any())
                 return new List<UserExperienceDto>();
 
-            return experiences.Select(e => new UserExperienceDto
-            {
-                Id = e.Id,
-                UserId = e.UserId,
-                Company = e.Company,
-                Position = e.Position,
-                Department = e.Department,
-                Location = e.Location,
-                EmploymentType = e.EmploymentType,
-                StartDate = e.StartDate,
-                EndDate = e.EndDate,
-                Responsibilities = e.Responsibilities,
-                Remarks = e.Remarks,
-                ProjectLink = e.ProjectLink,
-                Priority = e.Priority
-            }).ToList();
+            return experiences.Select(MapToDto).ToList();
         }
 
-        public async Task<UserExperienceDto> SaveUserExperienceAsync(UserExperienceDto dto)
+        /// <summary>
+        /// Save multiple work experience records for a user
+        /// </summary>
+        /// <param name="dtoList">List of UserExperienceDto to save</param>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>Saved list of UserExperienceDto</returns>
+        public async Task<List<UserExperienceDto>> SaveUserExperiencesAsync(
+            List<UserExperienceDto> dtoList,
+            int userId)
+        {
+            var result = new List<UserExperienceDto>();
+
+            foreach (var dto in dtoList)
+            {
+                dto.UserId = userId;
+
+                var savedEntity = await SaveOrUpdateAsync(dto);
+
+                result.Add(MapToDto(savedEntity));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Save or update a single UserExperience entity
+        /// </summary>
+        private async Task<UserExperience> SaveOrUpdateAsync(UserExperienceDto dto)
         {
             UserExperience? entity = null;
 
@@ -86,8 +99,30 @@ namespace MYCV.Application.Services
                 await _userExperienceRepository.UpdateAsync(entity);
             }
 
-            dto.Id = entity.Id;
-            return dto;
+            return entity;
+        }
+
+        /// <summary>
+        /// Map UserExperience entity to DTO
+        /// </summary>
+        private static UserExperienceDto MapToDto(UserExperience entity)
+        {
+            return new UserExperienceDto
+            {
+                Id = entity.Id,
+                UserId = entity.UserId,
+                Company = entity.Company,
+                Position = entity.Position,
+                Department = entity.Department,
+                Location = entity.Location,
+                EmploymentType = entity.EmploymentType,
+                StartDate = entity.StartDate,
+                EndDate = entity.EndDate,
+                Responsibilities = entity.Responsibilities,
+                Remarks = entity.Remarks,
+                ProjectLink = entity.ProjectLink,
+                Priority = entity.Priority
+            };
         }
     }
 }

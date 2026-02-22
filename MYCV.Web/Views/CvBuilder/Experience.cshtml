@@ -359,20 +359,28 @@
 
         // Save Experience and go next
         document.querySelector('.btn-next-step').addEventListener('click', async function () {
-            const experienceList = [];
-            document.querySelectorAll('#experienceAccordion .accordion-item').forEach(item => {
-                experienceList.push({
-                    Company: item.querySelector('.company')?.value,
-                    Position: item.querySelector('.position')?.value,
-                    Department: item.querySelector('.department')?.value,
-                    Location: item.querySelector('.location')?.value,
-                    EmploymentType: item.querySelector('.employmentType')?.value,
-                    StartDate: item.querySelector('.startDate')?.value,
-                    EndDate: item.querySelector('.endDate')?.value,
-                    Responsibilities: item.querySelector('.responsibilities')?.value,
-                    Remarks: item.querySelector('.remarks')?.value
-                });
+        const experienceList = [];
+
+        document.querySelectorAll('#experienceAccordion .accordion-item').forEach((item, index) => {
+            experienceList.push({
+                Id: 0,
+                Company: item.querySelector('.company')?.value || "",
+                Position: item.querySelector('.position')?.value || "",
+                Department: item.querySelector('.department')?.value || "",
+                Location: item.querySelector('.location')?.value || "",
+                EmploymentType: item.querySelector('.employmentType')?.value || "FullTime",
+                StartDate: item.querySelector('.startDate')?.value
+                    ? new Date(item.querySelector('.startDate').value).toISOString()
+                    : null,
+                EndDate: item.querySelector('.endDate')?.value
+                    ? new Date(item.querySelector('.endDate').value).toISOString()
+                    : null,
+                Responsibilities: item.querySelector('.responsibilities')?.value || "",
+                Remarks: item.querySelector('.remarks')?.value || "",
+                ProjectLink: null,
+                Priority: index + 1
             });
+        });
 
             try {
                 const response = await fetch('/CvBuilder/SaveExperience', {

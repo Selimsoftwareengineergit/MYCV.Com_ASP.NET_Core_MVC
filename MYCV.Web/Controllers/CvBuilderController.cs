@@ -201,7 +201,6 @@ namespace MYCV.Web.Controllers
 
                 var userId = int.Parse(userIdClaim);
 
-                // Get existing experiences
                 var response = await _cvApiService.GetUserExperiencesAsync(userId);
 
                 if (!response.Success)

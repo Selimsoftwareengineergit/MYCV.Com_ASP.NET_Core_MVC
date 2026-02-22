@@ -9,7 +9,19 @@ namespace MYCV.Application.Interfaces
 {
     public interface IUserExperienceService
     {
-        Task<List<UserExperienceDto>> GetUserExperienceAsync(int userId);
-        Task<UserExperienceDto> SaveUserExperienceAsync(UserExperienceDto dto);
+        /// <summary>
+        /// Get all work experience records for a user
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>List of UserExperienceDto</returns>
+        Task<List<UserExperienceDto>> GetUserExperiencesAsync(int userId);
+
+        /// <summary>
+        /// Save multiple work experience records for a user
+        /// </summary>
+        /// <param name="dtoList">List of UserExperienceDto to save</param>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>Saved list of UserExperienceDto</returns>
+        Task<List<UserExperienceDto>> SaveUserExperiencesAsync(List<UserExperienceDto> dtoList, int userId);
     }
 }

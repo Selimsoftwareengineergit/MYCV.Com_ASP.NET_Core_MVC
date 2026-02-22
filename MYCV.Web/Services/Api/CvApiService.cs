@@ -260,7 +260,6 @@ namespace MYCV.Web.Services.Api
             {
                 _logger.LogInformation("Saving user experiences. Count: {Count}", experienceList.Count);
 
-                // POST to API endpoint for saving experiences
                 var response = await _httpClient.PostAsJsonAsync("api/cv/experience", experienceList);
 
                 if (!response.IsSuccessStatusCode)
