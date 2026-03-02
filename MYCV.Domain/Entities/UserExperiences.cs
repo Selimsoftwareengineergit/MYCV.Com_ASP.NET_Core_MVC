@@ -1,11 +1,6 @@
-﻿using MYCV.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MYCV.Domain.Enums;
 
 namespace MYCV.Domain.Entities
 {
@@ -29,8 +24,8 @@ namespace MYCV.Domain.Entities
         [MaxLength(150)]
         public string Location { get; set; } = string.Empty;
 
-        [Required]
-        public EmploymentType EmploymentType { get; set; } = EmploymentType.FullTime;
+        [Required, MaxLength(50)]
+        public string EmploymentType { get; set; } = string.Empty; 
 
         [Required]
         public DateTime StartDate { get; set; }
@@ -43,12 +38,11 @@ namespace MYCV.Domain.Entities
         [MaxLength(250)]
         public string Remarks { get; set; } = string.Empty;
 
-        // Optional fields for professional design
         [MaxLength(250)]
-        public string? ProjectLink { get; set; } 
+        public string? ProjectLink { get; set; }
 
-        public bool IsCurrentJob => EndDate == null; 
+        public bool IsCurrentJob => EndDate == null;
 
-        public int Priority { get; set; } = 1; 
+        public int Priority { get; set; } = 1;
     }
 }

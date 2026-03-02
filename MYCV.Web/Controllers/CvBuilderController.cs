@@ -225,16 +225,16 @@ namespace MYCV.Web.Controllers
         {
             if (experienceList == null || !experienceList.Any())
             {
-                return BadRequest(new { Success = false, Message = "At least one experience record is required." });
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "At least one experience record is required."
+                });
             }
 
             try
             {
-                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-                if (string.IsNullOrEmpty(userIdClaim))
-                    return Unauthorized(new { Success = false, Message = "User not authorized." });
-
-                var userId = int.Parse(userIdClaim);
+                int userId = User.GetUserId();
 
                 foreach (var exp in experienceList)
                 {
@@ -245,17 +245,24 @@ namespace MYCV.Web.Controllers
 
                 if (!result.Success)
                 {
-                    _logger.LogWarning("Failed to save experiences for user {UserId}: {Message}", userId, result.Message);
+                    _logger.LogWarning("Failed to save experiences for user {UserId}: {Message}",
+                        userId, result.Message);
+
                     return BadRequest(new { Success = false, Message = result.Message });
                 }
 
                 _logger.LogInformation("Saved experiences successfully for user {UserId}", userId);
+
                 return Ok(new
                 {
                     Success = true,
                     Data = result.Data,
                     Message = "Work experience saved successfully!"
                 });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(new { Success = false, Message = "User not authorized." });
             }
             catch (Exception ex)
             {
