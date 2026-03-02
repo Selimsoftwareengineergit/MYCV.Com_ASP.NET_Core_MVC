@@ -45,6 +45,10 @@ namespace MYCV.Web.Controllers
                 var experienceResponse = await _cvApiService.GetUserExperiencesAsync(userId);
                 bool step3Completed = experienceResponse.Success && experienceResponse.Data != null && experienceResponse.Data.Any();
 
+                // Step 4: Skill
+                var skillResponse = await _cvApiService.GetUserExperiencesAsync(userId);
+                bool step3Completed = experienceResponse.Success && experienceResponse.Data != null && experienceResponse.Data.Any();
+
                 // 🔐 Step lock rules
                 if (!step1Completed)
                     return View("Index"); // Step 1 not done, stay on personal info

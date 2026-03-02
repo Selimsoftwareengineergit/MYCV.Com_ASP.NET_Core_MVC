@@ -286,5 +286,41 @@ namespace MYCV.Web.Services.Api
                 return ApiResponse<List<UserExperienceDto>>.ErrorResponse("Network or API error");
             }
         }
+
+        /// <summary>
+        /// Get User Skill by userId
+        /// </summary>
+        public async Task<ApiResponse<List<UserExperienceDto>>> GetUserSkillAsync(int userId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching skill records for user {UserId}", userId);
+
+                var response = await _httpClient.GetAsync($"api/cv/{userId}/skill");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning("GetUserExperiencesAsync failed for user {UserId}: {Error}", userId, error);
+                    return ApiResponse<List<UserExperienceDto>>.ErrorResponse(error);
+                }
+
+                var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<UserExperienceDto>>>();
+
+                if (result == null)
+                {
+                    _logger.LogWarning("GetUserExperiencesAsync returned null for user {UserId}", userId);
+                    return ApiResponse<List<UserExperienceDto>>.ErrorResponse("Invalid response from API");
+                }
+
+                _logger.LogInformation("Successfully fetched work experience records for user {UserId}", userId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception in GetUserExperiencesAsync for user {UserId}", userId);
+                return ApiResponse<List<UserExperienceDto>>.ErrorResponse("Network or API error");
+            }
+        }
     }
 }

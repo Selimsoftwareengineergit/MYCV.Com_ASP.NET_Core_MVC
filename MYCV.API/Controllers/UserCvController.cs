@@ -214,5 +214,37 @@ namespace MYCV.API.Controllers
                         .ErrorResponse("Internal server error"));
             }
         }
+
+        /// <summary>
+        /// Get all skills records for a user
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>ApiResponse with user's skill list</returns>
+        [HttpGet("{userId:int}/skill")]
+        public async Task<IActionResult> GetUserSkill(int userId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching work experience records for user {UserId}", userId);
+
+                var experienceList = await _userExperienceService.GetUserExperiencesAsync(userId);
+
+                if (experienceList == null || !experienceList.Any())
+                {
+                    _logger.LogWarning("No work experience records found for user {UserId}", userId);
+                    return NotFound(ApiResponse<List<UserExperienceDto>>
+                        .ErrorResponse("No work experience records found"));
+                }
+
+                return Ok(ApiResponse<List<UserExperienceDto>>
+                    .SuccessResponse(experienceList, "Work experience records fetched successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching work experience records for user {UserId}", userId);
+                return StatusCode(500, ApiResponse<List<UserExperienceDto>>
+                    .ErrorResponse("Internal server error"));
+            }
+        }
     }
 }
