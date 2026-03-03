@@ -1,33 +1,35 @@
 ﻿using MYCV.Application.Interfaces;
 using MYCV.Application.DTOs;
 using MYCV.Domain.Entities;
-using System;
-using System.Threading.Tasks;
 
 namespace MYCV.Application.Services
 {
     public class UserPersonalDetailService : IUserPersonalDetailService
     {
-        private readonly IUserPersonalDetailRepository _cvRepository;
+        private readonly IUserPersonalDetailRepository _personalDetailRepository;
         private readonly IFileService _fileService;
 
         public UserPersonalDetailService(
             IUserPersonalDetailRepository cvRepository,
             IFileService fileService)
         {
-            _cvRepository = cvRepository ?? throw new ArgumentNullException(nameof(cvRepository));
+            _personalDetailRepository = cvRepository ?? throw new ArgumentNullException(nameof(cvRepository));
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
+        }
+
+        public async Task<UserPersonalDetailDto?> GetUserPersonalDetailAsync(int userId)
+        {
+            var personalDetail = await _personalDetailRepository.GetByUserIdAsync(userId);
+            return personalDetail is null ? null : MapToDto(personalDetail);
         }
 
         public async Task<UserPersonalDetailDto> SaveUserPersonalDetailAsync(UserPersonalDetailDto dto)
         {
-            // Fetch existing CV (nullable)
-            var existingCv = await _cvRepository.GetByUserIdAsync(dto.UserId);
-            bool isNew = existingCv is null;
+            // Fetch existing personal detail
+            var existingPersonalDetail = await _personalDetailRepository.GetByUserIdAsync(dto.UserId);
+            bool isNew = existingPersonalDetail is null;
 
-            // =========================
             // Upload profile picture if provided
-            // =========================
             if (dto.ProfilePicture != null)
             {
                 dto.ProfilePictureUrl = await _fileService.UploadProfilePictureAsync(
@@ -36,12 +38,10 @@ namespace MYCV.Application.Services
                     isNew);
             }
 
-            // =========================
-            // CREATE new CV
-            // =========================
+            // Create new personal detail
             if (isNew)
             {
-                var newCv = new UserPersonalDetail
+                var newPersonalDetail = new UserPersonalDetail
                 {
                     UserId = dto.UserId,
                     FullName = dto.FullName,
@@ -66,70 +66,61 @@ namespace MYCV.Application.Services
                     CreatedDate = DateTime.UtcNow
                 };
 
-                await _cvRepository.AddAsync(newCv);
-                return MapToDto(newCv);
+                await _personalDetailRepository.AddAsync(newPersonalDetail);
+                return MapToDto(newPersonalDetail);
             }
 
-            // =========================
-            // UPDATE existing CV
-            // =========================
-            existingCv!.FullName = dto.FullName;
-            existingCv.ProfessionalTitle = dto.ProfessionalTitle;
-            existingCv.DateOfBirth = dto.DateOfBirth;
-            existingCv.Gender = dto.Gender;
-            existingCv.Email = dto.Email;
-            existingCv.PhoneNumber = dto.PhoneNumber;
-            existingCv.Country = dto.Country;
-            existingCv.City = dto.City;
-            existingCv.Address = dto.Address;
-            existingCv.Summary = dto.Summary;
-            existingCv.Objective = dto.Objective;
-            existingCv.LinkedIn = dto.LinkedIn;
-            existingCv.GitHub = dto.GitHub;
-            existingCv.Portfolio = dto.Portfolio;
-            existingCv.Website = dto.Website;
-            existingCv.LinkedInHeadline = dto.LinkedInHeadline;
+            // Update existing personal detail
+            existingPersonalDetail!.FullName = dto.FullName;
+            existingPersonalDetail.ProfessionalTitle = dto.ProfessionalTitle;
+            existingPersonalDetail.DateOfBirth = dto.DateOfBirth;
+            existingPersonalDetail.Gender = dto.Gender;
+            existingPersonalDetail.Email = dto.Email;
+            existingPersonalDetail.PhoneNumber = dto.PhoneNumber;
+            existingPersonalDetail.Country = dto.Country;
+            existingPersonalDetail.City = dto.City;
+            existingPersonalDetail.Address = dto.Address;
+            existingPersonalDetail.Summary = dto.Summary;
+            existingPersonalDetail.Objective = dto.Objective;
+            existingPersonalDetail.LinkedIn = dto.LinkedIn;
+            existingPersonalDetail.GitHub = dto.GitHub;
+            existingPersonalDetail.Portfolio = dto.Portfolio;
+            existingPersonalDetail.Website = dto.Website;
+            existingPersonalDetail.LinkedInHeadline = dto.LinkedInHeadline;
 
-            // Update profile picture only if a new one was uploaded
             if (!string.IsNullOrEmpty(dto.ProfilePictureUrl))
-                existingCv.ProfilePictureUrl = dto.ProfilePictureUrl;
+                existingPersonalDetail.ProfilePictureUrl = dto.ProfilePictureUrl;
 
-            existingCv.UpdatedDate = DateTime.UtcNow;
+            existingPersonalDetail.UpdatedDate = DateTime.UtcNow;
 
-            await _cvRepository.UpdateAsync(existingCv);
+            await _personalDetailRepository.UpdateAsync(existingPersonalDetail);
 
-            return MapToDto(existingCv);
+            return MapToDto(existingPersonalDetail);
         }
 
-        public async Task<UserPersonalDetailDto?> GetUserPersonalDetailAsync(int userId)
-        {
-            var cv = await _cvRepository.GetByUserIdAsync(userId);
-            return cv is null ? null : MapToDto(cv);
-        }
-
-        private static UserPersonalDetailDto MapToDto(UserPersonalDetail cv)
+        private static UserPersonalDetailDto MapToDto(UserPersonalDetail personalDetail)
         {
             return new UserPersonalDetailDto
             {
-                Id = cv.Id,
-                UserId = cv.UserId,
-                FullName = cv.FullName,
-                ProfessionalTitle = cv.ProfessionalTitle,
-                DateOfBirth = cv.DateOfBirth,
-                Gender = cv.Gender,
-                Email = cv.Email,
-                PhoneNumber = cv.PhoneNumber,
-                Country = cv.Country,
-                City = cv.City,
-                Address = cv.Address,
-                ProfilePictureUrl = cv.ProfilePictureUrl,
-                Summary = cv.Summary,
-                Objective = cv.Objective,
-                LinkedIn = cv.LinkedIn,
-                GitHub = cv.GitHub,
-                Portfolio = cv.Portfolio,
-                Website = cv.Website,
-                LinkedInHeadline = cv.LinkedInHeadline
+                Id = personalDetail.Id,
+                UserId = personalDetail.UserId,
+                FullName = personalDetail.FullName,
+                ProfessionalTitle = personalDetail.ProfessionalTitle,
+                DateOfBirth = personalDetail.DateOfBirth, 
+                Gender = personalDetail.Gender,
+                Email = personalDetail.Email,
+                PhoneNumber = personalDetail.PhoneNumber,
+                Country = personalDetail.Country,
+                City = personalDetail.City,
+                Address = personalDetail.Address,
+                ProfilePictureUrl = personalDetail.ProfilePictureUrl,
+                Summary = personalDetail.Summary,
+                Objective = personalDetail.Objective,
+                LinkedIn = personalDetail.LinkedIn,
+                GitHub = personalDetail.GitHub,
+                Portfolio = personalDetail.Portfolio,
+                Website = personalDetail.Website,
+                LinkedInHeadline = personalDetail.LinkedInHeadline
             };
         }
     }

@@ -17,7 +17,7 @@ namespace MYCV.Application.DTOs
         // Personal Information
         public string FullName { get; set; } = null!;
         public string ProfessionalTitle { get; set; } = null!;
-        public DateOnly DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
         public string? Gender { get; set; }
 
         // Contact Information

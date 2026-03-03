@@ -10,6 +10,7 @@ namespace MYCV.Web.Services.Api
         Task<ApiResponse<List<UserEducationDto>>> SaveuserEducationAsync(List<UserEducationDto> educationList);
         Task<ApiResponse<List<UserExperienceDto>>> GetUserExperiencesAsync(int userId);
         Task<ApiResponse<List<UserExperienceDto>>> SaveUserExperiencesAsync(List<UserExperienceDto> experienceList);
-        Task<ApiResponse<List<UserExperienceDto>>> GetUserSkillAsync(int userId);
+        Task<ApiResponse<List<UserSkillDto>>> GetUserSkillAsync(int userId);
+        Task<ApiResponse<List<UserSkillDto>>> SaveUserSkillAsync(List<UserSkillDto> skillList);
     }
 }

@@ -440,9 +440,11 @@ G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\runtimes
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.Application.dll
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.Domain.dll
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.Infrastructure.dll
+G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.Shared.dll
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.Application.pdb
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.Domain.pdb
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.Infrastructure.pdb
+G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.Shared.pdb
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.csproj.AssemblyReference.cache
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.GeneratedMSBuildEditorConfig.editorconfig
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.AssemblyInfoInputs.cache
@@ -468,5 +470,3 @@ G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\refint\M
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.pdb
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.genruntimeconfig.cache
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\ref\MYCV.API.dll
-G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.Shared.dll
-G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.Shared.pdb

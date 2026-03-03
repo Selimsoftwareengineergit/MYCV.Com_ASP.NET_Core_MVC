@@ -16,39 +16,41 @@ namespace MYCV.API.Controllers
         private readonly IUserPersonalDetailService _userPersonalDetail;
         private readonly IUserEducationService _userEducationService;
         private readonly IUserExperienceService _userExperienceService;
+        private readonly IUserSkillService _userSkillService;
         public UserCvController(ILogger<UserCvController> logger, IUserPersonalDetailService userPersonalDetail,
-            IUserEducationService userEducationService, IUserExperienceService userExperienceService)
+            IUserEducationService userEducationService, IUserExperienceService userExperienceService, IUserSkillService userSkillService)
         {
             _logger = logger;
             _userPersonalDetail = userPersonalDetail;
             _userEducationService = userEducationService;
             _userExperienceService = userExperienceService;
+            _userSkillService = userSkillService;
         }
 
         /// <summary>
-        /// Get CV for a user by userId (int)
+        /// Get personal detail for a user by userId (int)
         /// </summary>
         /// <param name="userId">The ID of the user</param>
-        /// <returns>ApiResponse with user's personal CV info</returns>
-        [HttpGet("{userId:int}")]
+        /// <returns>ApiResponse with user's personal detail</returns>
+        [HttpGet("{userId:int}/personalDetail")]
         public async Task<IActionResult> GetUserPersonalDetail(int userId)
         {
             try
             {
-                _logger.LogInformation("Fetching CV for user {UserId}", userId);
+                _logger.LogInformation("Fetching personal detail for user {UserId}", userId);
 
-                var cv = await _userPersonalDetail.GetUserPersonalDetailAsync(userId);
-                if (cv == null)
+                var personalDetail = await _userPersonalDetail.GetUserPersonalDetailAsync(userId);
+                if (personalDetail == null)
                 {
-                    _logger.LogWarning("No CV found for user {UserId}", userId);
-                    return NotFound(ApiResponse<UserPersonalDetailDto>.ErrorResponse("CV not found"));
+                    _logger.LogWarning("No personal detail found for user {UserId}", userId);
+                    return NotFound(ApiResponse<UserPersonalDetailDto>.ErrorResponse("Personal detail not found"));
                 }
 
-                return Ok(ApiResponse<UserPersonalDetailDto>.SuccessResponse(cv, "CV fetched successfully"));
+                return Ok(ApiResponse<UserPersonalDetailDto>.SuccessResponse(personalDetail, "Personal detail fetched successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching CV for user {UserId}", userId);
+                _logger.LogError(ex, "Error fetching personal detail for user {UserId}", userId);
                 return StatusCode(500, ApiResponse<UserPersonalDetailDto>.ErrorResponse("Internal server error"));
             }
         }
@@ -225,25 +227,59 @@ namespace MYCV.API.Controllers
         {
             try
             {
-                _logger.LogInformation("Fetching work experience records for user {UserId}", userId);
+                _logger.LogInformation("Fetching user skill records for user {UserId}", userId);
 
-                var experienceList = await _userExperienceService.GetUserExperiencesAsync(userId);
+                var skillList = await _userSkillService.GetUserSkillAsync(userId);
 
-                if (experienceList == null || !experienceList.Any())
+                if (skillList == null || !skillList.Any())
                 {
-                    _logger.LogWarning("No work experience records found for user {UserId}", userId);
-                    return NotFound(ApiResponse<List<UserExperienceDto>>
-                        .ErrorResponse("No work experience records found"));
+                    _logger.LogWarning("No skill records found for user {UserId}", userId);
+                    return NotFound(ApiResponse<List<UserSkillDto>>
+                        .ErrorResponse("No skill records found"));
                 }
 
-                return Ok(ApiResponse<List<UserExperienceDto>>
-                    .SuccessResponse(experienceList, "Work experience records fetched successfully"));
+                return Ok(ApiResponse<List<UserSkillDto>>
+                    .SuccessResponse(skillList, "Skill records fetched successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching work experience records for user {UserId}", userId);
-                return StatusCode(500, ApiResponse<List<UserExperienceDto>>
+                _logger.LogError(ex, "Error fetching skill records for user {UserId}", userId);
+                return StatusCode(500, ApiResponse<List<UserSkillDto>>
                     .ErrorResponse("Internal server error"));
+            }
+        }
+
+        /// <summary>
+        /// Save user skill information
+        /// </summary>
+        [HttpPost("skill")]
+        public async Task<IActionResult> SaveUserSkill([FromBody] List<UserSkillDto> dtoList)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ApiResponse<List<UserSkillDto>>
+                    .ErrorResponse("Please fill all required fields."));
+
+            try
+            {
+                int userId = User.GetUserId();
+
+                var savedList = await _userSkillService
+                    .SaveUserSkillAsync(dtoList, userId);
+
+                return Ok(ApiResponse<List<UserSkillDto>>
+                    .SuccessResponse(savedList, "Skill saved successfully"));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(ApiResponse<List<UserSkillDto>>
+                    .ErrorResponse("User not authorized"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving skill info for user {UserId}", User.Identity?.Name);
+                return StatusCode(500,
+                    ApiResponse<List<UserSkillDto>>
+                        .ErrorResponse("Internal server error"));
             }
         }
     }

@@ -1,0 +1,332 @@
+﻿@using MYCV.Domain.Enums
+@model List<MYCV.Application.DTOs.UserSkillDto>
+
+@{
+    ViewData["Title"] = "Skills";
+    var currentStep = (int)CvStep.Skills;
+    var completedSteps = new List<int>
+    {
+        (int)CvStep.PersonalInformation,
+        (int)CvStep.Education,
+        (int)CvStep.WorkExperience
+    };
+}
+
+<section class="py-5 bg-light">
+    <div class="container">
+
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col text-center">
+                <h2 class="fw-bold">Skills</h2>
+                <p class="text-muted">Add your professional and technical skills</p>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <!-- Sidebar Step Navigation -->
+            <div class="col-lg-4 mb-4">
+                @await Component.InvokeAsync("CvStepNavigation", new
+                    {
+                        currentStep = currentStep,
+                        completedSteps = completedSteps
+                    })
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-8" style="max-height: 80vh; overflow-y: auto;">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="fw-semibold mb-0">Step <span>@currentStep</span></h4>
+                            <span class="badge bg-primary">In Progress</span>
+                        </div>
+
+                        <div class="accordion" id="skillAccordion">
+
+                            @if (Model != null && Model.Any())
+                            {
+                                for (int i = 0; i < Model.Count; i++)
+                                {
+                                    var skill = Model[i];
+
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingSkill@i">
+                                            <button class="accordion-button collapsed"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#collapseSkill@i">
+                                                Skill @(i + 1) - @(string.IsNullOrEmpty(skill.SkillName) ? "New" : skill.SkillName)
+                                            </button>
+                                        </h2>
+
+                                        <div id="collapseSkill@i"
+                                             class="accordion-collapse collapse"
+                                             data-bs-parent="#skillAccordion">
+                                            <div class="accordion-body">
+                                                @Html.Partial("_SkillFormFields", skill)
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#collapseSkill0">
+                                            Skill 1
+                                        </button>
+                                    </h2>
+
+                                    <div id="collapseSkill0"
+                                         class="accordion-collapse collapse show">
+                                        <div class="accordion-body">
+
+                                            <div class="row g-3">
+
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Skill Name</label>
+                                                    <input type="text" class="form-control skillName" required />
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Level</label>
+                                                    <select class="form-select level" required>
+                                                        <option value="">Select...</option>
+                                                        @foreach (var level in Enum.GetNames(typeof(SkillLevel)))
+                                                        {
+                                                            <option value="@level">@level</option>
+                                                        }
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Skill Type</label>
+                                                    <select class="form-select skillType" required>
+                                                        <option value="">Select...</option>
+                                                        @foreach (var type in Enum.GetNames(typeof(SkillType)))
+                                                        {
+                                                            <option value="@type">@type</option>
+                                                        }
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Years of Experience</label>
+                                                    <input type="number" step="0.1" class="form-control years" />
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Proficiency (%)</label>
+                                                    <input type="number" class="form-control proficiency" min="0" max="100" />
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Additional Notes</label>
+                                                    <textarea class="form-control remarks" rows="2"></textarea>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-outline-secondary btn-prev-step">
+                                ← Previous
+                            </button>
+
+                            <button type="button" class="btn btn-success btn-add-skill">
+                                + Add Skill
+                            </button>
+
+                            <button type="button" class="btn btn-primary btn-next-step">
+                                Save & Continue →
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Styles {
+    <style>
+        .cv-steps {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .cv-steps .step {
+                display: flex;
+                align-items: center;
+                position: relative;
+                padding: 12px 0;
+                color: #6c757d;
+                font-weight: 500;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+                .cv-steps .step .step-circle {
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    border: 2px solid #dee2e6;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-right: 12px;
+                    font-size: 14px;
+                    transition: 0.3s;
+                }
+
+                .cv-steps .step.active {
+                    color: #0d6efd;
+                    font-weight: 600;
+                }
+
+                    .cv-steps .step.active .step-circle {
+                        border-color: #0d6efd;
+                        background-color: #0d6efd;
+                        color: #fff;
+                    }
+
+                .cv-steps .step.completed {
+                    color: #198754;
+                }
+
+                    .cv-steps .step.completed .step-circle {
+                        border-color: #198754;
+                        background-color: #198754;
+                        color: #fff;
+                    }
+
+                .cv-steps .step:not(:last-child)::after {
+                    content: '';
+                    position: absolute;
+                    left: 14px;
+                    top: 42px;
+                    height: 100%;
+                    width: 2px;
+                    background-color: #e9ecef;
+                }
+    </style>
+}
+
+@section Scripts {
+    <script>
+
+        // Add new skill
+        document.querySelector('.btn-add-skill').addEventListener('click', function () {
+            const accordion = document.getElementById('skillAccordion');
+            const index = accordion.children.length;
+
+            const newItem = document.createElement('div');
+            newItem.className = 'accordion-item';
+
+            newItem.innerHTML = `
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseSkill${index}">
+                        Skill ${index + 1}
+                    </button>
+                </h2>
+                <div id="collapseSkill${index}" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Skill Name</label>
+                                <input type="text" class="form-control skillName" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Level</label>
+                                <select class="form-select level" required>
+                                    <option value="">Select...</option>
+                                    <option>Beginner</option>
+                                    <option>Intermediate</option>
+                                    <option>Expert</option>
+                                    <option>Master</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Skill Type</label>
+                                <select class="form-select skillType" required>
+                                    <option value="">Select...</option>
+                                    <option>Technical</option>
+                                    <option>Soft</option>
+                                    <option>Language</option>
+                                    <option>Tool</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Years</label>
+                                <input type="number" step="0.1" class="form-control years" />
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Notes</label>
+                                <textarea class="form-control remarks" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+
+            accordion.appendChild(newItem);
+        });
+
+        // Save skills
+        document.querySelector('.btn-next-step').addEventListener('click', async function () {
+
+            const skillList = [];
+
+            document.querySelectorAll('#skillAccordion .accordion-item').forEach(item => {
+                skillList.push({
+                    SkillName: item.querySelector('.skillName')?.value,
+                    Level: item.querySelector('.level')?.value,
+                    SkillType: item.querySelector('.skillType')?.value,
+                    YearsOfExperience: item.querySelector('.years')?.value,
+                    ProficiencyPercentage: item.querySelector('.proficiency')?.value,
+                    Remarks: item.querySelector('.remarks')?.value
+                });
+            });
+
+            const response = await fetch('/CvBuilder/SaveSkill', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(skillList)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                alert(result.message || 'Failed to save skills!');
+                return;
+            }
+
+            window.location.href = '/CvBuilder/Step?stepNumber=' + (@currentStep + 1);
+        });
+
+        document.querySelector('.btn-prev-step').addEventListener('click', function () {
+            window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.WorkExperience);
+        });
+
+    </script>
+}
