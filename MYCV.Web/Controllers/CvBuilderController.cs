@@ -413,7 +413,7 @@ namespace MYCV.Web.Controllers
             // Navigate to the requested step
             return stepNumber switch
             {
-                (int)CvStep.PersonalInformation => RedirectToAction("Index"),
+                (int)CvStep.PersonalDetail => RedirectToAction("Index"),
                 (int)CvStep.Education => RedirectToAction("Education"),
                 (int)CvStep.WorkExperience => RedirectToAction("Experience"),
                 (int)CvStep.Skills => RedirectToAction("Skill"),

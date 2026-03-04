@@ -58,7 +58,7 @@ namespace MYCV.Application.Services
                 entity = new UserEducation
                 {
                     UserId = dto.UserId,
-                    EducationLevel = dto.EducationLevel,
+                    //EducationLevel = dto.EducationLevel,
                     ExamName = dto.ExamName,
                     BoardOrUniversity = dto.BoardOrUniversity,
                     GroupOrMajor = dto.GroupOrMajor,
@@ -72,7 +72,7 @@ namespace MYCV.Application.Services
             }
             else
             {
-                entity.EducationLevel = dto.EducationLevel;
+                //entity.EducationLevel = dto.EducationLevel;
                 entity.ExamName = dto.ExamName;
                 entity.BoardOrUniversity = dto.BoardOrUniversity;
                 entity.GroupOrMajor = dto.GroupOrMajor;
@@ -93,7 +93,7 @@ namespace MYCV.Application.Services
             {
                 Id = entity.Id,
                 UserId = entity.UserId,
-                EducationLevel = entity.EducationLevel,
+                //EducationLevel = entity.EducationLevel,
                 ExamName = entity.ExamName,
                 BoardOrUniversity = entity.BoardOrUniversity,
                 GroupOrMajor = entity.GroupOrMajor,

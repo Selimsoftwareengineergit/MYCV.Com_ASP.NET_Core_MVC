@@ -71,7 +71,7 @@ namespace MYCV.Application.Services
                     Position = dto.Position,
                     Department = dto.Department,
                     Location = dto.Location,
-                    EmploymentType = dto.EmploymentType,
+                    //EmploymentType = dto.EmploymentType,
                     StartDate = dto.StartDate,
                     EndDate = dto.EndDate,
                     Responsibilities = dto.Responsibilities,
@@ -88,7 +88,7 @@ namespace MYCV.Application.Services
                 entity.Position = dto.Position;
                 entity.Department = dto.Department;
                 entity.Location = dto.Location;
-                entity.EmploymentType = dto.EmploymentType;
+                //entity.EmploymentType = dto.EmploymentType;
                 entity.StartDate = dto.StartDate;
                 entity.EndDate = dto.EndDate;
                 entity.Responsibilities = dto.Responsibilities;
@@ -115,7 +115,7 @@ namespace MYCV.Application.Services
                 Position = entity.Position,
                 Department = entity.Department,
                 Location = entity.Location,
-                EmploymentType = entity.EmploymentType,
+                //EmploymentType = entity.EmploymentType,
                 StartDate = entity.StartDate,
                 EndDate = entity.EndDate,
                 Responsibilities = entity.Responsibilities,

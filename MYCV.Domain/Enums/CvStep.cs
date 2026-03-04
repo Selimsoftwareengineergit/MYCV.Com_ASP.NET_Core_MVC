@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace MYCV.Domain.Enums
 {
     public enum CvStep
     {
-        PersonalInformation = 1,   // User personal details
+        PersonalDetail = 1,        // User personal details
         Education = 2,             // Academic records and certificates
         WorkExperience = 3,        // Job experience with responsibilities & projects
         Skills = 4,                // Technical & soft skills

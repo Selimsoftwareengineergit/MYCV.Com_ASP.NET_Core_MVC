@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MYCV.Domain.Enums;
 
 namespace MYCV.Domain.Entities
 {
@@ -10,22 +11,49 @@ namespace MYCV.Domain.Entities
 
         [ForeignKey(nameof(UserId))]
         public virtual User User { get; set; } = null!;
-        public string FullName { get; set; } = null!;
-        public string ProfessionalTitle { get; set; } = null!;
-        public DateTime DateOfBirth { get; set; } 
-        public string? Gender { get; set; }
-        public string Email { get; set; } = null!;
-        public string PhoneNumber { get; set; } = null!;
-        public string Country { get; set; } = null!;
-        public string City { get; set; } = null!;
+
+        [Required, MaxLength(150)]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required, MaxLength(150)]
+        public string ProfessionalTitle { get; set; } = string.Empty;
+
+        [Required]
+        public DateTime DateOfBirth { get; set; }
+
+        public Gender? Gender { get; set; }
+
+        [Required, MaxLength(150), EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required, MaxLength(20)]
+        public string PhoneNumber { get; set; } = string.Empty;
+
+        [Required, MaxLength(100)]
+        public string Country { get; set; } = string.Empty;
+
+        [Required, MaxLength(100)]
+        public string City { get; set; } = string.Empty;
+
+        [MaxLength(250)]
         public string? Address { get; set; }
+
+        [MaxLength(250)]
         public string? ProfilePictureUrl { get; set; }
-        public string? Summary { get; set; }
-        public string? Objective { get; set; }
+
+        [MaxLength(250)]
         public string? LinkedIn { get; set; }
+
+        [MaxLength(250)]
         public string? GitHub { get; set; }
+
+        [MaxLength(250)]
         public string? Portfolio { get; set; }
+
+        [MaxLength(250)]
         public string? Website { get; set; }
+
+        [MaxLength(250)]
         public string? LinkedInHeadline { get; set; }
     }
 }

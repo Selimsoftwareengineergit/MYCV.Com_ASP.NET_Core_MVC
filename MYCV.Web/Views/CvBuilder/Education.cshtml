@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Education Qualification";
     var currentStep = (int)CvStep.Education;
-    var completedSteps = new List<int> { (int)CvStep.PersonalInformation };
+    var completedSteps = new List<int> { (int)CvStep.PersonalDetail };
 }
 
 <section class="py-5 bg-light">
@@ -386,7 +386,7 @@ document.querySelector('.btn-next-step').addEventListener('click', async functio
 });
 
 document.querySelector('.btn-prev-step').addEventListener('click', function () {
-    window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.PersonalInformation);
+    window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.PersonalDetail);
 });
 
 updateSidebar();

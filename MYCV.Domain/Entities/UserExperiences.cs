@@ -19,13 +19,13 @@ namespace MYCV.Domain.Entities
         public string Position { get; set; } = string.Empty;
 
         [MaxLength(100)]
-        public string Department { get; set; } = string.Empty;
+        public string? Department { get; set; }
 
         [MaxLength(150)]
-        public string Location { get; set; } = string.Empty;
+        public string? Location { get; set; }
 
-        [Required, MaxLength(50)]
-        public string EmploymentType { get; set; } = string.Empty; 
+        [Required]
+        public EmploymentType EmploymentType { get; set; } = EmploymentType.FullTime;
 
         [Required]
         public DateTime StartDate { get; set; }
@@ -33,16 +33,16 @@ namespace MYCV.Domain.Entities
         public DateTime? EndDate { get; set; }
 
         [MaxLength(1000)]
-        public string Responsibilities { get; set; } = string.Empty;
+        public string? Responsibilities { get; set; }
 
         [MaxLength(250)]
-        public string Remarks { get; set; } = string.Empty;
+        public string? Remarks { get; set; }
 
         [MaxLength(250)]
         public string? ProjectLink { get; set; }
 
         public bool IsCurrentJob => EndDate == null;
 
-        public int Priority { get; set; } = 1;
+        public int Priority { get; set; } = 1; 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MYCV.Domain.Enums;
 
 namespace MYCV.Domain.Entities
 {
@@ -11,27 +12,28 @@ namespace MYCV.Domain.Entities
         [ForeignKey(nameof(UserId))]
         public virtual User User { get; set; } = null!;
 
-        [Required, MaxLength(50)]
-        public string EducationLevel { get; set; } = string.Empty;
+        [Required]
+        public EducationLevel EducationLevel { get; set; } = EducationLevel.Others;
 
         [Required, MaxLength(100)]
         public string ExamName { get; set; } = string.Empty;
 
         [MaxLength(100)]
-        public string BoardOrUniversity { get; set; } = string.Empty;
+        public string? BoardOrUniversity { get; set; }
 
         [MaxLength(50)]
-        public string GroupOrMajor { get; set; } = string.Empty;
+        public string? GroupOrMajor { get; set; }
 
         [MaxLength(50)]
-        public string Result { get; set; } = string.Empty;
+        public string? Result { get; set; }
 
+        [Range(1900, 2100)]
         public int PassingYear { get; set; }
 
         [MaxLength(250)]
-        public string CertificateFile { get; set; } = string.Empty;
+        public string? CertificateFile { get; set; }
 
         [MaxLength(250)]
-        public string Remarks { get; set; } = string.Empty;
+        public string? Remarks { get; set; }
     }
 }

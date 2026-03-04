@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
+using MYCV.Domain.Enums;
 
 namespace MYCV.Domain.Entities
 {
@@ -22,7 +19,10 @@ namespace MYCV.Domain.Entities
         [Required, MaxLength(150)]
         public string Role { get; set; } = string.Empty;
 
-        [MaxLength(1000)]
+        [Required]
+        public ProjectType ProjectType { get; set; } = ProjectType.Other;
+
+        [MaxLength(1500)]
         public string Description { get; set; } = string.Empty;
 
         [MaxLength(500)]
@@ -33,6 +33,7 @@ namespace MYCV.Domain.Entities
 
         public DateTime? EndDate { get; set; }
 
+        [NotMapped]
         public bool IsOngoing => EndDate == null;
 
         [MaxLength(250)]

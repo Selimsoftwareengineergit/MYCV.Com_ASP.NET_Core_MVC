@@ -15,14 +15,14 @@ namespace MYCV.Domain.Entities
         [Required, MaxLength(100)]
         public string SkillName { get; set; } = string.Empty;
 
-        [Required, MaxLength(50)]
-        public string Level { get; set; } = SkillLevel.Beginner.ToString();
+        [Required]
+        public SkillLevel Level { get; set; } = SkillLevel.Beginner;
 
-        [Required, MaxLength(50)]
-        public string SkillType { get; set; } = string.Empty;
+        [Required]
+        public SkillType SkillType { get; set; } = SkillType.Technical;
 
         [MaxLength(250)]
-        public string Remarks { get; set; } = string.Empty;
+        public string? Remarks { get; set; }
 
         public double? YearsOfExperience { get; set; }
 
@@ -31,6 +31,7 @@ namespace MYCV.Domain.Entities
 
         public int Priority { get; set; } = 1;
 
+        [Range(0, 100)]
         public int? ProficiencyPercentage { get; set; }
     }
 }
