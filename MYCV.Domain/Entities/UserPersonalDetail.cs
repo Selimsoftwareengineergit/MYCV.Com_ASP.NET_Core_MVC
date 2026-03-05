@@ -23,20 +23,22 @@ namespace MYCV.Domain.Entities
 
         public Gender? Gender { get; set; }
 
-        [Required, MaxLength(150), EmailAddress]
-        public string Email { get; set; } = string.Empty;
+        public Religion? Religion { get; set; }
 
         [Required, MaxLength(20)]
         public string PhoneNumber { get; set; } = string.Empty;
 
         [Required, MaxLength(100)]
-        public string Country { get; set; } = string.Empty;
+        public string Country { get; set; } = "Bangladesh";
 
         [Required, MaxLength(100)]
         public string City { get; set; } = string.Empty;
 
         [MaxLength(250)]
-        public string? Address { get; set; }
+        public string? PresentAddress { get; set; }
+
+        [MaxLength(250)]
+        public string? PermanentAddress { get; set; }
 
         [MaxLength(250)]
         public string? ProfilePictureUrl { get; set; }
@@ -55,5 +57,8 @@ namespace MYCV.Domain.Entities
 
         [MaxLength(250)]
         public string? LinkedInHeadline { get; set; }
+
+        [MaxLength(20)]
+        public string? Nationality { get; set; } = "Bangladeshi";
     }
 }

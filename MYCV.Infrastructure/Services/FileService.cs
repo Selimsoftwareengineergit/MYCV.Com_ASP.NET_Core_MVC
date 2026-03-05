@@ -1,9 +1,5 @@
 ﻿using MYCV.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MYCV.Infrastructure.Services
 {
@@ -29,7 +25,7 @@ namespace MYCV.Infrastructure.Services
             if (file == null || file.Length == 0)
                 throw new ArgumentException("No file uploaded.");
 
-            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            var extension = Path.GetExtension(file.FileName)?.ToLowerInvariant();
 
             var allowed = allowedExtensions
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
@@ -42,37 +38,44 @@ namespace MYCV.Infrastructure.Services
             if (file.Length > maxFileSizeMB * 1024 * 1024)
                 throw new ArgumentException($"File size cannot exceed {maxFileSizeMB} MB.");
 
-            // Final physical folder:
-            // C:\MYCV\PersonalImage\<UserId>
+            // Physical folder: C:\MYCV\PersonalImage\<UserId>
             var userFolder = Path.Combine(_rootFolder, userId.ToString());
 
-            // If new user → delete full folder
-            if (isNewUser && Directory.Exists(userFolder))
+            try
             {
-                Directory.Delete(userFolder, true);
-            }
+                // If new user → delete full folder
+                if (isNewUser && Directory.Exists(userFolder))
+                {
+                    Directory.Delete(userFolder, true);
+                }
 
-            if (!Directory.Exists(userFolder))
+                // Ensure folder exists
                 Directory.CreateDirectory(userFolder);
 
-            // If updating existing → delete only files
-            if (!isNewUser && Directory.Exists(userFolder))
-            {
-                foreach (var existingFile in Directory.GetFiles(userFolder))
+                // If updating existing → delete only files
+                if (!isNewUser)
                 {
-                    File.Delete(existingFile);
+                    foreach (var existingFile in Directory.GetFiles(userFolder))
+                    {
+                        File.Delete(existingFile);
+                    }
                 }
+
+                var fileName = $"{Guid.NewGuid()}{extension}";
+                var filePath = Path.Combine(userFolder, fileName);
+
+                // Use a separate stream to avoid disposing issues
+                await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true);
+                await file.CopyToAsync(fileStream);
+
+                // Return relative path for DB
+                return $"{userId}/{fileName}";
             }
-
-            var fileName = $"{Guid.NewGuid()}{extension}";
-            var filePath = Path.Combine(userFolder, fileName);
-
-            await using var stream = new FileStream(filePath, FileMode.Create);
-            await file.CopyToAsync(stream);
-
-            // IMPORTANT:
-            // Return relative path (store in DB)
-            return $"{userId}/{fileName}";
+            catch (Exception ex)
+            {
+                // Log or handle exceptions if needed
+                throw new IOException("Failed to upload profile picture.", ex);
+            }
         }
     }
 }

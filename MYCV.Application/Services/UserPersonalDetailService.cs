@@ -25,68 +25,77 @@ namespace MYCV.Application.Services
 
         public async Task<UserPersonalDetailDto> SaveUserPersonalDetailAsync(UserPersonalDetailDto dto)
         {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
             // Fetch existing personal detail
             var existingPersonalDetail = await _personalDetailRepository.GetByUserIdAsync(dto.UserId);
             bool isNew = existingPersonalDetail is null;
 
             // Upload profile picture if provided
-            if (dto.ProfilePicture != null)
+            if (dto.ProfilePicture != null && dto.ProfilePicture.Length > 0)
             {
+                // Ensure the stream is properly disposed after upload
                 dto.ProfilePictureUrl = await _fileService.UploadProfilePictureAsync(
                     dto.ProfilePicture,
                     dto.UserId,
                     isNew);
             }
 
-            // Create new personal detail
             if (isNew)
             {
+                // Create new personal detail
                 var newPersonalDetail = new UserPersonalDetail
                 {
                     UserId = dto.UserId,
                     FullName = dto.FullName,
                     ProfessionalTitle = dto.ProfessionalTitle,
                     DateOfBirth = dto.DateOfBirth,
-                    //Gender = dto.Gender,
-                    Email = dto.Email,
+                    Gender = dto.Gender,
+                    Religion = dto.Religion,
                     PhoneNumber = dto.PhoneNumber,
                     Country = dto.Country,
                     City = dto.City,
-                    Address = dto.Address,
+                    PresentAddress = dto.PresentAddress,
+                    PermanentAddress = dto.PermanentAddress,
                     ProfilePictureUrl = dto.ProfilePictureUrl,
                     LinkedIn = dto.LinkedIn,
                     GitHub = dto.GitHub,
                     Portfolio = dto.Portfolio,
                     Website = dto.Website,
                     LinkedInHeadline = dto.LinkedInHeadline,
-                    IsActive = true,
-                    IsDeleted = false,
-                    CreatedDate = DateTime.UtcNow
+                    Nationality = dto.Nationality,
+                    CreatedDate = DateTime.UtcNow,
+                    UpdatedDate = DateTime.UtcNow
                 };
 
                 await _personalDetailRepository.AddAsync(newPersonalDetail);
+
                 return MapToDto(newPersonalDetail);
             }
 
             // Update existing personal detail
-            existingPersonalDetail!.FullName = dto.FullName;
+            existingPersonalDetail.FullName = dto.FullName;
             existingPersonalDetail.ProfessionalTitle = dto.ProfessionalTitle;
             existingPersonalDetail.DateOfBirth = dto.DateOfBirth;
-            //existingPersonalDetail.Gender = dto.Gender;
-            existingPersonalDetail.Email = dto.Email;
+            existingPersonalDetail.Gender = dto.Gender;
+            existingPersonalDetail.Religion = dto.Religion;
             existingPersonalDetail.PhoneNumber = dto.PhoneNumber;
             existingPersonalDetail.Country = dto.Country;
             existingPersonalDetail.City = dto.City;
-            existingPersonalDetail.Address = dto.Address;
+            existingPersonalDetail.PresentAddress = dto.PresentAddress;
+            existingPersonalDetail.PermanentAddress = dto.PermanentAddress;
             existingPersonalDetail.LinkedIn = dto.LinkedIn;
             existingPersonalDetail.GitHub = dto.GitHub;
             existingPersonalDetail.Portfolio = dto.Portfolio;
             existingPersonalDetail.Website = dto.Website;
             existingPersonalDetail.LinkedInHeadline = dto.LinkedInHeadline;
 
+            // Only update the profile picture if a new one was uploaded
             if (!string.IsNullOrEmpty(dto.ProfilePictureUrl))
                 existingPersonalDetail.ProfilePictureUrl = dto.ProfilePictureUrl;
 
+            existingPersonalDetail.Nationality = dto.Nationality;
             existingPersonalDetail.UpdatedDate = DateTime.UtcNow;
 
             await _personalDetailRepository.UpdateAsync(existingPersonalDetail);
@@ -102,19 +111,21 @@ namespace MYCV.Application.Services
                 UserId = personalDetail.UserId,
                 FullName = personalDetail.FullName,
                 ProfessionalTitle = personalDetail.ProfessionalTitle,
-                DateOfBirth = personalDetail.DateOfBirth, 
-                //Gender = personalDetail.Gender,
-                Email = personalDetail.Email,
+                DateOfBirth = personalDetail.DateOfBirth,
+                Gender = personalDetail.Gender,
+                Religion = personalDetail.Religion,
                 PhoneNumber = personalDetail.PhoneNumber,
                 Country = personalDetail.Country,
                 City = personalDetail.City,
-                Address = personalDetail.Address,
+                PresentAddress = personalDetail.PresentAddress,
+                PermanentAddress = personalDetail.PermanentAddress,
                 ProfilePictureUrl = personalDetail.ProfilePictureUrl,
                 LinkedIn = personalDetail.LinkedIn,
                 GitHub = personalDetail.GitHub,
                 Portfolio = personalDetail.Portfolio,
                 Website = personalDetail.Website,
-                LinkedInHeadline = personalDetail.LinkedInHeadline
+                LinkedInHeadline = personalDetail.LinkedInHeadline,
+                Nationality = personalDetail.Nationality
             };
         }
     }

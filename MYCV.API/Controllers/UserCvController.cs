@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using MYCV.Shared.Extensions;
 using MYCV.Application.DTOs;
 using MYCV.Application.Interfaces;
-using System.Net;
 
 namespace MYCV.API.Controllers
 {

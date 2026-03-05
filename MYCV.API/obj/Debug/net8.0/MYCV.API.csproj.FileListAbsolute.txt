@@ -307,13 +307,6 @@ G:\MYCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\Microsoft.AspNetCore
 G:\MYCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\Newtonsoft.Json.dll
 G:\MYCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\System.Management.dll
 G:\MYCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Management.dll
-G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.csproj.AssemblyReference.cache
-G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.GeneratedMSBuildEditorConfig.editorconfig
-G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.AssemblyInfoInputs.cache
-G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.AssemblyInfo.cs
-G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.csproj.CoreCompileInputs.cache
-G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.MvcApplicationPartsAssemblyInfo.cache
-G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.sourcelink.json
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\appsettings.Development.json
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\appsettings.json
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\EmailTemplates\EmailVerification.html
@@ -452,6 +445,14 @@ G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.App
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.Domain.pdb
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.Infrastructure.pdb
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\bin\Debug\net8.0\MYCV.Shared.pdb
+G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.csproj.AssemblyReference.cache
+G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.GeneratedMSBuildEditorConfig.editorconfig
+G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.AssemblyInfoInputs.cache
+G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.AssemblyInfo.cs
+G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.csproj.CoreCompileInputs.cache
+G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.MvcApplicationPartsAssemblyInfo.cs
+G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.MvcApplicationPartsAssemblyInfo.cache
+G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.sourcelink.json
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\scopedcss\bundle\MYCV.API.styles.css
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\staticwebassets.build.json
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\staticwebassets.development.json
@@ -469,4 +470,3 @@ G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\refint\M
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.pdb
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.genruntimeconfig.cache
 G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\ref\MYCV.API.dll
-G:\60_Projects\MyCV\MYCV.Com_ASP.NET_Core_MVC\MYCV.API\obj\Debug\net8.0\MYCV.API.MvcApplicationPartsAssemblyInfo.cs

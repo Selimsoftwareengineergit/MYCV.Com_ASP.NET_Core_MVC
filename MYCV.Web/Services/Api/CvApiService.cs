@@ -1,6 +1,10 @@
 ﻿using MYCV.Application.DTOs;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http.Json;
+using MYCV.Web.Helpers;
+
 
 namespace MYCV.Web.Services.Api
 {
@@ -18,6 +22,9 @@ namespace MYCV.Web.Services.Api
         /// <summary>
         /// Get User personal detail by userId 
         /// </summary>
+        /// <summary>
+        /// Get User personal detail by userId
+        /// </summary>
         public async Task<ApiResponse<UserPersonalDetailDto>> GetUserPersonalDetailAsync(int userId)
         {
             try
@@ -29,26 +36,38 @@ namespace MYCV.Web.Services.Api
                 if (!response.IsSuccessStatusCode)
                 {
                     var error = await response.Content.ReadAsStringAsync();
-                    _logger.LogWarning("GetUserPersonalDetailAsync failed for user {UserId}: {Error}", userId, error);
+
+                    _logger.LogWarning(
+                        "GetUserPersonalDetailAsync failed for user {UserId}. StatusCode: {StatusCode}, Error: {Error}",
+                        userId, response.StatusCode, error);
 
                     return ApiResponse<UserPersonalDetailDto>.ErrorResponse(error);
                 }
 
                 var result = await response.Content
-                    .ReadFromJsonAsync<ApiResponse<UserPersonalDetailDto>>();
+                    .ReadFromJsonAsync<ApiResponse<UserPersonalDetailDto>>(AppJsonOptions.Options);
 
                 if (result == null)
                 {
-                    _logger.LogWarning("GetUserPersonalDetailAsync returned null for user {UserId}", userId);
+                    _logger.LogWarning(
+                        "GetUserPersonalDetailAsync returned null response for user {UserId}",
+                        userId);
+
                     return ApiResponse<UserPersonalDetailDto>.ErrorResponse("Invalid response from API");
                 }
 
-                _logger.LogInformation("Successfully fetched personal detail for user {UserId}", userId);
+                _logger.LogInformation(
+                    "Successfully fetched personal detail for user {UserId}",
+                    userId);
+
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception in GetUserPersonalDetailAsync for user {UserId}", userId);
+                _logger.LogError(ex,
+                    "Exception occurred in GetUserPersonalDetailAsync for user {UserId}",
+                    userId);
+
                 return ApiResponse<UserPersonalDetailDto>.ErrorResponse("Network or API error");
             }
         }
@@ -56,69 +75,100 @@ namespace MYCV.Web.Services.Api
         /// <summary>
         /// Save personal detail for a user
         /// </summary>
+        /// <summary>
+        /// Save personal detail for a user
+        /// </summary>
         public async Task<ApiResponse<UserPersonalDetailDto>> SaveUserPersonalDetailAsync(UserPersonalDetailDto dto)
         {
+            if (dto == null)
+                return ApiResponse<UserPersonalDetailDto>.ErrorResponse("User personal detail is null");
+
             try
             {
                 _logger.LogInformation("Saving personal detail for user {UserId}", dto.UserId);
 
-                using var content = new MultipartFormDataContent
-                {
-                    { new StringContent(dto.UserId.ToString()), "UserId" },
-                    { new StringContent(dto.Id.ToString()), "Id" },
-                    { new StringContent(dto.FullName ?? string.Empty), "FullName" },
-                    { new StringContent(dto.ProfessionalTitle ?? string.Empty), "ProfessionalTitle" },
-                    { new StringContent(dto.DateOfBirth.ToString("yyyy-MM-dd")), "DateOfBirth" },
-                    { new StringContent(dto.Gender ?? string.Empty), "Gender" },
-                    { new StringContent(dto.Email ?? string.Empty), "Email" },
-                    { new StringContent(dto.PhoneNumber ?? string.Empty), "PhoneNumber" },
-                    { new StringContent(dto.Country ?? string.Empty), "Country" },
-                    { new StringContent(dto.City ?? string.Empty), "City" },
-                    { new StringContent(dto.Address ?? string.Empty), "Address" },
-                    { new StringContent(dto.Summary ?? string.Empty), "Summary" },
-                    { new StringContent(dto.Objective ?? string.Empty), "Objective" },
-                    { new StringContent(dto.LinkedIn ?? string.Empty), "LinkedIn" },
-                    { new StringContent(dto.GitHub ?? string.Empty), "GitHub" },
-                    { new StringContent(dto.Portfolio ?? string.Empty), "Portfolio" },
-                    { new StringContent(dto.Website ?? string.Empty), "Website" },
-                    { new StringContent(dto.LinkedInHeadline ?? string.Empty), "LinkedInHeadline" }
-                };
+                using var content = new MultipartFormDataContent();
 
+                void AddString(string name, string? value)
+                {
+                    content.Add(new StringContent(value ?? string.Empty), name);
+                }
+
+                // Required Fields
+                AddString("UserId", dto.UserId.ToString());
+                AddString("Id", dto.Id.ToString());
+                AddString("FullName", dto.FullName);
+                AddString("ProfessionalTitle", dto.ProfessionalTitle);
+                AddString("DateOfBirth", dto.DateOfBirth.ToString("yyyy-MM-dd"));
+                AddString("Gender", dto.Gender?.ToString());
+                AddString("PhoneNumber", dto.PhoneNumber);
+                AddString("Country", dto.Country);
+                AddString("City", dto.City);
+
+                // Optional Fields
+                AddString("Religion", dto.Religion?.ToString());
+                AddString("PresentAddress", dto.PresentAddress);
+                AddString("PermanentAddress", dto.PermanentAddress);
+                AddString("Nationality", dto.Nationality);
+                AddString("LinkedIn", dto.LinkedIn);
+                AddString("GitHub", dto.GitHub);
+                AddString("Portfolio", dto.Portfolio);
+                AddString("Website", dto.Website);
+                AddString("LinkedInHeadline", dto.LinkedInHeadline);
+
+                // Profile Picture
                 if (dto.ProfilePicture != null)
                 {
-                    var streamContent = new StreamContent(dto.ProfilePicture.OpenReadStream());
-                    streamContent.Headers.ContentType = new MediaTypeHeaderValue(dto.ProfilePicture.ContentType);
-                    content.Add(streamContent, "ProfilePicture", dto.ProfilePicture.FileName);
+                    var stream = dto.ProfilePicture.OpenReadStream();
+
+                    var fileContent = new StreamContent(stream);
+
+                    fileContent.Headers.ContentType =
+                        new MediaTypeHeaderValue(dto.ProfilePicture.ContentType ?? "application/octet-stream");
+
+                    content.Add(fileContent, "ProfilePicture", dto.ProfilePicture.FileName ?? "profilepic");
                 }
 
                 var response = await _httpClient.PostAsync("api/cv/personal-detail", content);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    _logger.LogWarning("SaveUserPersonalDetailAsync failed. Status: {StatusCode}, Content: {Content}",
-                        response.StatusCode, error);
-                    return ApiResponse<UserPersonalDetailDto>.ErrorResponse(error);
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "SaveUserPersonalDetailAsync failed for user {UserId}. StatusCode: {StatusCode}, Error: {Error}",
+                        dto.UserId, response.StatusCode, errorContent);
+
+                    return ApiResponse<UserPersonalDetailDto>.ErrorResponse(errorContent);
                 }
 
-                var result = await response.Content.ReadFromJsonAsync<ApiResponse<UserPersonalDetailDto>>();
+                var apiResult = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<UserPersonalDetailDto>>(AppJsonOptions.Options);
 
-                if (result == null)
+                if (apiResult == null)
                 {
-                    _logger.LogWarning("SaveUserPersonalDetailAsync returned null response");
+                    _logger.LogWarning(
+                        "SaveUserPersonalDetailAsync returned null response for user {UserId}",
+                        dto.UserId);
+
                     return ApiResponse<UserPersonalDetailDto>.ErrorResponse("Invalid response from API");
                 }
 
-                _logger.LogInformation("Personal detail saved successfully for user {UserId}", dto.UserId);
-                return result;
+                _logger.LogInformation(
+                    "Personal detail saved successfully for user {UserId}",
+                    dto.UserId);
+
+                return apiResult;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception in SaveUserPersonalDetailAsync for user {UserId}", dto.UserId);
-                return ApiResponse<UserPersonalDetailDto>.ErrorResponse("Network or API error: " + ex.Message);
+                _logger.LogError(ex,
+                    "Exception occurred in SaveUserPersonalDetailAsync for user {UserId}",
+                    dto.UserId);
+
+                return ApiResponse<UserPersonalDetailDto>.ErrorResponse($"Network or API error: {ex.Message}");
             }
         }
-
 
         /// <summary>
         /// Get User Education by userId 
