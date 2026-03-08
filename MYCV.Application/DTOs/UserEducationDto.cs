@@ -1,5 +1,5 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using MYCV.Domain.Enums;
 
 namespace MYCV.Application.DTOs
 {
@@ -8,31 +8,36 @@ namespace MYCV.Application.DTOs
         public int Id { get; set; }
 
         [Required]
-        public int UserId { get; set; }  
+        public int UserId { get; set; }
 
         [Required]
-        [MaxLength(50)]
-        public string EducationLevel { get; set; } = string.Empty;
+        public EducationLevel EducationLevel { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(150)]
         public string ExamName { get; set; } = string.Empty;
 
+        [MaxLength(150)]
+        public string? InstituteName { get; set; }
+
         [MaxLength(100)]
-        public string BoardOrUniversity { get; set; } = string.Empty;
+        public string? BoardOrUniversity { get; set; }
+
+        [MaxLength(100)]
+        public string? GroupOrMajor { get; set; }
 
         [MaxLength(50)]
-        public string GroupOrMajor { get; set; } = string.Empty;
+        public string? Result { get; set; }
 
         [MaxLength(50)]
-        public string Result { get; set; } = string.Empty;
+        public string? Duration { get; set; }
 
-        public int PassingYear { get; set; }
+        [Range(1900, 2100)]
+        public int? PassingYear { get; set; }
+
+        public bool IsCurrentlyStudying { get; set; }
 
         [MaxLength(250)]
-        public string CertificateFile { get; set; } = string.Empty;
-
-        [MaxLength(250)]
-        public string Remarks { get; set; } = string.Empty;
+        public string? Remarks { get; set; }
     }
 }

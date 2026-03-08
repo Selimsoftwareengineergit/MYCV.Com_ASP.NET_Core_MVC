@@ -1,11 +1,6 @@
 ﻿using MYCV.Application.DTOs;
 using MYCV.Application.Interfaces;
 using MYCV.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MYCV.Application.Services
 {
@@ -58,13 +53,15 @@ namespace MYCV.Application.Services
                 entity = new UserEducation
                 {
                     UserId = dto.UserId,
-                    //EducationLevel = dto.EducationLevel,
+                    EducationLevel = dto.EducationLevel,
                     ExamName = dto.ExamName,
+                    InstituteName = dto.InstituteName,
                     BoardOrUniversity = dto.BoardOrUniversity,
                     GroupOrMajor = dto.GroupOrMajor,
                     Result = dto.Result,
+                    Duration = dto.Duration,
                     PassingYear = dto.PassingYear,
-                    CertificateFile = dto.CertificateFile,
+                    IsCurrentlyStudying = dto.IsCurrentlyStudying,
                     Remarks = dto.Remarks
                 };
 
@@ -72,13 +69,15 @@ namespace MYCV.Application.Services
             }
             else
             {
-                //entity.EducationLevel = dto.EducationLevel;
+                entity.EducationLevel = dto.EducationLevel;
                 entity.ExamName = dto.ExamName;
+                entity.InstituteName = dto.InstituteName;
                 entity.BoardOrUniversity = dto.BoardOrUniversity;
                 entity.GroupOrMajor = dto.GroupOrMajor;
                 entity.Result = dto.Result;
+                entity.Duration = dto.Duration;
                 entity.PassingYear = dto.PassingYear;
-                entity.CertificateFile = dto.CertificateFile;
+                entity.IsCurrentlyStudying = dto.IsCurrentlyStudying;
                 entity.Remarks = dto.Remarks;
 
                 await _userEducationRepository.UpdateAsync(entity);
@@ -93,13 +92,15 @@ namespace MYCV.Application.Services
             {
                 Id = entity.Id,
                 UserId = entity.UserId,
-                //EducationLevel = entity.EducationLevel,
+                EducationLevel = entity.EducationLevel,
                 ExamName = entity.ExamName,
+                InstituteName = entity.InstituteName,
                 BoardOrUniversity = entity.BoardOrUniversity,
                 GroupOrMajor = entity.GroupOrMajor,
                 Result = entity.Result,
+                Duration = entity.Duration,
                 PassingYear = entity.PassingYear,
-                CertificateFile = entity.CertificateFile,
+                IsCurrentlyStudying = entity.IsCurrentlyStudying,
                 Remarks = entity.Remarks
             };
         }
