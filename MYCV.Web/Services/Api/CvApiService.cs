@@ -1,8 +1,5 @@
 ﻿using MYCV.Application.DTOs;
 using System.Net.Http.Headers;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using Microsoft.AspNetCore.Http.Json;
 using MYCV.Web.Helpers;
 
 
@@ -171,37 +168,53 @@ namespace MYCV.Web.Services.Api
         }
 
         /// <summary>
-        /// Get User Education by userId 
+        /// Get user education records by userId
         /// </summary>
         public async Task<ApiResponse<List<UserEducationDto>>> GetUserEducationAsync(int userId)
         {
             try
             {
-                _logger.LogInformation("Fetching education records for user {UserId}", userId);
+                _logger.LogInformation(
+                    "Fetching education records for user {UserId}",
+                    userId);
 
                 var response = await _httpClient.GetAsync($"api/cv/{userId}/education");
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    _logger.LogWarning("GetUserEducationAsync failed for user {UserId}: {Error}", userId, error);
-                    return ApiResponse<List<UserEducationDto>>.ErrorResponse(error);
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "GetUserEducationAsync failed for user {UserId}. StatusCode: {StatusCode}, Error: {Error}",
+                        userId, response.StatusCode, errorContent);
+
+                    return ApiResponse<List<UserEducationDto>>.ErrorResponse(errorContent);
                 }
 
-                var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<UserEducationDto>>>();
+                var result = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<List<UserEducationDto>>>(AppJsonOptions.Options);
 
                 if (result == null)
                 {
-                    _logger.LogWarning("GetUserEducationAsync returned null for user {UserId}", userId);
+                    _logger.LogWarning(
+                        "GetUserEducationAsync returned null response for user {UserId}",
+                        userId);
+
                     return ApiResponse<List<UserEducationDto>>.ErrorResponse("Invalid response from API");
                 }
 
-                _logger.LogInformation("Successfully fetched education records for user {UserId}", userId);
+                _logger.LogInformation(
+                    "Successfully fetched education records for user {UserId}",
+                    userId);
+
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception in GetUserEducationAsync for user {UserId}", userId);
+                _logger.LogError(ex,
+                    "Exception occurred in GetUserEducationAsync for user {UserId}",
+                    userId);
+
                 return ApiResponse<List<UserEducationDto>>.ErrorResponse("Network or API error");
             }
         }
@@ -209,180 +222,495 @@ namespace MYCV.Web.Services.Api
         /// <summary>
         /// Save multiple user education records
         /// </summary>
-        public async Task<ApiResponse<List<UserEducationDto>>> SaveuserEducationAsync(List<UserEducationDto> educationList)
+        public async Task<ApiResponse<List<UserEducationDto>>> SaveUserEducationAsync(List<UserEducationDto> educationList)
         {
+            if (educationList == null || !educationList.Any())
+                return ApiResponse<List<UserEducationDto>>.ErrorResponse("Education list is empty");
+
             try
             {
-                _logger.LogInformation("Saving education records. Count: {Count}", educationList.Count);
+                _logger.LogInformation(
+                    "Saving education records. Count: {Count}",
+                    educationList.Count);
 
-                var response = await _httpClient.PostAsJsonAsync("api/cv/education", educationList);
+                var response = await _httpClient.PostAsJsonAsync(
+                    "api/cv/education",
+                    educationList,
+                    AppJsonOptions.Options);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    _logger.LogWarning("SaveEducationAsync failed: {Error}", error);
-                    return ApiResponse<List<UserEducationDto>>.ErrorResponse(error);
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "SaveUserEducationAsync failed. StatusCode: {StatusCode}, Error: {Error}",
+                        response.StatusCode, errorContent);
+
+                    return ApiResponse<List<UserEducationDto>>.ErrorResponse(errorContent);
                 }
 
-                var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<UserEducationDto>>>();
+                var result = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<List<UserEducationDto>>>(AppJsonOptions.Options);
 
                 if (result == null)
                 {
-                    _logger.LogWarning("SaveEducationAsync returned null response");
+                    _logger.LogWarning(
+                        "SaveUserEducationAsync returned null response");
+
                     return ApiResponse<List<UserEducationDto>>.ErrorResponse("Invalid response from API");
                 }
 
-                _logger.LogInformation("Education records saved successfully");
+                _logger.LogInformation(
+                    "Education records saved successfully");
+
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception in SaveEducationAsync");
-                return ApiResponse<List<UserEducationDto>>.ErrorResponse("Network or API error");
+                _logger.LogError(ex,
+                    "Exception occurred in SaveUserEducationAsync");
+
+                return ApiResponse<List<UserEducationDto>>.ErrorResponse($"Network or API error: {ex.Message}");
             }
         }
 
         /// <summary>
-        /// Get User Experiences by userId
+        /// Get user work experience records by userId
         /// </summary>
         public async Task<ApiResponse<List<UserExperienceDto>>> GetUserExperiencesAsync(int userId)
         {
             try
             {
-                _logger.LogInformation("Fetching work experience records for user {UserId}", userId);
+                _logger.LogInformation(
+                    "Fetching work experience records for user {UserId}",
+                    userId);
 
-                var response = await _httpClient.GetAsync($"api/cv/{userId}/experiences");
+                var response = await _httpClient.GetAsync($"api/cv/{userId}/experience");
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    _logger.LogWarning("GetUserExperiencesAsync failed for user {UserId}: {Error}", userId, error);
-                    return ApiResponse<List<UserExperienceDto>>.ErrorResponse(error);
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "GetUserExperiencesAsync failed for user {UserId}. StatusCode: {StatusCode}, Error: {Error}",
+                        userId, response.StatusCode, errorContent);
+
+                    return ApiResponse<List<UserExperienceDto>>.ErrorResponse(errorContent);
                 }
 
-                var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<UserExperienceDto>>>();
+                var result = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<List<UserExperienceDto>>>(AppJsonOptions.Options);
 
                 if (result == null)
                 {
-                    _logger.LogWarning("GetUserExperiencesAsync returned null for user {UserId}", userId);
+                    _logger.LogWarning(
+                        "GetUserExperiencesAsync returned null response for user {UserId}",
+                        userId);
+
                     return ApiResponse<List<UserExperienceDto>>.ErrorResponse("Invalid response from API");
                 }
 
-                _logger.LogInformation("Successfully fetched work experience records for user {UserId}", userId);
+                _logger.LogInformation(
+                    "Successfully fetched work experience records for user {UserId}",
+                    userId);
+
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception in GetUserExperiencesAsync for user {UserId}", userId);
+                _logger.LogError(ex,
+                    "Exception occurred in GetUserExperiencesAsync for user {UserId}",
+                    userId);
+
                 return ApiResponse<List<UserExperienceDto>>.ErrorResponse("Network or API error");
             }
         }
 
         /// <summary>
-        /// Save user work/experience records
+        /// Save multiple user work/experience records
         /// </summary>
         public async Task<ApiResponse<List<UserExperienceDto>>> SaveUserExperiencesAsync(List<UserExperienceDto> experienceList)
         {
+            if (experienceList == null || !experienceList.Any())
+                return ApiResponse<List<UserExperienceDto>>.ErrorResponse("Experience list is empty");
+
             try
             {
-                _logger.LogInformation("Saving user experiences. Count: {Count}", experienceList.Count);
+                _logger.LogInformation(
+                    "Saving work experience records. Count: {Count}",
+                    experienceList.Count);
 
-                var response = await _httpClient.PostAsJsonAsync("api/cv/experience", experienceList);
+                var response = await _httpClient.PostAsJsonAsync(
+                    "api/cv/experience",
+                    experienceList,
+                    AppJsonOptions.Options);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    _logger.LogWarning("SaveUserExperiencesAsync failed: {Error}", error);
-                    return ApiResponse<List<UserExperienceDto>>.ErrorResponse(error);
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "SaveUserExperiencesAsync failed. StatusCode: {StatusCode}, Error: {Error}",
+                        response.StatusCode, errorContent);
+
+                    return ApiResponse<List<UserExperienceDto>>.ErrorResponse(errorContent);
                 }
 
-                var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<UserExperienceDto>>>();
+                var result = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<List<UserExperienceDto>>>(AppJsonOptions.Options);
 
                 if (result == null)
                 {
-                    _logger.LogWarning("SaveUserExperiencesAsync returned null response");
+                    _logger.LogWarning(
+                        "SaveUserExperiencesAsync returned null response");
+
                     return ApiResponse<List<UserExperienceDto>>.ErrorResponse("Invalid response from API");
                 }
 
-                _logger.LogInformation("User experiences saved successfully");
+                _logger.LogInformation(
+                    "Work experience records saved successfully");
+
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception in SaveUserExperiencesAsync");
-                return ApiResponse<List<UserExperienceDto>>.ErrorResponse("Network or API error");
+                _logger.LogError(ex,
+                    "Exception occurred in SaveUserExperiencesAsync");
+
+                return ApiResponse<List<UserExperienceDto>>.ErrorResponse($"Network or API error: {ex.Message}");
             }
         }
 
         /// <summary>
-        /// Get User Skill by userId
+        /// Get all skill records for a user
         /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>ApiResponse with user's skill list</returns>
         public async Task<ApiResponse<List<UserSkillDto>>> GetUserSkillAsync(int userId)
         {
             try
             {
-                _logger.LogInformation("Fetching skill records for user {UserId}", userId);
+                _logger.LogInformation(
+                    "Fetching skill records for user {UserId}",
+                    userId);
 
                 var response = await _httpClient.GetAsync($"api/cv/{userId}/skill");
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    _logger.LogWarning("GetUserSkillAsync failed for user {UserId}: {Error}", userId, error);
-                    return ApiResponse<List<UserSkillDto>>.ErrorResponse(error);
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "GetUserSkillAsync failed for user {UserId}. StatusCode: {StatusCode}, Error: {Error}",
+                        userId, response.StatusCode, errorContent);
+
+                    return ApiResponse<List<UserSkillDto>>.ErrorResponse(errorContent);
                 }
 
-                var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<UserSkillDto>>>();
+                var result = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<List<UserSkillDto>>>(AppJsonOptions.Options);
 
                 if (result == null)
                 {
-                    _logger.LogWarning("GetUserSkillAsync returned null for user {UserId}", userId);
+                    _logger.LogWarning(
+                        "GetUserSkillAsync returned null response for user {UserId}",
+                        userId);
+
                     return ApiResponse<List<UserSkillDto>>.ErrorResponse("Invalid response from API");
                 }
 
-                _logger.LogInformation("Successfully fetched skill records for user {UserId}", userId);
+                _logger.LogInformation(
+                    "Successfully fetched skill records for user {UserId}",
+                    userId);
+
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception in GetUserSkillAsync for user {UserId}", userId);
+                _logger.LogError(ex,
+                    "Exception occurred in GetUserSkillAsync for user {UserId}",
+                    userId);
+
                 return ApiResponse<List<UserSkillDto>>.ErrorResponse("Network or API error");
             }
         }
 
         /// <summary>
-        /// Save user skill records
+        /// Save multiple user skill records
         /// </summary>
+        /// <param name="skillList">List of user skills to save</param>
+        /// <returns>ApiResponse with saved user skills</returns>
         public async Task<ApiResponse<List<UserSkillDto>>> SaveUserSkillAsync(List<UserSkillDto> skillList)
         {
+            if (skillList == null || !skillList.Any())
+                return ApiResponse<List<UserSkillDto>>.ErrorResponse("Skill list is empty");
+
             try
             {
-                _logger.LogInformation("Saving user skill. Count: {Count}", skillList.Count);
+                _logger.LogInformation(
+                    "Saving user skill records. Count: {Count}",
+                    skillList.Count);
 
-                var response = await _httpClient.PostAsJsonAsync("api/cv/skill", skillList);
+                var response = await _httpClient.PostAsJsonAsync(
+                    "api/cv/skill",
+                    skillList,
+                    AppJsonOptions.Options);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    _logger.LogWarning("SaveUserSkillAsync failed: {Error}", error);
-                    return ApiResponse<List<UserSkillDto>>.ErrorResponse(error);
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "SaveUserSkillAsync failed. StatusCode: {StatusCode}, Error: {Error}",
+                        response.StatusCode, errorContent);
+
+                    return ApiResponse<List<UserSkillDto>>.ErrorResponse(errorContent);
                 }
 
-                var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<UserSkillDto>>>();
+                var result = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<List<UserSkillDto>>>(AppJsonOptions.Options);
 
                 if (result == null)
                 {
-                    _logger.LogWarning("SaveSkillAsync returned null response");
+                    _logger.LogWarning(
+                        "SaveUserSkillAsync returned null response");
+
                     return ApiResponse<List<UserSkillDto>>.ErrorResponse("Invalid response from API");
                 }
 
-                _logger.LogInformation("User skill saved successfully");
+                _logger.LogInformation(
+                    "User skill records saved successfully");
+
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception in SaveUserSkillAsync");
-                return ApiResponse<List<UserSkillDto>>.ErrorResponse("Network or API error");
+                _logger.LogError(ex,
+                    "Exception occurred in SaveUserSkillAsync");
+
+                return ApiResponse<List<UserSkillDto>>.ErrorResponse($"Network or API error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Get all projects records for a user
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>ApiResponse with user's project list</returns>
+        public async Task<ApiResponse<List<UserProjectDto>>> GetUserProjectAsync(int userId)
+        {
+            try
+            {
+                _logger.LogInformation(
+                    "Fetching project records for user {UserId}",
+                    userId);
+
+                var response = await _httpClient.GetAsync($"api/cv/{userId}/project");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "GetUserProjectAsync failed for user {UserId}. StatusCode: {StatusCode}, Error: {Error}",
+                        userId, response.StatusCode, errorContent);
+
+                    return ApiResponse<List<UserProjectDto>>.ErrorResponse(errorContent);
+                }
+
+                var result = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<List<UserProjectDto>>>(AppJsonOptions.Options);
+
+                if (result == null)
+                {
+                    _logger.LogWarning(
+                        "GetUserProjectAsync returned null response for user {UserId}",
+                        userId);
+
+                    return ApiResponse<List<UserProjectDto>>.ErrorResponse("Invalid response from API");
+                }
+
+                _logger.LogInformation(
+                    "Successfully fetched project records for user {UserId}",
+                    userId);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Exception occurred in GetUserProjectAsync for user {UserId}",
+                    userId);
+
+                return ApiResponse<List<UserProjectDto>>.ErrorResponse("Network or API error");
+            }
+        }
+
+        /// <summary>
+        /// Save multiple user project records
+        /// </summary>
+        /// <param name="projectList">List of user project to save</param>
+        /// <returns>ApiResponse with saved user projects</returns>
+        public async Task<ApiResponse<List<UserProjectDto>>> SaveUserProjectAsync(List<UserProjectDto> projectList)
+        {
+            if (projectList == null || !projectList.Any())
+                return ApiResponse<List<UserProjectDto>>.ErrorResponse("Project list is empty");
+
+            try
+            {
+                _logger.LogInformation(
+                    "Saving user project records. Count: {Count}",
+                    projectList.Count);
+
+                var response = await _httpClient.PostAsJsonAsync(
+                    "api/cv/project",
+                    projectList,
+                    AppJsonOptions.Options);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "SaveUserProjectAsync failed. StatusCode: {StatusCode}, Error: {Error}",
+                        response.StatusCode, errorContent);
+
+                    return ApiResponse<List<UserProjectDto>>.ErrorResponse(errorContent);
+                }
+
+                var result = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<List<UserProjectDto>>>(AppJsonOptions.Options);
+
+                if (result == null)
+                {
+                    _logger.LogWarning(
+                        "SaveUserProjectAsync returned null response");
+
+                    return ApiResponse<List<UserProjectDto>>.ErrorResponse("Invalid response from API");
+                }
+
+                _logger.LogInformation(
+                    "User project records saved successfully");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Exception occurred in SaveUserProjectAsync");
+
+                return ApiResponse<List<UserProjectDto>>.ErrorResponse($"Network or API error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Get all language records for a user
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>ApiResponse with user's language list</returns>
+        public async Task<ApiResponse<List<UserLanguageDto>>> GetUserLanguageAsync(int userId)
+        {
+            try
+            {
+                _logger.LogInformation(
+                    "Fetching language records for user {UserId}",
+                    userId);
+
+                var response = await _httpClient.GetAsync($"api/cv/{userId}/language");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "GetUserLanguageAsync failed for user {UserId}. StatusCode: {StatusCode}, Error: {Error}",
+                        userId, response.StatusCode, errorContent);
+
+                    return ApiResponse<List<UserLanguageDto>>.ErrorResponse(errorContent);
+                }
+
+                var result = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<List<UserLanguageDto>>>(AppJsonOptions.Options);
+
+                if (result == null)
+                {
+                    _logger.LogWarning(
+                        "GetUserLanguageAsync returned null response for user {UserId}",
+                        userId);
+
+                    return ApiResponse<List<UserLanguageDto>>.ErrorResponse("Invalid response from API");
+                }
+
+                _logger.LogInformation(
+                    "Successfully fetched language records for user {UserId}",
+                    userId);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Exception occurred in GetUserLanguageAsync for user {UserId}",
+                    userId);
+
+                return ApiResponse<List<UserLanguageDto>>.ErrorResponse("Network or API error");
+            }
+        }
+
+        /// <summary>
+        /// Save multiple user language records
+        /// </summary>
+        /// <param name="languageList">List of user language to save</param>
+        /// <returns>ApiResponse with saved user languages</returns>
+        public async Task<ApiResponse<List<UserLanguageDto>>> SaveUserLanguageAsync(List<UserLanguageDto> languageList)
+        {
+            if (languageList == null || !languageList.Any())
+                return ApiResponse<List<UserLanguageDto>>.ErrorResponse("Languages list is empty");
+
+            try
+            {
+                _logger.LogInformation(
+                    "Saving user language records. Count: {Count}",
+                    languageList.Count);
+
+                var response = await _httpClient.PostAsJsonAsync(
+                    "api/cv/language",
+                    languageList,
+                    AppJsonOptions.Options);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "SaveUserLanguageAsync failed. StatusCode: {StatusCode}, Error: {Error}",
+                        response.StatusCode, errorContent);
+
+                    return ApiResponse<List<UserLanguageDto>>.ErrorResponse(errorContent);
+                }
+
+                var result = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<List<UserLanguageDto>>>(AppJsonOptions.Options);
+
+                if (result == null)
+                {
+                    _logger.LogWarning(
+                        "SaveUserLanguageAsync returned null response");
+
+                    return ApiResponse<List<UserLanguageDto>>.ErrorResponse("Invalid response from API");
+                }
+
+                _logger.LogInformation(
+                    "User language records saved successfully");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Exception occurred in SaveUserLanguageAsync");
+
+                return ApiResponse<List<UserLanguageDto>>.ErrorResponse($"Network or API error: {ex.Message}");
             }
         }
     }

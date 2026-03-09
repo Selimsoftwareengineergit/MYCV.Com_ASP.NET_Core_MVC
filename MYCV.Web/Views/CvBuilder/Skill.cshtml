@@ -1,15 +1,10 @@
-﻿@using MYCV.Domain.Enums
-@model List<MYCV.Application.DTOs.UserSkillDto>
+﻿@model List<MYCV.Application.DTOs.UserSkillDto>
+@using MYCV.Domain.Enums
 
 @{
     ViewData["Title"] = "Skills";
     var currentStep = (int)CvStep.Skills;
-    var completedSteps = new List<int>
-    {
-        (int)CvStep.PersonalDetail,
-        (int)CvStep.Education,
-        (int)CvStep.WorkExperience
-    };
+    var completedSteps = new List<int> { (int)CvStep.PersonalDetail, (int)CvStep.Education, (int)CvStep.WorkExperience };
 }
 
 <section class="py-5 bg-light">
@@ -24,18 +19,13 @@
         </div>
 
         <div class="row">
-
-            <!-- Sidebar Step Navigation -->
+            <!-- LEFT STEP NAVIGATION -->
             <div class="col-lg-4 mb-4">
-                @await Component.InvokeAsync("CvStepNavigation", new
-                    {
-                        currentStep = currentStep,
-                        completedSteps = completedSteps
-                    })
+                @await Component.InvokeAsync("CvStepNavigation", new { currentStep = currentStep, completedSteps = completedSteps })
             </div>
 
-            <!-- Main Content -->
-            <div class="col-lg-8" style="max-height: 80vh; overflow-y: auto;">
+            <!-- RIGHT CONTENT -->
+            <div class="col-lg-8" style="max-height:80vh; overflow-y:auto;">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
 
@@ -45,127 +35,89 @@
                         </div>
 
                         <div class="accordion" id="skillAccordion">
-
-                            @if (Model != null && Model.Any())
-                            {
-                                for (int i = 0; i < Model.Count; i++)
-                                {
-                                    var skill = Model[i];
-
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingSkill@i">
-                                            <button class="accordion-button collapsed"
-                                                    type="button"
-                                                    data-bs-toggle="collapse"
-                                                    data-bs-target="#collapseSkill@i">
-                                                Skill @(i + 1) - @(string.IsNullOrEmpty(skill.SkillName) ? "New" : skill.SkillName)
-                                            </button>
-                                        </h2>
-
-                                        <div id="collapseSkill@i"
-                                             class="accordion-collapse collapse"
-                                             data-bs-parent="#skillAccordion">
-                                            <div class="accordion-body">
-                                                @Html.Partial("_SkillFormFields", skill)
+                            <!-- Initial Skill -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header position-relative">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSkill0">
+                                        Skill 1
+                                    </button>
+                                    <button type="button" class="btn-close position-absolute top-0 end-0 m-2 btn-remove-skill"></button>
+                                </h2>
+                                <div id="collapseSkill0" class="accordion-collapse collapse show">
+                                    <div class="accordion-body">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label required">Skill Name</label>
+                                                <input type="text" class="form-control skillName" placeholder="Enter skill name" required />
                                             </div>
-                                        </div>
-                                    </div>
-                                }
-                            }
-                            else
-                            {
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button"
-                                                type="button"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#collapseSkill0">
-                                            Skill 1
-                                        </button>
-                                    </h2>
-
-                                    <div id="collapseSkill0"
-                                         class="accordion-collapse collapse show">
-                                        <div class="accordion-body">
-
-                                            <div class="row g-3">
-
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Skill Name</label>
-                                                    <input type="text" class="form-control skillName" required />
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Level</label>
-                                                    <select class="form-select level" required>
-                                                        <option value="">Select...</option>
-                                                        @foreach (var level in Enum.GetNames(typeof(SkillLevel)))
-                                                        {
-                                                            <option value="@level">@level</option>
-                                                        }
-                                                    </select>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Skill Type</label>
-                                                    <select class="form-select skillType" required>
-                                                        <option value="">Select...</option>
-                                                        @foreach (var type in Enum.GetNames(typeof(SkillType)))
-                                                        {
-                                                            <option value="@type">@type</option>
-                                                        }
-                                                    </select>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Years of Experience</label>
-                                                    <input type="number" step="0.1" class="form-control years" />
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Proficiency (%)</label>
-                                                    <input type="number" class="form-control proficiency" min="0" max="100" />
-                                                </div>
-
-                                                <div class="col-md-12">
-                                                    <label class="form-label">Additional Notes</label>
-                                                    <textarea class="form-control remarks" rows="2"></textarea>
-                                                </div>
-
+                                            <div class="col-md-6">
+                                                <label class="form-label required">Level</label>
+                                                <select class="form-select level" required>
+                                                    <option value="">Select level...</option>
+                                                    @foreach (var level in Enum.GetNames(typeof(SkillLevel)))
+                                                    {
+                                                        <option value="@level">@level</option>
+                                                    }
+                                                </select>
                                             </div>
-
+                                            <div class="col-md-6">
+                                                <label class="form-label required">Skill Type</label>
+                                                <select class="form-select skillType" required>
+                                                    <option value="">Select type...</option>
+                                                    @foreach (var type in Enum.GetNames(typeof(SkillType)))
+                                                    {
+                                                        <option value="@type">@type</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Years of Experience</label>
+                                                <input type="number" step="0.1" class="form-control yearsOfExperience" placeholder="e.g., 2.5" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Proficiency (%)</label>
+                                                <input type="number" min="0" max="100" class="form-control proficiencyPercentage" placeholder="0-100%" />
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="form-label">Remarks</label>
+                                                <textarea class="form-control remarks" rows="2" placeholder="Optional notes"></textarea>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            }
-
+                            </div>
                         </div>
 
                         <!-- Buttons -->
-                        <div class="d-flex justify-content-between mt-4">
-                            <button type="button" class="btn btn-outline-secondary btn-prev-step">
-                                ← Previous
-                            </button>
-
-                            <button type="button" class="btn btn-success btn-add-skill">
-                                + Add Skill
-                            </button>
-
-                            <button type="button" class="btn btn-primary btn-next-step">
-                                Save & Continue →
-                            </button>
+                        <div class="d-flex justify-content-between mt-4 flex-wrap gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-prev-step">← Previous</button>
+                            <button type="button" class="btn btn-success btn-add-skill">+ Add Skill</button>
+                            <button type="button" class="btn btn-primary btn-next-step">Save & Continue →</button>
                         </div>
 
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </section>
 
+<!-- Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="infoModalTitle" class="modal-title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="savedInfoContent"></div>
+        </div>
+    </div>
+</div>
+
 @section Styles {
     <style>
+        /* Step Navigation */
         .cv-steps {
             list-style: none;
             padding: 0;
@@ -226,107 +178,246 @@
                     width: 2px;
                     background-color: #e9ecef;
                 }
+
+        /* Accordion header */
+        .accordion-button {
+            font-weight: bold;
+            background-color: #e7f1ff;
+            color: #0d6efd;
+        }
+
+            .accordion-button:not(.collapsed) {
+                background-color: #cfe2ff;
+                color: #0d6efd;
+            }
+
+        .accordion-header {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-right: 2.5rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            background-color: #e7f1ff;
+        }
+
+            /* Remove button (small cross) */
+            .accordion-header .btn-remove-skill,
+            .accordion-header .btn-remove-edu {
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 1.4rem;
+                height: 1.4rem;
+                padding: 0;
+                font-size: 0.9rem;
+                border-radius: 50%;
+                border: none;
+                background-color: #dc3545;
+                color: #fff;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1050;
+            }
+
+                .accordion-header .btn-remove-skill:hover,
+                .accordion-header .btn-remove-edu:hover {
+                    background-color: #b02a37;
+                }
+
+        /* Accordion body scroll */
+        .accordion-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        /* Form spacing */
+        .form-label {
+            font-weight: 500;
+        }
+
+        /* Required field asterisk */
+        label.required::after {
+            content: " *";
+            color: red;
+            font-weight: bold;
+        }
+
+        .row.g-3 > [class*='col-'] {
+            margin-bottom: 1rem;
+        }
+
+        /* Buttons */
+        .btn-add-skill,
+        .btn-add-edu {
+            min-width: 150px;
+        }
+
+        .btn-next-step {
+            min-width: 170px;
+        }
+
+        /* Mobile */
+        @@media (max-width: 768px) {
+            .accordion-body
+
+        {
+            max-height: none;
+        }
+
+        .btn-add-skill,
+        .btn-add-edu,
+        .btn-next-step {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        }
     </style>
 }
 
 @section Scripts {
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-        // Add new skill
-        document.querySelector('.btn-add-skill').addEventListener('click', function () {
             const accordion = document.getElementById('skillAccordion');
-            const index = accordion.children.length;
+            const currentStep = @currentStep;
+            const SkillLevel = @Html.Raw(Json.Serialize(Enum.GetNames(typeof(SkillLevel))));
+            const SkillType = @Html.Raw(Json.Serialize(Enum.GetNames(typeof(SkillType))));
 
-            const newItem = document.createElement('div');
-            newItem.className = 'accordion-item';
+            // Function to update numbering and IDs after adding/removing skills
+            function updateSkillNumbers() {
+                accordion.querySelectorAll('.accordion-item').forEach((item, i) => {
+                    const headerBtn = item.querySelector('.accordion-button');
+                    headerBtn.textContent = `Skill ${i + 1}`;
+                    const collapseDiv = item.querySelector('.accordion-collapse');
+                    const newId = `collapseSkill${i + 1}`;
+                    collapseDiv.id = newId;
+                    headerBtn.dataset.bsTarget = `#${newId}`;
+                });
+            }
 
-            newItem.innerHTML = `
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#collapseSkill${index}">
-                        Skill ${index + 1}
-                    </button>
-                </h2>
-                <div id="collapseSkill${index}" class="accordion-collapse collapse">
-                    <div class="accordion-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Skill Name</label>
-                                <input type="text" class="form-control skillName" required />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Level</label>
-                                <select class="form-select level" required>
-                                    <option value="">Select...</option>
-                                    <option>Beginner</option>
-                                    <option>Intermediate</option>
-                                    <option>Expert</option>
-                                    <option>Master</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Skill Type</label>
-                                <select class="form-select skillType" required>
-                                    <option value="">Select...</option>
-                                    <option>Technical</option>
-                                    <option>Soft</option>
-                                    <option>Language</option>
-                                    <option>Tool</option>
-                                    <option>Other</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Years</label>
-                                <input type="number" step="0.1" class="form-control years" />
-                            </div>
-                            <div class="col-md-12">
-                                <label class="form-label">Notes</label>
-                                <textarea class="form-control remarks" rows="2"></textarea>
+            // Add Skill
+            document.querySelector('.btn-add-skill').addEventListener('click', () => {
+                const count = accordion.querySelectorAll('.accordion-item').length + 1;
+                const newItem = document.createElement('div');
+                newItem.classList.add('accordion-item');
+
+                newItem.innerHTML = `
+                    <h2 class="accordion-header position-relative">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSkill${count}">Skill ${count}</button>
+                        <button type="button" class="btn-remove-skill" title="Remove Skill">&times;</button>
+                    </h2>
+                    <div id="collapseSkill${count}" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label required">Skill Name</label>
+                                    <input type="text" class="form-control skillName" placeholder="Enter skill name" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label required">Level</label>
+                                    <select class="form-select level" required>
+                                        <option value="">Select level...</option>
+                                        ${SkillLevel.map(l => `<option value="${l}">${l}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label required">Skill Type</label>
+                                    <select class="form-select skillType" required>
+                                        <option value="">Select type...</option>
+                                        ${SkillType.map(t => `<option value="${t}">${t}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Years of Experience</label>
+                                    <input type="number" step="0.1" min="0" class="form-control yearsOfExperience" placeholder="e.g., 2.5" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Proficiency (%)</label>
+                                    <input type="number" min="0" max="100" class="form-control proficiencyPercentage" placeholder="0-100%" />
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label">Remarks</label>
+                                    <textarea class="form-control remarks" rows="2" placeholder="Optional notes"></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>`;
-
-            accordion.appendChild(newItem);
-        });
-
-        // Save skills
-        document.querySelector('.btn-next-step').addEventListener('click', async function () {
-
-            const skillList = [];
-
-            document.querySelectorAll('#skillAccordion .accordion-item').forEach(item => {
-                skillList.push({
-                    SkillName: item.querySelector('.skillName')?.value,
-                    Level: item.querySelector('.level')?.value,
-                    SkillType: item.querySelector('.skillType')?.value,
-                    YearsOfExperience: item.querySelector('.years')?.value,
-                    ProficiencyPercentage: item.querySelector('.proficiency')?.value,
-                    Remarks: item.querySelector('.remarks')?.value
-                });
+                `;
+                accordion.appendChild(newItem);
+                updateSkillNumbers();
             });
 
-            const response = await fetch('/CvBuilder/SaveSkill', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(skillList)
+            // Remove Skill
+            accordion.addEventListener('click', e => {
+                if(e.target.classList.contains('btn-remove-skill')) {
+                    e.target.closest('.accordion-item').remove();
+                    updateSkillNumbers();
+                }
             });
 
-            const result = await response.json();
+            // Save Skills
+            async function saveSkills() {
+                const skillList = Array.from(accordion.querySelectorAll('.accordion-item')).map(item => ({
+                    SkillName: item.querySelector('.skillName').value.trim(),
+                    Level: item.querySelector('.level').value,
+                    SkillType: item.querySelector('.skillType').value,
+                    YearsOfExperience: item.querySelector('.yearsOfExperience').value || null,
+                    ProficiencyPercentage: item.querySelector('.proficiencyPercentage').value || null,
+                    Remarks: item.querySelector('.remarks').value.trim() || null
+                }));
 
-            if (!response.ok || !result.success) {
-                alert(result.message || 'Failed to save skills!');
-                return;
+                // Basic validation
+                for (let i = 0; i < skillList.length; i++) {
+                    const skill = skillList[i];
+                    if (!skill.SkillName || !skill.Level || !skill.SkillType) {
+                        showModal('Error', `Please fill all required fields for Skill ${i + 1}`, 'danger');
+                        return;
+                    }
+                }
+
+                try {
+                    const response = await fetch('/CvBuilder/SaveSkill', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(skillList)
+                    });
+                    const result = await response.json();
+                    if (!response.ok || !result.success) {
+                        showModal('Error', result.message || 'Failed to save skills', 'danger');
+                        return;
+                    }
+
+                    showModal('Success', 'Skills saved successfully!', 'success');
+                    setTimeout(() => window.location.href = '/CvBuilder/Step?stepNumber=' + (currentStep + 1), 1500);
+                } catch (err) {
+                    showModal('Error', 'Failed to save skills', 'danger');
+                }
             }
 
-            window.location.href = '/CvBuilder/Step?stepNumber=' + (@currentStep + 1);
-        });
+            // Buttons
+            document.querySelector('.btn-next-step').addEventListener('click', e => { e.preventDefault(); saveSkills(); });
+            document.querySelector('.btn-prev-step').addEventListener('click', () => window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.WorkExperience));
 
-        document.querySelector('.btn-prev-step').addEventListener('click', function () {
-            window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.WorkExperience);
-        });
+            // Modal helper
+            function showModal(title, message, type='info') {
+                const modalEl = document.getElementById('infoModal');
+                document.getElementById('infoModalTitle').textContent = title;
+                document.getElementById('savedInfoContent').innerHTML = message;
+                const header = modalEl.querySelector('.modal-header');
+                header.className = 'modal-header';
+                if (type === 'success') header.classList.add('bg-success','text-white');
+                else if (type === 'danger') header.classList.add('bg-danger','text-white');
+                else header.classList.add('bg-info','text-white');
+                new bootstrap.Modal(modalEl).show();
+                setTimeout(()=> bootstrap.Modal.getInstance(modalEl).hide(), 4000);
+            }
 
+        });
     </script>
 }

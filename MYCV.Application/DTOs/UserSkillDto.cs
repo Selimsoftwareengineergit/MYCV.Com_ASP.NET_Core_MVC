@@ -1,31 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MYCV.Domain.Enums;
 
 namespace MYCV.Application.DTOs
 {
     public class UserSkillDto
     {
+        /// <summary>
+        /// Unique identifier of the skill record
+        /// </summary>
         public int Id { get; set; }
 
+        /// <summary>
+        /// Associated user ID
+        /// </summary>
         public int UserId { get; set; }
 
+        /// <summary>
+        /// Name of the skill
+        /// </summary>
         public string SkillName { get; set; } = string.Empty;
 
-        public string Level { get; set; } = string.Empty;
+        /// <summary>
+        /// Level of the skill (Beginner, Intermediate, Expert, Master)
+        /// </summary>
+        public SkillLevel Level { get; set; } = SkillLevel.Beginner;
 
-        public string SkillType { get; set; } = string.Empty;
+        /// <summary>
+        /// Type of skill (Technical, Soft, Language, Tool, Other)
+        /// </summary>
+        public SkillType SkillType { get; set; } = SkillType.Technical;
 
-        public string Remarks { get; set; } = string.Empty;
+        /// <summary>
+        /// Optional remarks about the skill
+        /// </summary>
+        public string? Remarks { get; set; }
 
+        /// <summary>
+        /// Number of years of experience for this skill
+        /// </summary>
         public double? YearsOfExperience { get; set; }
 
-        public string? CertificateFile { get; set; }
+        /// <summary>
+        /// Priority of the skill (used for ordering/display)
+        /// </summary>
+        public int Priority { get; set; } = 1;
 
-        public int Priority { get; set; }
-
+        /// <summary>
+        /// Optional proficiency percentage (0-100)
+        /// </summary>
         public int? ProficiencyPercentage { get; set; }
     }
 }

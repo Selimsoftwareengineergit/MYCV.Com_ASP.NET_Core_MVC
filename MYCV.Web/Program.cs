@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using MYCV.Web.Helpers;
 using MYCV.Web.Services.Api;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MYCV.Web.Services.Api;
 using MYCV.Application.DTOs;
-using MYCV.Web.ViewModels;
-using MYCV.Domain.Entities;
-using System.Security.Claims;
 using MYCV.Web.Helpers;
 using MYCV.Domain.Enums;
 using MYCV.Shared.Extensions;
@@ -52,6 +49,12 @@ namespace MYCV.Web.Controllers
                                       && skillResponse.Data != null
                                       && skillResponse.Data.Any();
 
+                // Step 5: Projects
+                var projectResponse = await _cvApiService.GetUserProjectAsync(userId);
+                bool step5Completed = projectResponse.Success
+                                      && projectResponse.Data != null
+                                      && projectResponse.Data.Any();
+
                 // Step lock rules
                 if (!step1Completed)
                     return View("Index");
@@ -64,6 +67,9 @@ namespace MYCV.Web.Controllers
 
                 if (!step4Completed)
                     return RedirectToAction("Skill");
+
+                if (!step5Completed)
+                    return RedirectToAction("Project");
 
                 // All steps completed
                 return RedirectToAction("PreviewDownload");
@@ -177,7 +183,7 @@ namespace MYCV.Web.Controllers
                     edu.UserId = userId;
                 }
 
-                var result = await _cvApiService.SaveuserEducationAsync(educationList);
+                var result = await _cvApiService.SaveUserEducationAsync(educationList);
 
                 if (!result.Success)
                 {
@@ -365,6 +371,168 @@ namespace MYCV.Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error saving skill for user {User}", User.Identity?.Name);
+                return StatusCode(500, new { Success = false, Message = "Internal server error." });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Project()
+        {
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return RedirectToAction("Login", "Account");
+
+                var userId = int.Parse(userIdClaim);
+
+                var response = await _cvApiService.GetUserProjectAsync(userId);
+
+                if (!response.Success)
+                {
+                    _logger.LogWarning("Failed to load project for user {UserId}: {Message}", userId, response.Message);
+                    TempData["ErrorMessage"] = response.Message ?? "Unable to load project data.";
+                    return View(new List<UserProjectDto>());
+                }
+
+                return View(response.Data ?? new List<UserProjectDto>());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading project for user {User}", User.Identity?.Name);
+                TempData["ErrorMessage"] = "An unexpected error occurred while loading project data.";
+                return View(new List<UserProjectDto>());
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveProject([FromBody] List<UserProjectDto> projectList)
+        {
+            if (projectList == null || !projectList.Any())
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "At least one project record is required."
+                });
+            }
+
+            try
+            {
+                int userId = User.GetUserId();
+
+                foreach (var exp in projectList)
+                {
+                    exp.UserId = userId;
+                }
+
+                var result = await _cvApiService.SaveUserProjectAsync(projectList);
+
+                if (!result.Success)
+                {
+                    _logger.LogWarning("Failed to save project for user {UserId}: {Message}",
+                        userId, result.Message);
+
+                    return BadRequest(new { Success = false, Message = result.Message });
+                }
+
+                _logger.LogInformation("Saved project successfully for user {UserId}", userId);
+
+                return Ok(new
+                {
+                    Success = true,
+                    Data = result.Data,
+                    Message = "Projects saved successfully!"
+                });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(new { Success = false, Message = "User not authorized." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving project for user {User}", User.Identity?.Name);
+                return StatusCode(500, new { Success = false, Message = "Internal server error." });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Language()
+        {
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return RedirectToAction("Login", "Account");
+
+                var userId = int.Parse(userIdClaim);
+
+                var response = await _cvApiService.GetUserProjectAsync(userId);
+
+                if (!response.Success)
+                {
+                    _logger.LogWarning("Failed to load project for user {UserId}: {Message}", userId, response.Message);
+                    TempData["ErrorMessage"] = response.Message ?? "Unable to load project data.";
+                    return View(new List<UserProjectDto>());
+                }
+
+                return View(response.Data ?? new List<UserProjectDto>());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading project for user {User}", User.Identity?.Name);
+                TempData["ErrorMessage"] = "An unexpected error occurred while loading project data.";
+                return View(new List<UserProjectDto>());
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveProject([FromBody] List<UserProjectDto> projectList)
+        {
+            if (projectList == null || !projectList.Any())
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "At least one project record is required."
+                });
+            }
+
+            try
+            {
+                int userId = User.GetUserId();
+
+                foreach (var exp in projectList)
+                {
+                    exp.UserId = userId;
+                }
+
+                var result = await _cvApiService.SaveUserProjectAsync(projectList);
+
+                if (!result.Success)
+                {
+                    _logger.LogWarning("Failed to save project for user {UserId}: {Message}",
+                        userId, result.Message);
+
+                    return BadRequest(new { Success = false, Message = result.Message });
+                }
+
+                _logger.LogInformation("Saved project successfully for user {UserId}", userId);
+
+                return Ok(new
+                {
+                    Success = true,
+                    Data = result.Data,
+                    Message = "Projects saved successfully!"
+                });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(new { Success = false, Message = "User not authorized." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving project for user {User}", User.Identity?.Name);
                 return StatusCode(500, new { Success = false, Message = "Internal server error." });
             }
         }

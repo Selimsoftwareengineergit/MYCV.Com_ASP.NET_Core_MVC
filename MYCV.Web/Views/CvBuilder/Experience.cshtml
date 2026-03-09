@@ -9,14 +9,17 @@
 
 <section class="py-5 bg-light">
     <div class="container">
+
         <div class="row mb-4">
             <div class="col text-center">
                 <h2 class="fw-bold">Work Experience</h2>
-                <p class="text-muted">Add your professional experience step by step</p>
+                <p class="text-muted">Add your professional experience</p>
             </div>
         </div>
 
         <div class="row">
+
+            <!-- LEFT STEP NAVIGATION -->
             <div class="col-lg-4 mb-4">
                 @await Component.InvokeAsync("CvStepNavigation", new
                     {
@@ -25,111 +28,127 @@
                     })
             </div>
 
-            <div class="col-lg-8" style="max-height: 80vh; overflow-y: auto;">
+            <!-- RIGHT CONTENT -->
+
+            <div class="col-lg-8" style="max-height:80vh; overflow-y:auto;">
+
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
+
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="fw-semibold mb-0">Step <span id="currentStepDisplay">@currentStep</span></h4>
-                            <span class="badge bg-primary" id="stepBadge">In Progress</span>
+                            <span class="badge bg-primary">In Progress</span>
                         </div>
 
                         <div class="accordion" id="experienceAccordion">
-                            @if (Model != null && Model.Any())
-                            {
-                                for (int i = 0; i < Model.Count; i++)
-                                {
-                                    var exp = Model[i];
-                                    <div class="accordion-item step-form" data-step="@currentStep">
-                                        <h2 class="accordion-header" id="headingExp@i">
-                                            <button class="accordion-button collapsed" type="button"
-                                                    data-bs-toggle="collapse"
-                                                    data-bs-target="#collapseExp@i"
-                                                    aria-expanded="false"
-                                                    aria-controls="collapseExp@i">
-                                                Experience @(i + 1) - @(string.IsNullOrEmpty(exp.Company) ? "New" : exp.Company)
-                                            </button>
-                                        </h2>
-                                        <div id="collapseExp@i" class="accordion-collapse collapse"
-                                             aria-labelledby="headingExp@i">
-                                            <div class="accordion-body">
-                                                @Html.Partial("_ExperienceFormFields", exp)
+
+                            <!-- Initial Experience -->
+
+                            <div class="accordion-item step-form" data-step="@currentStep">
+
+                                <h2 class="accordion-header position-relative">
+
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExp1">
+                                        Experience Information
+                                    </button>
+
+                                    <button type="button" class="btn-close position-absolute top-0 end-0 m-2 btn-remove-exp"></button>
+
+                                </h2>
+
+                                <div id="collapseExp1" class="accordion-collapse collapse show">
+
+                                    <div class="accordion-body">
+
+                                        <div class="row g-3">
+
+                                            <div class="col-md-6">
+                                                <label class="form-label required">Company</label>
+                                                <input type="text" class="form-control company" required />
                                             </div>
-                                        </div>
-                                    </div>
-                                }
-                            }
-                            else
-                            {
-                                <div class="accordion-item step-form" data-step="@currentStep">
-                                    <h2 class="accordion-header" id="headingExp0">
-                                        <button class="accordion-button" type="button"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#collapseExp0"
-                                                aria-expanded="true"
-                                                aria-controls="collapseExp0">
-                                            Experience 1
-                                        </button>
-                                    </h2>
-                                    <div id="collapseExp0" class="accordion-collapse collapse show"
-                                         aria-labelledby="headingExp0">
-                                        <div class="accordion-body">
-                                            <div class="row g-3">
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Company</label>
-                                                    <input type="text" class="form-control company" required />
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Position</label>
-                                                    <input type="text" class="form-control position" required />
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Department</label>
-                                                    <input type="text" class="form-control department" />
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Location</label>
-                                                    <input type="text" class="form-control location" />
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Employment Type</label>
-                                                    <select class="form-select employmentType" required>
-                                                        <option value="">Select...</option>
-                                                        @foreach (var type in Enum.GetNames(typeof(EmploymentType)))
-                                                        {
-                                                            <option value="@type">@type</option>
-                                                        }
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Start Date</label>
-                                                    <input type="date" class="form-control startDate" required />
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label">End Date</label>
-                                                    <input type="date" class="form-control endDate" />
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <label class="form-label">Responsibilities</label>
-                                                    <textarea class="form-control responsibilities" rows="3"></textarea>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <label class="form-label">Additional Notes</label>
-                                                    <textarea class="form-control remarks" rows="2"></textarea>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label required">Position</label>
+                                                <input type="text" class="form-control position" required />
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label">Department</label>
+                                                <input type="text" class="form-control department" />
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label">Location</label>
+                                                <input type="text" class="form-control location" />
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label required">Employment Type</label>
+                                                <select class="form-select employmentType" asp-items="Html.GetEnumSelectList<EmploymentType>()">
+                                                    <option value="">Choose...</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label required">Start Date</label>
+                                                <input type="date" class="form-control startDate" />
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label">End Date</label>
+                                                <input type="date" class="form-control endDate" />
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="form-check mt-2">
+                                                    <input class="form-check-input isCurrentJob" type="checkbox">
+                                                    <label class="form-check-label">Currently Working Here</label>
                                                 </div>
                                             </div>
+
+                                            <div class="col-md-12">
+                                                <label class="form-label">Responsibilities</label>
+                                                 <textarea class="form-control responsibilities" rows="3"></textarea>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <label class="form-label">Project Link</label>
+                                                <input type="text" class="form-control projectLink" />
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <label class="form-label">Remarks</label>
+                                                <textarea class="form-control remarks" rows="2"></textarea>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
-                            }
+                            </div>
+
                         </div>
 
+                        <!-- BUTTONS -->
+
                         <div class="d-flex justify-content-between mt-4">
-                            <button type="button" class="btn btn-outline-secondary btn-prev-step">← Previous</button>
-                            <button type="button" class="btn btn-success btn-add-exp">+ Add Experience</button>
-                            <button type="button" class="btn btn-primary btn-next-step">Save & Continue →</button>
+
+                            <button type="button" class="btn btn-outline-secondary btn-prev-step">
+                                ← Previous
+                            </button>
+
+                            <button type="button" class="btn btn-success btn-add-exp">
+                                + Add Experience
+                            </button>
+
+                            <button type="button" class="btn btn-primary btn-next-step">
+                                Save & Continue →
+                            </button>
+
                         </div>
+
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -197,110 +216,344 @@
                     width: 2px;
                     background-color: #e9ecef;
                 }
+
+        /* Accordion Header */
+
+        .accordion-button {
+            font-weight: bold;
+            background-color: #e7f1ff;
+            color: #0d6efd;
+        }
+
+            .accordion-button:not(.collapsed) {
+                background-color: #cfe2ff;
+                color: #0d6efd;
+            }
+
+        /* Required label */
+
+        label.required::after {
+            content: " *";
+            color: red;
+            font-weight: bold;
+        }
+
+        /* Accordion Header layout */
+
+        .accordion-header {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-right: 2.5rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            background-color: #e7f1ff;
+        }
+
+            /* Remove Experience Button */
+
+            .accordion-header .btn-remove-exp {
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 1.4rem;
+                height: 1.4rem;
+                padding: 0;
+                font-size: 0.9rem;
+                line-height: 1;
+                border-radius: 50%;
+                border: none;
+                background-color: #dc3545;
+                color: #fff;
+                cursor: pointer;
+                z-index: 1050;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+                .accordion-header .btn-remove-exp:hover {
+                    background-color: #b02a37;
+                }
+
+        /* Accordion body scroll */
+
+        .accordion-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        /* Form spacing improvement */
+
+        .form-label {
+            font-weight: 500;
+        }
+
+        /* Button spacing */
+
+        .btn-add-exp {
+            min-width: 150px;
+        }
+
+        .btn-next-step {
+            min-width: 170px;
+        }
+
+        /* Mobile improvement */
+
+        @@media (max-width: 768px) {
+            .accordion-body
+
+        {
+            max-height: none;
+        }
+
+        .btn-add-exp,
+        .btn-next-step {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        }
     </style>
 }
 
 @section Scripts {
     <script>
-        let currentStep = @currentStep;
-        let completedSteps = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(completedSteps));
 
-        function updateSidebar() {
-            document.querySelectorAll('.cv-steps .step').forEach((s, index) => {
-                const stepNum = index + 1;
-                if (completedSteps.includes(stepNum)) {
-                    s.classList.add('completed');
-                    s.classList.remove('active');
-                    s.querySelector('.step-circle').textContent = '✓';
-                } else if (stepNum === currentStep) {
-                    s.classList.add('active');
-                    s.classList.remove('completed');
-                    s.querySelector('.step-circle').textContent = stepNum;
-                }
-            });
-            document.getElementById('currentStepDisplay').textContent = currentStep;
-        }
+        document.addEventListener('DOMContentLoaded', function(){
 
-        // Add new experience dynamically
-        document.querySelector('.btn-add-exp').addEventListener('click', function () {
             const accordion = document.getElementById('experienceAccordion');
-            const index = accordion.children.length;
-            const newItem = document.createElement('div');
-            newItem.className = 'accordion-item step-form';
-            newItem.dataset.step = currentStep;
-            newItem.innerHTML = `
-                <h2 class="accordion-header" id="headingExp${index}">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExp${index}">
-                        Experience ${index + 1}
+
+            // Add Experience
+            document.querySelector('.btn-add-exp').addEventListener('click', function(){
+
+                const count = accordion.querySelectorAll('.accordion-item').length + 1;
+
+                const newItem = document.createElement('div');
+                newItem.classList.add('accordion-item','step-form');
+
+                newItem.innerHTML = `
+
+                <h2 class="accordion-header position-relative">
+
+                    <button class="accordion-button" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseExp${count}">
+                        Experience Information
                     </button>
+
+                    <button type="button"
+                            class="btn-close btn-remove-exp"
+                            aria-label="Remove"></button>
+
                 </h2>
-                <div id="collapseExp${index}" class="accordion-collapse collapse" aria-labelledby="headingExp${index}">
+
+                <div id="collapseExp${count}" class="accordion-collapse collapse show">
+
                     <div class="accordion-body">
+
                         <div class="row g-3">
-                            <div class="col-md-6"><label class="form-label">Company</label><input type="text" class="form-control company" required /></div>
-                            <div class="col-md-6"><label class="form-label">Position</label><input type="text" class="form-control position" required /></div>
-                            <div class="col-md-6"><label class="form-label">Department</label><input type="text" class="form-control department" /></div>
-                            <div class="col-md-6"><label class="form-label">Location</label><input type="text" class="form-control location" /></div>
+
                             <div class="col-md-6">
-                                <label class="form-label">Employment Type</label>
-                                <select class="form-select employmentType" required>
-                                    <option value="">Select...</option>
-                                    <option value="FullTime">FullTime</option>
-                                    <option value="PartTime">PartTime</option>
-                                    <option value="Contract">Contract</option>
-                                    <option value="Internship">Internship</option>
+                                <label class="form-label required">Company</label>
+                                <input type="text" class="form-control company"/>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label required">Position</label>
+                                <input type="text" class="form-control position"/>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Department</label>
+                                <input type="text" class="form-control department"/>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Location</label>
+                                <input type="text" class="form-control location"/>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label required">Employment Type</label>
+                                <select class="form-select employmentType">
+                                    <option value="">Choose...</option>
+                                    <option value="1">FullTime</option>
+                                    <option value="2">PartTime</option>
+                                    <option value="3">Internship</option>
+                                    <option value="4">Contract</option>
+                                    <option value="5">Freelance</option>
+                                    <option value="6">Temporary</option>
                                 </select>
                             </div>
-                            <div class="col-md-6"><label class="form-label">Start Date</label><input type="date" class="form-control startDate" required /></div>
-                            <div class="col-md-6"><label class="form-label">End Date</label><input type="date" class="form-control endDate" /></div>
-                            <div class="col-md-12"><label class="form-label">Responsibilities</label><textarea class="form-control responsibilities" rows="3"></textarea></div>
-                            <div class="col-md-12"><label class="form-label">Additional Notes</label><textarea class="form-control remarks" rows="2"></textarea></div>
-                        </div>
-                    </div>
-                </div>`;
-            accordion.appendChild(newItem);
-        });
 
-        // Save Experience and go next
-        document.querySelector('.btn-next-step').addEventListener('click', async function () {
-            const experienceList = [];
-            document.querySelectorAll('#experienceAccordion .accordion-item').forEach(item => {
-                experienceList.push({
-                    Company: item.querySelector('.company').value,
-                    Position: item.querySelector('.position').value,
-                    Department: item.querySelector('.department').value,
-                    Location: item.querySelector('.location').value,
-                    EmploymentType: item.querySelector('.employmentType').value,
-                    StartDate: item.querySelector('.startDate').value,
-                    EndDate: item.querySelector('.endDate').value || null,
-                    Responsibilities: item.querySelector('.responsibilities').value,
-                    Remarks: item.querySelector('.remarks').value
-                });
+                            <div class="col-md-6">
+                                <label class="form-label">Start Date</label>
+                                <input type="date" class="form-control startDate"/>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">End Date</label>
+                                <input type="date" class="form-control endDate"/>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label">Responsibilities</label>
+                                <textarea class="form-control responsibilities"></textarea>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label">Project Link</label>
+                                <input type="text" class="form-control projectLink"/>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label">Remarks</label>
+                                <textarea class="form-control remarks"></textarea>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                `;
+
+                accordion.appendChild(newItem);
             });
 
-            try {
-                const response = await fetch('/CvBuilder/SaveExperience', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(experienceList)
-                });
-                const result = await response.json();
-                if (!response.ok || !result.success) {
-                    alert(result.message || 'Failed to save experience!');
-                    return;
+            // Remove Experience
+            accordion.addEventListener('click', function(e){
+
+                if(e.target.classList.contains('btn-remove-exp')){
+                    const item = e.target.closest('.accordion-item');
+                    if(item) item.remove();
                 }
-                // Navigate to the next step (e.g., Skills or Projects)
-                window.location.href = '/CvBuilder/Step?stepNumber=' + (@currentStep + 1);
-            } catch (err) {
-                console.error(err);
-                alert('Error saving experience!');
+
+            });
+
+            // Save Experience
+            async function saveExperience(){
+
+                const experienceList = [];
+
+                accordion.querySelectorAll('.accordion-item').forEach(item => {
+
+                    experienceList.push({
+
+                        Company: item.querySelector('.company').value,
+                        Position: item.querySelector('.position').value,
+                        Department: item.querySelector('.department').value,
+                        Location: item.querySelector('.location').value,
+                        EmploymentType: item.querySelector('.employmentType').value,
+                        StartDate: item.querySelector('.startDate').value,
+                        EndDate: item.querySelector('.endDate').value,
+                        Responsibilities: item.querySelector('.responsibilities').value,
+                        ProjectLink: item.querySelector('.projectLink').value,
+                        Remarks: item.querySelector('.remarks').value
+
+                    });
+
+                });
+
+                try{
+
+                    const response = await fetch('/CvBuilder/SaveExperience',{
+
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(experienceList)
+
+                    });
+
+                    const result = await response.json();
+
+                    if(!result.success){
+                        showModal("Error", result.message, "danger");
+                        return;
+                    }
+
+                    showModal("Success", formatSavedData(result.data), "success");
+
+                    // Reset accordion
+                    accordion.innerHTML = '';
+                    document.querySelector('.btn-add-exp').click();
+
+                }
+                catch(err){
+                    showModal("Error", "Failed to save experience", "danger");
+                }
+
             }
-        });
 
-        document.querySelector('.btn-prev-step').addEventListener('click', function () {
-            window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.Education);
-        });
+            function formatSavedData(savedData){
 
-        updateSidebar();
+                if(!savedData) return "No data saved.";
+
+                let content = "<ul class='list-group'>";
+
+                savedData.forEach((exp,index)=>{
+
+                    content += `<li class='list-group-item'>
+                        <strong>${index+1}.</strong>
+                        ${exp.Company} - ${exp.Position}
+                    </li>`;
+
+                });
+
+                content += "</ul>";
+
+                return content;
+
+            }
+
+            function showModal(title,message,type="info"){
+
+                const modalEl = document.getElementById('infoModal');
+
+                document.getElementById('infoModalTitle').textContent = title;
+
+                const bodyEl = document.getElementById('savedInfoContent');
+                bodyEl.innerHTML = message;
+
+                const header = modalEl.querySelector('.modal-header');
+                header.className = "modal-header";
+
+                if(type === "success")
+                    header.classList.add("bg-success","text-white");
+                else if(type === "danger")
+                    header.classList.add("bg-danger","text-white");
+                else
+                    header.classList.add("bg-info","text-white");
+
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+
+                setTimeout(()=> modal.hide(),4000);
+
+            }
+
+            // Next Step
+            document.querySelector('.btn-next-step')
+                .addEventListener('click', function(e){
+
+                    e.preventDefault();
+                    saveExperience();
+
+                });
+
+            // Previous Step
+            document.querySelector('.btn-prev-step')
+                .addEventListener('click', function(){
+
+                    window.location.href =
+                        '/CvBuilder/Step?stepNumber=' + @((int)CvStep.Education);
+
+                });
+
+        });
     </script>
 }

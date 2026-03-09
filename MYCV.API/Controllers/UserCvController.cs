@@ -16,14 +16,16 @@ namespace MYCV.API.Controllers
         private readonly IUserEducationService _userEducationService;
         private readonly IUserExperienceService _userExperienceService;
         private readonly IUserSkillService _userSkillService;
+        private readonly IUserProjectService _userProjectService;
         public UserCvController(ILogger<UserCvController> logger, IUserPersonalDetailService userPersonalDetail,
-            IUserEducationService userEducationService, IUserExperienceService userExperienceService, IUserSkillService userSkillService)
+            IUserEducationService userEducationService, IUserExperienceService userExperienceService, IUserSkillService userSkillService, IUserProjectService userProjectService)
         {
             _logger = logger;
             _userPersonalDetail = userPersonalDetail;
             _userEducationService = userEducationService;
             _userExperienceService = userExperienceService;
             _userSkillService = userSkillService;
+            _userProjectService = userProjectService;
         }
 
         /// <summary>
@@ -278,6 +280,72 @@ namespace MYCV.API.Controllers
                 _logger.LogError(ex, "Error saving skill info for user {UserId}", User.Identity?.Name);
                 return StatusCode(500,
                     ApiResponse<List<UserSkillDto>>
+                        .ErrorResponse("Internal server error"));
+            }
+        }
+
+        /// <summary>
+        /// Get all projects records for a user
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>ApiResponse with user's project list</returns>
+        [HttpGet("{userId:int}/project")]
+        public async Task<IActionResult> GetUserProject(int userId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching user project records for user {UserId}", userId);
+
+                var projectList = await _userProjectService.GetUserProjectAsync(userId);
+
+                if (projectList == null || !projectList.Any())
+                {
+                    _logger.LogWarning("No project records found for user {UserId}", userId);
+                    return NotFound(ApiResponse<List<UserProjectDto>>
+                        .ErrorResponse("No project records found"));
+                }
+
+                return Ok(ApiResponse<List<UserProjectDto>>
+                    .SuccessResponse(projectList, "Project records fetched successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching project records for user {UserId}", userId);
+                return StatusCode(500, ApiResponse<List<UserProjectDto>>
+                    .ErrorResponse("Internal server error"));
+            }
+        }
+
+        /// <summary>
+        /// Save user skill information
+        /// </summary>
+        [HttpPost("project")]
+        public async Task<IActionResult> SaveUserProject([FromBody] List<UserProjectDto> dtoList)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ApiResponse<List<UserProjectDto>>
+                    .ErrorResponse("Please fill all required fields."));
+
+            try
+            {
+                int userId = User.GetUserId();
+
+                var savedList = await _userProjectService
+                    .SaveUserProjectAsync(dtoList, userId);
+
+                return Ok(ApiResponse<List<UserProjectDto>>
+                    .SuccessResponse(savedList, "Project saved successfully"));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(ApiResponse<List<UserProjectDto>>
+                    .ErrorResponse("User not authorized"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving project info for user {UserId}", User.Identity?.Name);
+                return StatusCode(500,
+                    ApiResponse<List<UserProjectDto>>
                         .ErrorResponse("Internal server error"));
             }
         }

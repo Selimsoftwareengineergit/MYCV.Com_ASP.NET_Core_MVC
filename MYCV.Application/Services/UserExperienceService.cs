@@ -14,10 +14,8 @@ namespace MYCV.Application.Services
         }
 
         /// <summary>
-        /// Get all work experience records for a user
+        /// Get all work experiences for a user
         /// </summary>
-        /// <param name="userId">The ID of the user</param>
-        /// <returns>List of UserExperienceDto</returns>
         public async Task<List<UserExperienceDto>> GetUserExperiencesAsync(int userId)
         {
             var experiences = await _userExperienceRepository.GetByUserIdAsync(userId);
@@ -25,15 +23,15 @@ namespace MYCV.Application.Services
             if (experiences == null || !experiences.Any())
                 return new List<UserExperienceDto>();
 
-            return experiences.Select(MapToDto).ToList();
+            return experiences
+                .OrderByDescending(x => x.StartDate)
+                .Select(MapToDto)
+                .ToList();
         }
 
         /// <summary>
-        /// Save multiple work experience records for a user
+        /// Save multiple experiences
         /// </summary>
-        /// <param name="dtoList">List of UserExperienceDto to save</param>
-        /// <param name="userId">The ID of the user</param>
-        /// <returns>Saved list of UserExperienceDto</returns>
         public async Task<List<UserExperienceDto>> SaveUserExperiencesAsync(
             List<UserExperienceDto> dtoList,
             int userId)
@@ -53,7 +51,7 @@ namespace MYCV.Application.Services
         }
 
         /// <summary>
-        /// Save or update a single UserExperience entity
+        /// Save or Update Experience
         /// </summary>
         private async Task<UserExperience> SaveOrUpdateAsync(UserExperienceDto dto)
         {
@@ -71,7 +69,7 @@ namespace MYCV.Application.Services
                     Position = dto.Position,
                     Department = dto.Department,
                     Location = dto.Location,
-                    //EmploymentType = dto.EmploymentType,
+                    EmploymentType = dto.EmploymentType,
                     StartDate = dto.StartDate,
                     EndDate = dto.EndDate,
                     Responsibilities = dto.Responsibilities,
@@ -88,7 +86,7 @@ namespace MYCV.Application.Services
                 entity.Position = dto.Position;
                 entity.Department = dto.Department;
                 entity.Location = dto.Location;
-                //entity.EmploymentType = dto.EmploymentType;
+                entity.EmploymentType = dto.EmploymentType;
                 entity.StartDate = dto.StartDate;
                 entity.EndDate = dto.EndDate;
                 entity.Responsibilities = dto.Responsibilities;
@@ -103,7 +101,7 @@ namespace MYCV.Application.Services
         }
 
         /// <summary>
-        /// Map UserExperience entity to DTO
+        /// Map Entity to DTO
         /// </summary>
         private static UserExperienceDto MapToDto(UserExperience entity)
         {
@@ -115,7 +113,7 @@ namespace MYCV.Application.Services
                 Position = entity.Position,
                 Department = entity.Department,
                 Location = entity.Location,
-                //EmploymentType = entity.EmploymentType,
+                EmploymentType = entity.EmploymentType,
                 StartDate = entity.StartDate,
                 EndDate = entity.EndDate,
                 Responsibilities = entity.Responsibilities,

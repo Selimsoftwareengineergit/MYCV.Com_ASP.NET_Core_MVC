@@ -68,11 +68,10 @@ namespace MYCV.Application.Services
                 {
                     UserId = dto.UserId,
                     SkillName = dto.SkillName,
-                    //Level = dto.Level,
-                    //SkillType = dto.SkillType,
+                    Level = dto.Level,
+                    SkillType = dto.SkillType,
                     Remarks = dto.Remarks,
                     YearsOfExperience = dto.YearsOfExperience,
-                    CertificateFile = dto.CertificateFile,
                     Priority = dto.Priority,
                     ProficiencyPercentage = dto.ProficiencyPercentage
                 };
@@ -82,11 +81,10 @@ namespace MYCV.Application.Services
             else
             {
                 entity.SkillName = dto.SkillName;
-                //entity.Level = dto.Level;
-                //entity.SkillType = dto.SkillType;
+                entity.Level = dto.Level;
+                entity.SkillType = dto.SkillType;
                 entity.Remarks = dto.Remarks;
                 entity.YearsOfExperience = dto.YearsOfExperience;
-                entity.CertificateFile = dto.CertificateFile;
                 entity.Priority = dto.Priority;
                 entity.ProficiencyPercentage = dto.ProficiencyPercentage;
 
@@ -106,11 +104,10 @@ namespace MYCV.Application.Services
                 Id = entity.Id,
                 UserId = entity.UserId,
                 SkillName = entity.SkillName,
-                //Level = entity.Level,
-                //SkillType = entity.SkillType,
+                Level = entity.Level,
+                SkillType = entity.SkillType,
                 Remarks = entity.Remarks,
                 YearsOfExperience = entity.YearsOfExperience,
-                CertificateFile = entity.CertificateFile,
                 Priority = entity.Priority,
                 ProficiencyPercentage = entity.ProficiencyPercentage
             };
