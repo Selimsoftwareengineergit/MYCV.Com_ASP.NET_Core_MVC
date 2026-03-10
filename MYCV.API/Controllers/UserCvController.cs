@@ -17,8 +17,9 @@ namespace MYCV.API.Controllers
         private readonly IUserExperienceService _userExperienceService;
         private readonly IUserSkillService _userSkillService;
         private readonly IUserProjectService _userProjectService;
+        private readonly IUserLanguageService _userLanguageService;
         public UserCvController(ILogger<UserCvController> logger, IUserPersonalDetailService userPersonalDetail,
-            IUserEducationService userEducationService, IUserExperienceService userExperienceService, IUserSkillService userSkillService, IUserProjectService userProjectService)
+            IUserEducationService userEducationService, IUserExperienceService userExperienceService, IUserSkillService userSkillService, IUserProjectService userProjectService, IUserLanguageService userLanguageService)
         {
             _logger = logger;
             _userPersonalDetail = userPersonalDetail;
@@ -26,6 +27,7 @@ namespace MYCV.API.Controllers
             _userExperienceService = userExperienceService;
             _userSkillService = userSkillService;
             _userProjectService = userProjectService;
+            _userLanguageService = userLanguageService;
         }
 
         /// <summary>
@@ -346,6 +348,72 @@ namespace MYCV.API.Controllers
                 _logger.LogError(ex, "Error saving project info for user {UserId}", User.Identity?.Name);
                 return StatusCode(500,
                     ApiResponse<List<UserProjectDto>>
+                        .ErrorResponse("Internal server error"));
+            }
+        }
+
+        /// <summary>
+        /// Get all languages records for a user
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>ApiResponse with user's language list</returns>
+        [HttpGet("{userId:int}/language")]
+        public async Task<IActionResult> GetUserLanguage(int userId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching user language records for user {UserId}", userId);
+
+                var languageList = await _userLanguageService.GetUserLanguageAsync(userId);
+
+                if (languageList == null || !languageList.Any())
+                {
+                    _logger.LogWarning("No language records found for user {UserId}", userId);
+                    return NotFound(ApiResponse<List<UserLanguageDto>>
+                        .ErrorResponse("No language records found"));
+                }
+
+                return Ok(ApiResponse<List<UserLanguageDto>>
+                    .SuccessResponse(languageList, "Language records fetched successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching language records for user {UserId}", userId);
+                return StatusCode(500, ApiResponse<List<UserLanguageDto>>
+                    .ErrorResponse("Internal server error"));
+            }
+        }
+
+        /// <summary>
+        /// Save user language information
+        /// </summary>
+        [HttpPost("language")]
+        public async Task<IActionResult> SaveUserLanguage([FromBody] List<UserLanguageDto> dtoList)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ApiResponse<List<UserLanguageDto>>
+                    .ErrorResponse("Please fill all required fields."));
+
+            try
+            {
+                int userId = User.GetUserId();
+
+                var savedList = await _userLanguageService
+                    .SaveUserLanguageAsync(dtoList, userId);
+
+                return Ok(ApiResponse<List<UserLanguageDto>>
+                    .SuccessResponse(savedList, "Languages saved successfully"));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(ApiResponse<List<UserLanguageDto>>
+                    .ErrorResponse("User not authorized"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving language info for user {UserId}", User.Identity?.Name);
+                return StatusCode(500,
+                    ApiResponse<List<UserLanguageDto>>
                         .ErrorResponse("Internal server error"));
             }
         }

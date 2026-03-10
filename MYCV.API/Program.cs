@@ -34,6 +34,8 @@ builder.Services.AddScoped<IUserEducationRepository, UserEducationRepository>();
 builder.Services.AddScoped<IUserExperienceRepository, UserExperienceRepository>();
 builder.Services.AddScoped<IUserSkillRepository, UserSkillRepository>();
 builder.Services.AddScoped<IUserProjectRepository, UserProjectRepository>();
+builder.Services.AddScoped<IUserLanguageRepository, UserLanguageRepository>();
+
 
 // ============================
 // 4️⃣ Configure Application Services
@@ -44,6 +46,7 @@ builder.Services.AddScoped<IUserEducationService, UserEducationService>();
 builder.Services.AddScoped<IUserExperienceService, UserExperienceService>();
 builder.Services.AddScoped < IUserSkillService, UserSkillService>();
 builder.Services.AddScoped<IUserProjectService, UserProjectService>();
+builder.Services.AddScoped<IUserLanguageService, UserLanguageService>();
 
 // ============================
 // 5️⃣ Configure File Service

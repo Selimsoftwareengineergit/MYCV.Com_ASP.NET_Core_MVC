@@ -55,6 +55,19 @@ namespace MYCV.Web.Controllers
                                       && projectResponse.Data != null
                                       && projectResponse.Data.Any();
 
+
+                // Step 6: Languages
+                var languageResponse = await _cvApiService.GetUserLanguageAsync(userId);
+                bool step6Completed = languageResponse.Success
+                                      && languageResponse.Data != null
+                                      && languageResponse.Data.Any();
+
+                // Step 7: SummaryObjective
+                var summaryObjectiveResponse = await _cvApiService.GetUserSummaryObjectiveAsync(userId);
+                bool step7Completed = summaryObjectiveResponse.Success
+                                      && summaryObjectiveResponse.Data != null
+                                      && summaryObjectiveResponse.Data.Any();
+
                 // Step lock rules
                 if (!step1Completed)
                     return View("Index");
@@ -70,6 +83,12 @@ namespace MYCV.Web.Controllers
 
                 if (!step5Completed)
                     return RedirectToAction("Project");
+
+                if (!step6Completed)
+                    return RedirectToAction("Language");
+
+                if (!step7Completed)
+                    return RedirectToAction("SummaryObjective");
 
                 // All steps completed
                 return RedirectToAction("PreviewDownload");
@@ -137,11 +156,7 @@ namespace MYCV.Web.Controllers
         {
             try
             {
-                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-                if (string.IsNullOrEmpty(userIdClaim))
-                    return RedirectToAction("Login", "Account");
-
-                var userId = int.Parse(userIdClaim);
+                int userId = User.GetUserId();
 
                 var response = await _cvApiService.GetUserEducationAsync(userId);
 
@@ -218,11 +233,7 @@ namespace MYCV.Web.Controllers
         {
             try
             {
-                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-                if (string.IsNullOrEmpty(userIdClaim))
-                    return RedirectToAction("Login", "Account");
-
-                var userId = int.Parse(userIdClaim);
+                int userId = User.GetUserId();
 
                 var response = await _cvApiService.GetUserExperiencesAsync(userId);
 
@@ -299,11 +310,7 @@ namespace MYCV.Web.Controllers
         {
             try
             {
-                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-                if (string.IsNullOrEmpty(userIdClaim))
-                    return RedirectToAction("Login", "Account");
-
-                var userId = int.Parse(userIdClaim);
+                int userId = User.GetUserId();
 
                 var response = await _cvApiService.GetUserSkillAsync(userId);
 
@@ -380,11 +387,7 @@ namespace MYCV.Web.Controllers
         {
             try
             {
-                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-                if (string.IsNullOrEmpty(userIdClaim))
-                    return RedirectToAction("Login", "Account");
-
-                var userId = int.Parse(userIdClaim);
+                int userId = User.GetUserId();
 
                 var response = await _cvApiService.GetUserProjectAsync(userId);
 
@@ -461,40 +464,36 @@ namespace MYCV.Web.Controllers
         {
             try
             {
-                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-                if (string.IsNullOrEmpty(userIdClaim))
-                    return RedirectToAction("Login", "Account");
+                int userId = User.GetUserId();
 
-                var userId = int.Parse(userIdClaim);
-
-                var response = await _cvApiService.GetUserProjectAsync(userId);
+                var response = await _cvApiService.GetUserLanguageAsync(userId);
 
                 if (!response.Success)
                 {
-                    _logger.LogWarning("Failed to load project for user {UserId}: {Message}", userId, response.Message);
-                    TempData["ErrorMessage"] = response.Message ?? "Unable to load project data.";
-                    return View(new List<UserProjectDto>());
+                    _logger.LogWarning("Failed to load language for user {UserId}: {Message}", userId, response.Message);
+                    TempData["ErrorMessage"] = response.Message ?? "Unable to load language data.";
+                    return View(new List<UserLanguageDto>());
                 }
 
-                return View(response.Data ?? new List<UserProjectDto>());
+                return View(response.Data ?? new List<UserLanguageDto>());
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error loading project for user {User}", User.Identity?.Name);
-                TempData["ErrorMessage"] = "An unexpected error occurred while loading project data.";
-                return View(new List<UserProjectDto>());
+                _logger.LogError(ex, "Error loading language for user {User}", User.Identity?.Name);
+                TempData["ErrorMessage"] = "An unexpected error occurred while loading language data.";
+                return View(new List<UserLanguageDto>());
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveProject([FromBody] List<UserProjectDto> projectList)
+        public async Task<IActionResult> SaveLanguage([FromBody] List<UserLanguageDto> languageList)
         {
-            if (projectList == null || !projectList.Any())
+            if (languageList == null || !languageList.Any())
             {
                 return BadRequest(new
                 {
                     Success = false,
-                    Message = "At least one project record is required."
+                    Message = "At least one language record is required."
                 });
             }
 
@@ -502,28 +501,28 @@ namespace MYCV.Web.Controllers
             {
                 int userId = User.GetUserId();
 
-                foreach (var exp in projectList)
+                foreach (var exp in languageList)
                 {
                     exp.UserId = userId;
                 }
 
-                var result = await _cvApiService.SaveUserProjectAsync(projectList);
+                var result = await _cvApiService.SaveUserLanguageAsync(languageList);
 
                 if (!result.Success)
                 {
-                    _logger.LogWarning("Failed to save project for user {UserId}: {Message}",
+                    _logger.LogWarning("Failed to save language for user {UserId}: {Message}",
                         userId, result.Message);
 
                     return BadRequest(new { Success = false, Message = result.Message });
                 }
 
-                _logger.LogInformation("Saved project successfully for user {UserId}", userId);
+                _logger.LogInformation("Saved language successfully for user {UserId}", userId);
 
                 return Ok(new
                 {
                     Success = true,
                     Data = result.Data,
-                    Message = "Projects saved successfully!"
+                    Message = "Languages saved successfully!"
                 });
             }
             catch (UnauthorizedAccessException)
@@ -532,7 +531,84 @@ namespace MYCV.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving project for user {User}", User.Identity?.Name);
+                _logger.LogError(ex, "Error saving language for user {User}", User.Identity?.Name);
+                return StatusCode(500, new { Success = false, Message = "Internal server error." });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Language()
+        {
+            try
+            {
+                int userId = User.GetUserId();
+
+                var response = await _cvApiService.GetUserLanguageAsync(userId);
+
+                if (!response.Success)
+                {
+                    _logger.LogWarning("Failed to load language for user {UserId}: {Message}", userId, response.Message);
+                    TempData["ErrorMessage"] = response.Message ?? "Unable to load language data.";
+                    return View(new List<UserLanguageDto>());
+                }
+
+                return View(response.Data ?? new List<UserLanguageDto>());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading language for user {User}", User.Identity?.Name);
+                TempData["ErrorMessage"] = "An unexpected error occurred while loading language data.";
+                return View(new List<UserLanguageDto>());
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveLanguage([FromBody] List<UserLanguageDto> languageList)
+        {
+            if (languageList == null || !languageList.Any())
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "At least one language record is required."
+                });
+            }
+
+            try
+            {
+                int userId = User.GetUserId();
+
+                foreach (var exp in languageList)
+                {
+                    exp.UserId = userId;
+                }
+
+                var result = await _cvApiService.SaveUserLanguageAsync(languageList);
+
+                if (!result.Success)
+                {
+                    _logger.LogWarning("Failed to save language for user {UserId}: {Message}",
+                        userId, result.Message);
+
+                    return BadRequest(new { Success = false, Message = result.Message });
+                }
+
+                _logger.LogInformation("Saved language successfully for user {UserId}", userId);
+
+                return Ok(new
+                {
+                    Success = true,
+                    Data = result.Data,
+                    Message = "Languages saved successfully!"
+                });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(new { Success = false, Message = "User not authorized." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving language for user {User}", User.Identity?.Name);
                 return StatusCode(500, new { Success = false, Message = "Internal server error." });
             }
         }

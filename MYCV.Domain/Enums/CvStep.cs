@@ -8,8 +8,8 @@ namespace MYCV.Domain.Enums
         WorkExperience = 3,       
         Skills = 4,               
         Projects = 5,              
-        Languages = 6,             // Languages with proficiency
-        SummaryObjective = 7,      // Career summary and objective
+        Languages = 6,             
+        SummaryObjective = 7,      
         References = 8,            // References (optional)
         Subscription = 9,          // Subscription/Payment check before download
         PreviewDownload = 10       // Final CV preview and download
