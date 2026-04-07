@@ -417,5 +417,71 @@ namespace MYCV.API.Controllers
                         .ErrorResponse("Internal server error"));
             }
         }
+
+        /// <summary>
+        /// Get all languages records for a user
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>ApiResponse with user's language list</returns>
+        [HttpGet("{userId:int}/language")]
+        public async Task<IActionResult> GetUserLanguage(int userId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching user language records for user {UserId}", userId);
+
+                var languageList = await _userLanguageService.GetUserLanguageAsync(userId);
+
+                if (languageList == null || !languageList.Any())
+                {
+                    _logger.LogWarning("No language records found for user {UserId}", userId);
+                    return NotFound(ApiResponse<List<UserLanguageDto>>
+                        .ErrorResponse("No language records found"));
+                }
+
+                return Ok(ApiResponse<List<UserLanguageDto>>
+                    .SuccessResponse(languageList, "Language records fetched successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching language records for user {UserId}", userId);
+                return StatusCode(500, ApiResponse<List<UserLanguageDto>>
+                    .ErrorResponse("Internal server error"));
+            }
+        }
+
+        /// <summary>
+        /// Save user Summary & Objective information
+        /// </summary>
+        [HttpPost("SummaryObjective")]
+        public async Task<IActionResult> SaveUserSummaryObjective([FromBody] List<UserSummaryObjectiveDto> dtoList)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ApiResponse<List<UserSummaryObjectiveDto>>
+                    .ErrorResponse("Please fill all required fields."));
+
+            try
+            {
+                int userId = User.GetUserId();
+
+                var savedList = await _userLanguageService
+                    .SaveUserLanguageAsync(dtoList, userId);
+
+                return Ok(ApiResponse<List<UserLanguageDto>>
+                    .SuccessResponse(savedList, "Languages saved successfully"));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(ApiResponse<List<UserLanguageDto>>
+                    .ErrorResponse("User not authorized"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving language info for user {UserId}", User.Identity?.Name);
+                return StatusCode(500,
+                    ApiResponse<List<UserLanguageDto>>
+                        .ErrorResponse("Internal server error"));
+            }
+        }
     }
 }

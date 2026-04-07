@@ -537,13 +537,13 @@ namespace MYCV.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Language()
+        public async Task<IActionResult> SummaryObjective()
         {
             try
             {
                 int userId = User.GetUserId();
 
-                var response = await _cvApiService.GetUserLanguageAsync(userId);
+                var response = await _cvApiService.GetUserSummaryObjectiveAsync(userId);
 
                 if (!response.Success)
                 {
@@ -563,7 +563,7 @@ namespace MYCV.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveLanguage([FromBody] List<UserLanguageDto> languageList)
+        public async Task<IActionResult> SaveSummaryObjective([FromBody] List<UserLanguageDto> languageList)
         {
             if (languageList == null || !languageList.Any())
             {
