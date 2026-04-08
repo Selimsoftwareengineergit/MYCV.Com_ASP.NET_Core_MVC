@@ -23,6 +23,6 @@ namespace MYCV.Web.Services.Api
         Task<ApiResponse<List<UserLanguageDto>>> SaveUserLanguageAsync(List<UserLanguageDto> languageList);
 
         Task<ApiResponse<List<UserSummaryObjectiveDto>>> GetUserSummaryObjectiveAsync(int userId);
-        Task<ApiResponse<List<UserSummaryObjectiveDto>>> SaveUserSummaryObjectiveAsync(List<UserSummaryObjectiveDto> languageList);
+        Task<ApiResponse<List<UserSummaryObjectiveDto>>> SaveUserSummaryObjectiveAsync(List<UserSummaryObjectiveDto> summaryObjectiveList);
     }
 }

@@ -68,6 +68,12 @@ namespace MYCV.Web.Controllers
                                       && summaryObjectiveResponse.Data != null
                                       && summaryObjectiveResponse.Data.Any();
 
+                // Step 8: References
+                var referenceResponse = await _cvApiService.GetUserReferenceAsync(userId);
+                bool step8Completed = referenceResponse.Success
+                                      && referenceResponse.Data != null
+                                      && referenceResponse.Data.Any();
+
                 // Step lock rules
                 if (!step1Completed)
                     return View("Index");
@@ -89,6 +95,9 @@ namespace MYCV.Web.Controllers
 
                 if (!step7Completed)
                     return RedirectToAction("SummaryObjective");
+
+                if (!step8Completed)
+                    return RedirectToAction("References");
 
                 // All steps completed
                 return RedirectToAction("PreviewDownload");
@@ -547,59 +556,58 @@ namespace MYCV.Web.Controllers
 
                 if (!response.Success)
                 {
-                    _logger.LogWarning("Failed to load language for user {UserId}: {Message}", userId, response.Message);
-                    TempData["ErrorMessage"] = response.Message ?? "Unable to load language data.";
-                    return View(new List<UserLanguageDto>());
+                    _logger.LogWarning(
+                        "Failed to load summary & objective for user {UserId}: {Message}",
+                        userId, response.Message);
+
+                    TempData["ErrorMessage"] = response.Message ?? "Unable to load Summary & Objective data.";
+
+                    return View(new UserSummaryObjectiveDto());
                 }
 
-                return View(response.Data ?? new List<UserLanguageDto>());
+                var model = response.Data?.FirstOrDefault() ?? new UserSummaryObjectiveDto();
+
+                return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error loading language for user {User}", User.Identity?.Name);
-                TempData["ErrorMessage"] = "An unexpected error occurred while loading language data.";
-                return View(new List<UserLanguageDto>());
+                _logger.LogError(ex, "Error loading summary & objective for user {User}", User.Identity?.Name);
+                TempData["ErrorMessage"] = "An unexpected error occurred while loading Summary & Objective data.";
+
+                return View(new UserSummaryObjectiveDto());
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveSummaryObjective([FromBody] List<UserLanguageDto> languageList)
+        public async Task<IActionResult> SaveSummaryObjective([FromBody] UserSummaryObjectiveDto model)
         {
-            if (languageList == null || !languageList.Any())
+            if (!ModelState.IsValid)
             {
-                return BadRequest(new
-                {
-                    Success = false,
-                    Message = "At least one language record is required."
-                });
+                _logger.LogWarning("Invalid summary & objective submitted for user {User}", User.Identity?.Name);
+                return BadRequest(new { Success = false, Message = "Please fill all required fields." });
             }
 
             try
             {
-                int userId = User.GetUserId();
+                model.UserId = User.GetUserId();
 
-                foreach (var exp in languageList)
-                {
-                    exp.UserId = userId;
-                }
-
-                var result = await _cvApiService.SaveUserLanguageAsync(languageList);
+                var result = await _cvApiService.SaveUserSummaryObjectiveAsync(new List<UserSummaryObjectiveDto> { model });
 
                 if (!result.Success)
                 {
-                    _logger.LogWarning("Failed to save language for user {UserId}: {Message}",
-                        userId, result.Message);
+                    _logger.LogWarning("Failed to save summary & objective for user {UserId}: {Message}",
+                        model.UserId, result.Message);
 
                     return BadRequest(new { Success = false, Message = result.Message });
                 }
 
-                _logger.LogInformation("Saved language successfully for user {UserId}", userId);
+                _logger.LogInformation("Saved summary & objective successfully for user {UserId}", model.UserId);
 
                 return Ok(new
                 {
                     Success = true,
-                    Data = result.Data,
-                    Message = "Languages saved successfully!"
+                    Data = result.Data?.FirstOrDefault(), 
+                    Message = "Summary & Objective saved successfully!"
                 });
             }
             catch (UnauthorizedAccessException)
@@ -608,7 +616,84 @@ namespace MYCV.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving language for user {User}", User.Identity?.Name);
+                _logger.LogError(ex, "Error saving summary & objective for user {User}", User.Identity?.Name);
+                return StatusCode(500, new { Success = false, Message = "Internal server error." });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> References()
+        {
+            try
+            {
+                int userId = User.GetUserId();
+
+                var response = await _cvApiService.GetUserReferenceAsync(userId);
+
+                if (!response.Success)
+                {
+                    _logger.LogWarning("Failed to load references for user {UserId}: {Message}", userId, response.Message);
+                    TempData["ErrorMessage"] = response.Message ?? "Unable to load reference data.";
+                    return View(new List<UserReferenceDto>());
+                }
+
+                return View(response.Data ?? new List<UserReferenceDto>());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading references for user {User}", User.Identity?.Name);
+                TempData["ErrorMessage"] = "An unexpected error occurred while loading reference data.";
+                return View(new List<UserReferenceDto>());
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveReferences([FromBody] List<UserReferenceDto> referenceList)
+        {
+            if (referenceList == null || !referenceList.Any())
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "At least one reference record is required."
+                });
+            }
+
+            try
+            {
+                int userId = User.GetUserId();
+
+                foreach (var reference in referenceList)
+                {
+                    reference.UserId = userId;
+                }
+
+                var result = await _cvApiService.SaveUserReferenceAsync(referenceList);
+
+                if (!result.Success)
+                {
+                    _logger.LogWarning("Failed to save references for user {UserId}: {Message}",
+                        userId, result.Message);
+
+                    return BadRequest(new { Success = false, Message = result.Message });
+                }
+
+                _logger.LogInformation("Saved references successfully for user {UserId}", userId);
+
+                return Ok(new
+                {
+                    Success = true,
+                    Data = result.Data,
+                    Message = "References saved successfully!"
+                });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(new { Success = false, Message = "User not authorized." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving references for user {User}", User.Identity?.Name);
                 return StatusCode(500, new { Success = false, Message = "Internal server error." });
             }
         }

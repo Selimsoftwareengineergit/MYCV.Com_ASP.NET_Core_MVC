@@ -18,8 +18,9 @@ namespace MYCV.API.Controllers
         private readonly IUserSkillService _userSkillService;
         private readonly IUserProjectService _userProjectService;
         private readonly IUserLanguageService _userLanguageService;
+        private readonly IUserSummaryObjectiveService _userSummaryObjectiveService;
         public UserCvController(ILogger<UserCvController> logger, IUserPersonalDetailService userPersonalDetail,
-            IUserEducationService userEducationService, IUserExperienceService userExperienceService, IUserSkillService userSkillService, IUserProjectService userProjectService, IUserLanguageService userLanguageService)
+            IUserEducationService userEducationService, IUserExperienceService userExperienceService, IUserSkillService userSkillService, IUserProjectService userProjectService, IUserLanguageService userLanguageService, IUserSummaryObjectiveService userSummaryObjectiveService)
         {
             _logger = logger;
             _userPersonalDetail = userPersonalDetail;
@@ -28,6 +29,7 @@ namespace MYCV.API.Controllers
             _userSkillService = userSkillService;
             _userProjectService = userProjectService;
             _userLanguageService = userLanguageService;
+            _userSummaryObjectiveService = userSummaryObjectiveService;
         }
 
         /// <summary>
@@ -419,33 +421,33 @@ namespace MYCV.API.Controllers
         }
 
         /// <summary>
-        /// Get all languages records for a user
+        /// Get all summaryObjective records for a user
         /// </summary>
         /// <param name="userId">The ID of the user</param>
-        /// <returns>ApiResponse with user's language list</returns>
-        [HttpGet("{userId:int}/language")]
-        public async Task<IActionResult> GetUserLanguage(int userId)
+        /// <returns>ApiResponse with user's summaryObjective list</returns>
+        [HttpGet("{userId:int}/summaryObjective")]
+        public async Task<IActionResult> GetUserSummaryObjective(int userId)
         {
             try
             {
-                _logger.LogInformation("Fetching user language records for user {UserId}", userId);
+                _logger.LogInformation("Fetching user summary & objective records for user {UserId}", userId);
 
-                var languageList = await _userLanguageService.GetUserLanguageAsync(userId);
+                var summaryObjectiveList = await _userSummaryObjectiveService.GetUserSummaryObjectiveAsync(userId);
 
-                if (languageList == null || !languageList.Any())
+                if (summaryObjectiveList == null || !summaryObjectiveList.Any())
                 {
-                    _logger.LogWarning("No language records found for user {UserId}", userId);
-                    return NotFound(ApiResponse<List<UserLanguageDto>>
-                        .ErrorResponse("No language records found"));
+                    _logger.LogWarning("No summaryObjective records found for user {UserId}", userId);
+                    return NotFound(ApiResponse<List<UserSummaryObjectiveDto>>
+                        .ErrorResponse("No summary & objective records found"));
                 }
 
-                return Ok(ApiResponse<List<UserLanguageDto>>
-                    .SuccessResponse(languageList, "Language records fetched successfully"));
+                return Ok(ApiResponse<List<UserSummaryObjectiveDto>>
+                    .SuccessResponse(summaryObjectiveList, "SummaryObjective records fetched successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching language records for user {UserId}", userId);
-                return StatusCode(500, ApiResponse<List<UserLanguageDto>>
+                _logger.LogError(ex, "Error fetching summary & objective records for user {UserId}", userId);
+                return StatusCode(500, ApiResponse<List<UserSummaryObjectiveDto>>
                     .ErrorResponse("Internal server error"));
             }
         }
@@ -453,7 +455,7 @@ namespace MYCV.API.Controllers
         /// <summary>
         /// Save user Summary & Objective information
         /// </summary>
-        [HttpPost("SummaryObjective")]
+        [HttpPost("summaryObjective")]
         public async Task<IActionResult> SaveUserSummaryObjective([FromBody] List<UserSummaryObjectiveDto> dtoList)
         {
             if (!ModelState.IsValid)
@@ -464,22 +466,22 @@ namespace MYCV.API.Controllers
             {
                 int userId = User.GetUserId();
 
-                var savedList = await _userLanguageService
-                    .SaveUserLanguageAsync(dtoList, userId);
+                var savedList = await _userSummaryObjectiveService
+                    .SaveUserSummaryObjectiveAsync(dtoList, userId);
 
-                return Ok(ApiResponse<List<UserLanguageDto>>
-                    .SuccessResponse(savedList, "Languages saved successfully"));
+                return Ok(ApiResponse<List<UserSummaryObjectiveDto>>
+                    .SuccessResponse(savedList, "Summary & Objective saved successfully"));
             }
             catch (UnauthorizedAccessException)
             {
-                return Unauthorized(ApiResponse<List<UserLanguageDto>>
+                return Unauthorized(ApiResponse<List<UserSummaryObjectiveDto>>
                     .ErrorResponse("User not authorized"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving language info for user {UserId}", User.Identity?.Name);
+                _logger.LogError(ex, "Error saving summary & objective info for user {UserId}", User.Identity?.Name);
                 return StatusCode(500,
-                    ApiResponse<List<UserLanguageDto>>
+                    ApiResponse<List<UserSummaryObjectiveDto>>
                         .ErrorResponse("Internal server error"));
             }
         }

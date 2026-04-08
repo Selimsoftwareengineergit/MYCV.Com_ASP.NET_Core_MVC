@@ -10,7 +10,7 @@ namespace MYCV.Domain.Enums
         Projects = 5,              
         Languages = 6,             
         SummaryObjective = 7,      
-        References = 8,            // References (optional)
+        References = 8,            
         Subscription = 9,          // Subscription/Payment check before download
         PreviewDownload = 10       // Final CV preview and download
     }

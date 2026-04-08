@@ -727,33 +727,33 @@ namespace MYCV.Web.Services.Api
                     "Fetching SummaryObjective records for user {UserId}",
                     userId);
 
-                var response = await _httpClient.GetAsync($"api/cv/{userId}/language");
+                var response = await _httpClient.GetAsync($"api/cv/{userId}/summaryObjective");
 
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
 
                     _logger.LogWarning(
-                        "GetUserLanguageAsync failed for user {UserId}. StatusCode: {StatusCode}, Error: {Error}",
+                        "GetUserSummaryObjectiveAsync failed for user {UserId}. StatusCode: {StatusCode}, Error: {Error}",
                         userId, response.StatusCode, errorContent);
 
-                    return ApiResponse<List<UserLanguageDto>>.ErrorResponse(errorContent);
+                    return ApiResponse<List<UserSummaryObjectiveDto>>.ErrorResponse(errorContent);
                 }
 
                 var result = await response.Content
-                    .ReadFromJsonAsync<ApiResponse<List<UserLanguageDto>>>(AppJsonOptions.Options);
+                    .ReadFromJsonAsync<ApiResponse<List<UserSummaryObjectiveDto>>>(AppJsonOptions.Options);
 
                 if (result == null)
                 {
                     _logger.LogWarning(
-                        "GetUserLanguageAsync returned null response for user {UserId}",
+                        "GetUserSummaryObjectiveAsync returned null response for user {UserId}",
                         userId);
 
-                    return ApiResponse<List<UserLanguageDto>>.ErrorResponse("Invalid response from API");
+                    return ApiResponse<List<UserSummaryObjectiveDto>>.ErrorResponse("Invalid response from API");
                 }
 
                 _logger.LogInformation(
-                    "Successfully fetched language records for user {UserId}",
+                    "Successfully fetched summary & objective records for user {UserId}",
                     userId);
 
                 return result;
@@ -761,32 +761,32 @@ namespace MYCV.Web.Services.Api
             catch (Exception ex)
             {
                 _logger.LogError(ex,
-                    "Exception occurred in GetUserLanguageAsync for user {UserId}",
+                    "Exception occurred in GetUserSummaryObjectiveAsync for user {UserId}",
                     userId);
 
-                return ApiResponse<List<UserLanguageDto>>.ErrorResponse("Network or API error");
+                return ApiResponse<List<UserSummaryObjectiveDto>>.ErrorResponse("Network or API error");
             }
         }
 
         /// <summary>
-        /// Save multiple user language records
+        /// Save multiple user summary & objective records
         /// </summary>
-        /// <param name="languageList">List of user language to save</param>
-        /// <returns>ApiResponse with saved user languages</returns>
-        public async Task<ApiResponse<List<UserLanguageDto>>> SaveUserLanguageAsync(List<UserLanguageDto> languageList)
+        /// <param name="summaryObjectiveList">List of user summary & objective to save</param>
+        /// <returns>ApiResponse with saved user summary & objective</returns>
+        public async Task<ApiResponse<List<UserSummaryObjectiveDto>>> SaveUserSummaryObjectiveAsync(List<UserSummaryObjectiveDto> summaryObjectiveList)
         {
-            if (languageList == null || !languageList.Any())
-                return ApiResponse<List<UserLanguageDto>>.ErrorResponse("Languages list is empty");
+            if (summaryObjectiveList == null || !summaryObjectiveList.Any())
+                return ApiResponse<List<UserSummaryObjectiveDto>>.ErrorResponse("SummaryObjective list is empty");
 
             try
             {
                 _logger.LogInformation(
-                    "Saving user language records. Count: {Count}",
-                    languageList.Count);
+                    "Saving user summary & objective records. Count: {Count}",
+                    summaryObjectiveList.Count);
 
                 var response = await _httpClient.PostAsJsonAsync(
-                    "api/cv/language",
-                    languageList,
+                    "api/cv/summaryObjective",
+                    summaryObjectiveList,
                     AppJsonOptions.Options);
 
                 if (!response.IsSuccessStatusCode)
@@ -794,34 +794,34 @@ namespace MYCV.Web.Services.Api
                     var errorContent = await response.Content.ReadAsStringAsync();
 
                     _logger.LogWarning(
-                        "SaveUserLanguageAsync failed. StatusCode: {StatusCode}, Error: {Error}",
+                        "SaveUserSummaryObjectiveAsync failed. StatusCode: {StatusCode}, Error: {Error}",
                         response.StatusCode, errorContent);
 
-                    return ApiResponse<List<UserLanguageDto>>.ErrorResponse(errorContent);
+                    return ApiResponse<List<UserSummaryObjectiveDto>>.ErrorResponse(errorContent);
                 }
 
                 var result = await response.Content
-                    .ReadFromJsonAsync<ApiResponse<List<UserLanguageDto>>>(AppJsonOptions.Options);
+                    .ReadFromJsonAsync<ApiResponse<List<UserSummaryObjectiveDto>>>(AppJsonOptions.Options);
 
                 if (result == null)
                 {
                     _logger.LogWarning(
-                        "SaveUserLanguageAsync returned null response");
+                        "SaveUserSummaryObjectiveAsync returned null response");
 
-                    return ApiResponse<List<UserLanguageDto>>.ErrorResponse("Invalid response from API");
+                    return ApiResponse<List<UserSummaryObjectiveDto>>.ErrorResponse("Invalid response from API");
                 }
 
                 _logger.LogInformation(
-                    "User language records saved successfully");
+                    "User summary & object records saved successfully");
 
                 return result;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex,
-                    "Exception occurred in SaveUserLanguageAsync");
+                    "Exception occurred in SaveUserSummaryObjectiveAsync");
 
-                return ApiResponse<List<UserLanguageDto>>.ErrorResponse($"Network or API error: {ex.Message}");
+                return ApiResponse<List<UserSummaryObjectiveDto>>.ErrorResponse($"Network or API error: {ex.Message}");
             }
         }
     }
