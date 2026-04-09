@@ -19,8 +19,10 @@ namespace MYCV.API.Controllers
         private readonly IUserProjectService _userProjectService;
         private readonly IUserLanguageService _userLanguageService;
         private readonly IUserSummaryObjectiveService _userSummaryObjectiveService;
+        private readonly IUserReferenceService _userReferenceService;
+        private readonly IUserSubscriptionService _userSubscriptionService;
         public UserCvController(ILogger<UserCvController> logger, IUserPersonalDetailService userPersonalDetail,
-            IUserEducationService userEducationService, IUserExperienceService userExperienceService, IUserSkillService userSkillService, IUserProjectService userProjectService, IUserLanguageService userLanguageService, IUserSummaryObjectiveService userSummaryObjectiveService)
+            IUserEducationService userEducationService, IUserExperienceService userExperienceService, IUserSkillService userSkillService, IUserProjectService userProjectService, IUserLanguageService userLanguageService, IUserSummaryObjectiveService userSummaryObjectiveService, IUserReferenceService userReferenceService, IUserSubscriptionService userSubscriptionService)
         {
             _logger = logger;
             _userPersonalDetail = userPersonalDetail;
@@ -30,6 +32,8 @@ namespace MYCV.API.Controllers
             _userProjectService = userProjectService;
             _userLanguageService = userLanguageService;
             _userSummaryObjectiveService = userSummaryObjectiveService;
+            _userReferenceService = userReferenceService;
+            _userSubscriptionService = userSubscriptionService;
         }
 
         /// <summary>
@@ -483,6 +487,139 @@ namespace MYCV.API.Controllers
                 return StatusCode(500,
                     ApiResponse<List<UserSummaryObjectiveDto>>
                         .ErrorResponse("Internal server error"));
+            }
+        }
+
+        /// <summary>
+        /// Get all references records for a user
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>ApiResponse with user's reference list</returns>
+        [HttpGet("{userId:int}/reference")]
+        public async Task<IActionResult> GetUserReference(int userId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching user reference records for user {UserId}", userId);
+
+                var referenceList = await _userReferenceService.GetUserReferenceAsync(userId);
+
+                if (referenceList == null || !referenceList.Any())
+                {
+                    _logger.LogWarning("No reference records found for user {UserId}", userId);
+                    return NotFound(ApiResponse<List<UserReferenceDto>>
+                        .ErrorResponse("No reference records found"));
+                }
+
+                return Ok(ApiResponse<List<UserReferenceDto>>
+                    .SuccessResponse(referenceList, "Reference records fetched successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching reference records for user {UserId}", userId);
+                return StatusCode(500, ApiResponse<List<UserReferenceDto>>
+                    .ErrorResponse("Internal server error"));
+            }
+        }
+
+        /// <summary>
+        /// Save user reference information
+        /// </summary>
+        [HttpPost("reference")]
+        public async Task<IActionResult> SaveUserReference([FromBody] List<UserReferenceDto> dtoList)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ApiResponse<List<UserReferenceDto>>
+                    .ErrorResponse("Please fill all required fields."));
+
+            try
+            {
+                int userId = User.GetUserId();
+
+                var savedList = await _userReferenceService
+                    .SaveUserReferenceAsync(dtoList, userId);
+
+                return Ok(ApiResponse<List<UserReferenceDto>>
+                    .SuccessResponse(savedList, "References saved successfully"));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(ApiResponse<List<UserReferenceDto>>
+                    .ErrorResponse("User not authorized"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving reference info for user {UserId}", User.Identity?.Name);
+                return StatusCode(500,
+                    ApiResponse<List<UserReferenceDto>>
+                        .ErrorResponse("Internal server error"));
+            }
+        }
+
+        /// <summary>
+        /// Get subscription information for a user
+        /// </summary>
+        /// <param name="userId">User ID</param>
+        /// <returns>ApiResponse with user's subscription details</returns>
+        [HttpGet("{userId:int}/subscription")]
+        public async Task<IActionResult> GetUserSubscription(int userId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching subscription for user {UserId}", userId);
+
+                var subscription = await _userSubscriptionService.GetUserSubscriptionAsync(userId);
+
+                if (subscription == null)
+                {
+                    _logger.LogWarning("No active subscription found for user {UserId}", userId);
+                    return NotFound(ApiResponse<UserSubscriptionDto>
+                        .ErrorResponse("No subscription found for this user"));
+                }
+
+                return Ok(ApiResponse<UserSubscriptionDto>
+                    .SuccessResponse(subscription, "Subscription fetched successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching subscription for user {UserId}", userId);
+                return StatusCode(500, ApiResponse<UserSubscriptionDto>
+                    .ErrorResponse("Internal server error"));
+            }
+        }
+
+        /// <summary>
+        /// Save user subscription information
+        /// </summary>
+        [HttpPost("subscription")]
+        public async Task<IActionResult> SaveUserSubscription([FromBody] UserSubscriptionDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ApiResponse<UserSubscriptionDto>
+                    .ErrorResponse("Please fill all required fields."));
+            }
+
+            try
+            {
+                int userId = User.GetUserId();
+                dto.UserId = userId;
+
+                var savedSubscription = await _userSubscriptionService.SaveUserSubscriptionAsync(dto);
+
+                return Ok(ApiResponse<UserSubscriptionDto>
+                    .SuccessResponse(savedSubscription, "Subscription saved successfully"));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(ApiResponse<UserSubscriptionDto>
+                    .ErrorResponse("User not authorized"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving subscription for user {UserId}", User.Identity?.Name);
+                return StatusCode(500, ApiResponse<UserSubscriptionDto>
+                    .ErrorResponse("Internal server error"));
             }
         }
     }

@@ -2,9 +2,10 @@
 {
     public enum SubscriptionPlan
     {
-        Monthly = 1,     
-        Quarterly = 2,  
-        HalfYearly = 3,  
-        Yearly = 4      
+        Weekly = 1,
+        Monthly = 2,
+        Quarterly = 3,
+        HalfYearly = 4,
+        Yearly = 5
     }
 }

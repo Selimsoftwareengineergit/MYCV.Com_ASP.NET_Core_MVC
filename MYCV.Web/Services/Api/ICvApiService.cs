@@ -24,5 +24,11 @@ namespace MYCV.Web.Services.Api
 
         Task<ApiResponse<List<UserSummaryObjectiveDto>>> GetUserSummaryObjectiveAsync(int userId);
         Task<ApiResponse<List<UserSummaryObjectiveDto>>> SaveUserSummaryObjectiveAsync(List<UserSummaryObjectiveDto> summaryObjectiveList);
+
+        Task<ApiResponse<List<UserReferenceDto>>> GetUserReferencesAsync(int userId);
+        Task<ApiResponse<List<UserReferenceDto>>> SaveUserReferencesAsync(List<UserReferenceDto> referenceList);
+
+        Task<ApiResponse<UserSubscriptionDto>> GetUserSubscriptionAsync(int userId);
+        Task<ApiResponse<UserSubscriptionDto>> SaveUserSubscriptionAsync(UserSubscriptionDto subscription);
     }
 }

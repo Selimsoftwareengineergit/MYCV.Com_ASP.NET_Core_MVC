@@ -1,0 +1,406 @@
+﻿@using MYCV.Domain.Enums
+@model List<MYCV.Application.DTOs.UserReferenceDto>
+
+@{
+    ViewData["Title"] = "References";
+    var currentStep = (int)CvStep.References;
+    var completedSteps = new List<int>
+    {
+        (int)CvStep.PersonalDetail,
+        (int)CvStep.Education,
+        (int)CvStep.WorkExperience,
+        (int)CvStep.Skills,
+        (int)CvStep.Projects,
+        (int)CvStep.Languages,
+        (int)CvStep.SummaryObjective
+    };
+}
+
+<section class="py-5 bg-light">
+    <div class="container">
+
+        <div class="row mb-4">
+            <div class="col text-center">
+                <h2 class="fw-bold">References</h2>
+                <p class="text-muted">Add professional references</p>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <!-- LEFT STEP NAVIGATION -->
+            <div class="col-lg-4 mb-4">
+                @await Component.InvokeAsync("CvStepNavigation", new
+                    {
+                        currentStep = currentStep,
+                        completedSteps = completedSteps
+                    })
+            </div>
+
+            <!-- RIGHT CONTENT -->
+            <div class="col-lg-8" style="max-height:80vh; overflow-y:auto;">
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="fw-semibold mb-0">Step <span id="currentStepDisplay">@currentStep</span></h4>
+                            <span class="badge bg-primary">In Progress</span>
+                        </div>
+
+                        <div class="accordion" id="referenceAccordion">
+                            @if (Model != null && Model.Any())
+                            {
+                                int count = 1;
+                                foreach (var reference in Model)
+                                {
+                                    <div class="accordion-item step-form" data-step="@currentStep">
+                                        <h2 class="accordion-header position-relative">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRef@count">
+                                                Reference Information
+                                            </button>
+                                            <button type="button" class="btn-close position-absolute top-0 end-0 m-2 btn-remove-ref" aria-label="Remove"></button>
+                                        </h2>
+                                        <div id="collapseRef@count" class="accordion-collapse collapse @(count == 1 ? "show" : "")">
+                                            <div class="accordion-body">
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label required">Name</label>
+                                                        <input type="text" class="form-control name" value="@reference.Name" required />
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Position</label>
+                                                        <input type="text" class="form-control position" value="@reference.Position" />
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Company</label>
+                                                        <input type="text" class="form-control company" value="@reference.Company" />
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label required">Contact</label>
+                                                        <input type="text" class="form-control contact" value="@reference.Contact" required />
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Relation</label>
+                                                        <input type="text" class="form-control relation" value="@reference.Relation" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    count++;
+                                }
+                            }
+                            else
+                            {
+                                <!-- Initial empty form -->
+                                <div class="accordion-item step-form" data-step="@currentStep">
+                                    <h2 class="accordion-header position-relative">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRef1">
+                                            Reference Information
+                                        </button>
+                                        <button type="button" class="btn-close position-absolute top-0 end-0 m-2 btn-remove-ref" aria-label="Remove"></button>
+                                    </h2>
+                                    <div id="collapseRef1" class="accordion-collapse collapse show">
+                                        <div class="accordion-body">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label required">Name</label>
+                                                    <input type="text" class="form-control name" required />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Position</label>
+                                                    <input type="text" class="form-control position" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Company</label>
+                                                    <input type="text" class="form-control company" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label required">Contact</label>
+                                                    <input type="text" class="form-control contact" required />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Relation</label>
+                                                    <input type="text" class="form-control relation" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- BUTTONS -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-outline-secondary btn-prev-step">← Previous</button>
+                            <button type="button" class="btn btn-success btn-add-ref">+ Add Reference</button>
+                            <button type="button" class="btn btn-primary btn-next-step">Save & Continue →</button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="infoModalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="savedInfoContent"></div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* ================================
+                   CV Steps Styles
+                ================================ */
+        .cv-steps {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .cv-steps .step {
+                display: flex;
+                align-items: center;
+                position: relative;
+                padding: 12px 0;
+                color: #6c757d;
+                font-weight: 500;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+                .cv-steps .step .step-circle {
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    border: 2px solid #dee2e6;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-right: 12px;
+                    font-size: 14px;
+                    transition: 0.3s;
+                }
+
+                .cv-steps .step.active {
+                    color: #0d6efd;
+                    font-weight: 600;
+                }
+
+                    .cv-steps .step.active .step-circle {
+                        border-color: #0d6efd;
+                        background-color: #0d6efd;
+                        color: #fff;
+                    }
+
+                .cv-steps .step.completed {
+                    color: #198754;
+                }
+
+                    .cv-steps .step.completed .step-circle {
+                        border-color: #198754;
+                        background-color: #198754;
+                        color: #fff;
+                    }
+
+                .cv-steps .step:not(:last-child)::after {
+                    content: '';
+                    position: absolute;
+                    left: 14px;
+                    top: 42px;
+                    height: 100%;
+                    width: 2px;
+                    background-color: #e9ecef;
+                }
+
+        /* ================================
+                   Accordion Styles
+                ================================ */
+        .accordion-button {
+            font-weight: bold;
+            background-color: #e7f1ff;
+            color: #0d6efd;
+        }
+
+            .accordion-button:not(.collapsed) {
+                background-color: #cfe2ff;
+                color: #0d6efd;
+            }
+
+        /* ================================
+                   Required label asterisk
+                ================================ */
+        label.required::after {
+            content: " *";
+            color: red;
+            font-weight: bold;
+        }
+
+        /* ================================
+                   Accordion Header
+                ================================ */
+        .accordion-header {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-right: 2.5rem; /* space for remove button */
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            background-color: #e7f1ff;
+        }
+
+            /* ================================
+                   SMALL Remove Button (Fixed)
+                ================================ */
+            .accordion-header .btn-remove-ref {
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 18px;
+                height: 18px;
+                padding: 0;
+                font-size: 12px;
+                line-height: 1;
+                border-radius: 50%;
+                border: none;
+                background-color: #dc3545;
+                color: #fff;
+                cursor: pointer;
+                z-index: 1050;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+                .accordion-header .btn-remove-ref::before {
+                    content: "×";
+                    font-weight: bold;
+                }
+
+                .accordion-header .btn-remove-ref:hover {
+                    background-color: #b02a37;
+                }
+
+        /* ================================
+                   Accordion Body Scroll
+                ================================ */
+        .accordion-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const accordion = document.getElementById('referenceAccordion');
+
+            // Add new reference
+            document.querySelector('.btn-add-ref').addEventListener('click', function () {
+                const count = accordion.querySelectorAll('.accordion-item').length + 1;
+                const newItem = document.createElement('div');
+                newItem.classList.add('accordion-item', 'step-form');
+                newItem.innerHTML = `
+                    <h2 class="accordion-header position-relative">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRef${count}">
+                            Reference Information
+                        </button>
+                        <button type="button" class="btn-close btn-remove-ref" aria-label="Remove"></button>
+                    </h2>
+                    <div id="collapseRef${count}" class="accordion-collapse collapse show">
+                        <div class="accordion-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label required">Name</label>
+                                    <input type="text" class="form-control name" required/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Position</label>
+                                    <input type="text" class="form-control position"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Company</label>
+                                    <input type="text" class="form-control company"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label required">Contact</label>
+                                    <input type="text" class="form-control contact" required/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Relation</label>
+                                    <input type="text" class="form-control relation"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                accordion.appendChild(newItem);
+            });
+
+            // Remove reference
+            accordion.addEventListener('click', function (e) {
+                if (e.target.classList.contains('btn-remove-ref')) {
+                    const item = e.target.closest('.accordion-item');
+                    if (item) item.remove();
+                }
+            });
+
+            // Save references
+            async function saveReferences() {
+                const referenceList = [];
+                accordion.querySelectorAll('.accordion-item').forEach(item => {
+                    referenceList.push({
+                        Name: item.querySelector('.name').value,
+                        Position: item.querySelector('.position').value,
+                        Company: item.querySelector('.company').value,
+                        Contact: item.querySelector('.contact').value,
+                        Relation: item.querySelector('.relation').value,
+                        Priority: 1
+                    });
+                });
+
+                const response = await fetch('/CvBuilder/SaveReferences', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(referenceList)
+                });
+
+                const result = await response.json();
+                showModal("Saved", JSON.stringify(result.data));
+            }
+
+            function showModal(title, message) {
+                const modalEl = document.getElementById('infoModal');
+                document.getElementById('infoModalTitle').textContent = title;
+                document.getElementById('savedInfoContent').innerHTML = message;
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            }
+
+            document.querySelector('.btn-next-step').addEventListener('click', function (e) {
+                e.preventDefault();
+                saveReferences();
+            });
+
+            document.querySelector('.btn-prev-step').addEventListener('click', function () {
+                window.location.href = '/CvBuilder/Step?stepNumber=' + @((int)CvStep.SummaryObjective);
+            });
+
+        });
+    </script>
+}

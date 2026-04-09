@@ -36,6 +36,7 @@ builder.Services.AddScoped<IUserSkillRepository, UserSkillRepository>();
 builder.Services.AddScoped<IUserProjectRepository, UserProjectRepository>();
 builder.Services.AddScoped<IUserLanguageRepository, UserLanguageRepository>();
 builder.Services.AddScoped<IUserSummaryObjectiveRepository, UserSummaryObjectiveRepository>();
+builder.Services.AddScoped<IUserReferenceRepository, UserReferenceRepository>();
 
 
 
@@ -50,6 +51,7 @@ builder.Services.AddScoped < IUserSkillService, UserSkillService>();
 builder.Services.AddScoped<IUserProjectService, UserProjectService>();
 builder.Services.AddScoped<IUserLanguageService, UserLanguageService>();
 builder.Services.AddScoped<IUserSummaryObjectiveService, UserSummaryObjectiveService>();
+builder.Services.AddScoped<IUserReferenceService, UserReferenceService>();
 
 // ============================
 // 5️⃣ Configure File Service

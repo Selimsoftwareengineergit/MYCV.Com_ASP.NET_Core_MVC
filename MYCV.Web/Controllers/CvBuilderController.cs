@@ -26,57 +26,74 @@ namespace MYCV.Web.Controllers
             {
                 int userId = User.GetUserId();
 
-                // Step 1: Personal Information
+                // ===============================
+                // STEP 1: Personal Information
+                // ===============================
                 var personalInfoResponse = await _cvApiService.GetUserPersonalDetailAsync(userId);
                 bool step1Completed = personalInfoResponse.Success
                                       && personalInfoResponse.Data != null;
 
-                // Step 2: Education
+                // ===============================
+                // STEP 2: Education
+                // ===============================
                 var educationResponse = await _cvApiService.GetUserEducationAsync(userId);
                 bool step2Completed = educationResponse.Success
                                       && educationResponse.Data != null
                                       && educationResponse.Data.Any();
 
-                // Step 3: Experience
+                // ===============================
+                // STEP 3: Experience
+                // ===============================
                 var experienceResponse = await _cvApiService.GetUserExperiencesAsync(userId);
                 bool step3Completed = experienceResponse.Success
                                       && experienceResponse.Data != null
                                       && experienceResponse.Data.Any();
 
-                // Step 4: Skill
+                // ===============================
+                // STEP 4: Skills
+                // ===============================
                 var skillResponse = await _cvApiService.GetUserSkillAsync(userId);
                 bool step4Completed = skillResponse.Success
                                       && skillResponse.Data != null
                                       && skillResponse.Data.Any();
 
-                // Step 5: Projects
+                // ===============================
+                // STEP 5: Projects
+                // ===============================
                 var projectResponse = await _cvApiService.GetUserProjectAsync(userId);
                 bool step5Completed = projectResponse.Success
                                       && projectResponse.Data != null
                                       && projectResponse.Data.Any();
 
-
-                // Step 6: Languages
+                // ===============================
+                // STEP 6: Languages
+                // ===============================
                 var languageResponse = await _cvApiService.GetUserLanguageAsync(userId);
                 bool step6Completed = languageResponse.Success
                                       && languageResponse.Data != null
                                       && languageResponse.Data.Any();
 
-                // Step 7: SummaryObjective
+                // ===============================
+                // STEP 7: Summary Objective
+                // ===============================
                 var summaryObjectiveResponse = await _cvApiService.GetUserSummaryObjectiveAsync(userId);
                 bool step7Completed = summaryObjectiveResponse.Success
                                       && summaryObjectiveResponse.Data != null
                                       && summaryObjectiveResponse.Data.Any();
 
-                // Step 8: References
-                var referenceResponse = await _cvApiService.GetUserReferenceAsync(userId);
+                // ===============================
+                // STEP 8: References
+                // ===============================
+                var referenceResponse = await _cvApiService.GetUserReferencesAsync(userId);
                 bool step8Completed = referenceResponse.Success
                                       && referenceResponse.Data != null
                                       && referenceResponse.Data.Any();
 
-                // Step lock rules
+                // ===============================
+                // STEP LOCK RULES
+                // ===============================
                 if (!step1Completed)
-                    return View("Index");
+                    return RedirectToAction("PersonalDetail");
 
                 if (!step2Completed)
                     return RedirectToAction("Education");
@@ -99,8 +116,21 @@ namespace MYCV.Web.Controllers
                 if (!step8Completed)
                     return RedirectToAction("References");
 
-                // All steps completed
-                return RedirectToAction("PreviewDownload");
+                // ===============================
+                // STEP 9: Subscription Check
+                // ===============================
+                var subscriptionResponse = await _cvApiService.GetUserSubscriptionAsync(userId);
+                var subscription = subscriptionResponse.Data;
+
+                bool hasActiveSubscription = subscriptionResponse.Success
+                                             && subscription != null
+                                             && !subscription.IsExpired;
+
+                if (!hasActiveSubscription)
+                    return RedirectToAction("Subscription");
+
+                // After subscription → template selection
+                return RedirectToAction("TemplateSelection");
             }
             catch (UnauthorizedAccessException)
             {
@@ -628,7 +658,7 @@ namespace MYCV.Web.Controllers
             {
                 int userId = User.GetUserId();
 
-                var response = await _cvApiService.GetUserReferenceAsync(userId);
+                var response = await _cvApiService.GetUserReferencesAsync(userId);
 
                 if (!response.Success)
                 {
@@ -668,7 +698,7 @@ namespace MYCV.Web.Controllers
                     reference.UserId = userId;
                 }
 
-                var result = await _cvApiService.SaveUserReferenceAsync(referenceList);
+                var result = await _cvApiService.SaveUserReferencesAsync(referenceList);
 
                 if (!result.Success)
                 {
@@ -695,6 +725,130 @@ namespace MYCV.Web.Controllers
             {
                 _logger.LogError(ex, "Error saving references for user {User}", User.Identity?.Name);
                 return StatusCode(500, new { Success = false, Message = "Internal server error." });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Subscription()
+        {
+            try
+            {
+                int userId = User.GetUserId();
+
+                var response = await _cvApiService.GetUserSubscriptionAsync(userId);
+
+                if (!response.Success)
+                {
+                    _logger.LogWarning(
+                        "Failed to load subscription for user {UserId}: {Message}",
+                        userId, response.Message);
+
+                    TempData["ErrorMessage"] =
+                        response.Message ?? "Unable to load subscription data.";
+
+                    return View(new UserSubscriptionDto());
+                }
+
+                var model = response.Data ?? new UserSubscriptionDto();
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error loading subscription for user {User}",
+                    User.Identity?.Name);
+
+                TempData["ErrorMessage"] =
+                    "An unexpected error occurred while loading subscription data.";
+
+                return View(new UserSubscriptionDto());
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveSubscription(
+            [FromBody] UserSubscriptionDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                _logger.LogWarning(
+                    "Invalid subscription submitted for user {User}",
+                    User.Identity?.Name);
+
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "Please fill all required fields."
+                });
+            }
+
+            try
+            {
+                model.UserId = User.GetUserId();
+
+                // Auto calculate start date
+                model.StartDate = DateTime.UtcNow;
+
+                // Auto calculate end date from selected plan
+                model.EndDate = model.Plan switch
+                {
+                    SubscriptionPlan.Weekly => model.StartDate.AddDays(7),
+                    SubscriptionPlan.Monthly => model.StartDate.AddMonths(1),
+                    SubscriptionPlan.Quarterly => model.StartDate.AddMonths(3),
+                    SubscriptionPlan.HalfYearly => model.StartDate.AddMonths(6),
+                    SubscriptionPlan.Yearly => model.StartDate.AddYears(1),
+                    _ => model.StartDate.AddMonths(1)
+                };
+
+                var result = await _cvApiService.SaveUserSubscriptionAsync(model);
+
+                if (!result.Success)
+                {
+                    _logger.LogWarning(
+                        "Failed to save subscription for user {UserId}: {Message}",
+                        model.UserId,
+                        result.Message);
+
+                    return BadRequest(new
+                    {
+                        Success = false,
+                        Message = result.Message
+                    });
+                }
+
+                _logger.LogInformation(
+                    "Saved subscription successfully for user {UserId}",
+                    model.UserId);
+
+                return Ok(new
+                {
+                    Success = true,
+                    Data = result.Data,
+                    Message = "Subscription saved successfully!"
+                });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(new
+                {
+                    Success = false,
+                    Message = "User not authorized."
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error saving subscription for user {User}",
+                    User.Identity?.Name);
+
+                return StatusCode(500, new
+                {
+                    Success = false,
+                    Message = "Internal server error."
+                });
             }
         }
 

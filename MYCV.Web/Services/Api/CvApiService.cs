@@ -824,5 +824,227 @@ namespace MYCV.Web.Services.Api
                 return ApiResponse<List<UserSummaryObjectiveDto>>.ErrorResponse($"Network or API error: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Get all references records for a user
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>ApiResponse with user's reference list</returns>
+        public async Task<ApiResponse<List<UserReferenceDto>>> GetUserReferencesAsync(int userId)
+        {
+            try
+            {
+                _logger.LogInformation(
+                    "Fetching references records for user {UserId}",
+                    userId);
+
+                var response = await _httpClient.GetAsync($"api/cv/{userId}/reference");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "GetUserReferencesAsync failed for user {UserId}. StatusCode: {StatusCode}, Error: {Error}",
+                        userId, response.StatusCode, errorContent);
+
+                    return ApiResponse<List<UserReferenceDto>>.ErrorResponse(errorContent);
+                }
+
+                var result = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<List<UserReferenceDto>>>(AppJsonOptions.Options);
+
+                if (result == null)
+                {
+                    _logger.LogWarning(
+                        "GetUserReferenceAsync returned null response for user {UserId}",
+                        userId);
+
+                    return ApiResponse<List<UserReferenceDto>>.ErrorResponse("Invalid response from API");
+                }
+
+                _logger.LogInformation(
+                    "Successfully fetched references records for user {UserId}",
+                    userId);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Exception occurred in GetUserReferenceAsync for user {UserId}",
+                    userId);
+
+                return ApiResponse<List<UserReferenceDto>>.ErrorResponse("Network or API error");
+            }
+        }
+
+        /// <summary>
+        /// Save user multiple reference records
+        /// </summary>
+        /// <param name="referenceList">List of user reference to save</param>
+        /// <returns>ApiResponse with saved user reference</returns>
+        public async Task<ApiResponse<List<UserReferenceDto>>> SaveUserReferencesAsync(List<UserReferenceDto> referenceList)
+        {
+            if (referenceList == null || !referenceList.Any())
+                return ApiResponse<List<UserReferenceDto>>.ErrorResponse("Reference list is empty");
+
+            try
+            {
+                _logger.LogInformation(
+                    "Saving user reference records. Count: {Count}",
+                    referenceList.Count);
+
+                var response = await _httpClient.PostAsJsonAsync(
+                    "api/cv/reference",
+                    referenceList,
+                    AppJsonOptions.Options);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "SaveUserReferencesAsync failed. StatusCode: {StatusCode}, Error: {Error}",
+                        response.StatusCode, errorContent);
+
+                    return ApiResponse<List<UserReferenceDto>>.ErrorResponse(errorContent);
+                }
+
+                var result = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<List<UserReferenceDto>>>(AppJsonOptions.Options);
+
+                if (result == null)
+                {
+                    _logger.LogWarning(
+                        "SaveUserReferencesAsync returned null response");
+
+                    return ApiResponse<List<UserReferenceDto>>.ErrorResponse("Invalid response from API");
+                }
+
+                _logger.LogInformation(
+                    "User reference records saved successfully");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Exception occurred in SaveUserReferencesAsync");
+
+                return ApiResponse<List<UserReferenceDto>>.ErrorResponse($"Network or API error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Get user subscription record
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>ApiResponse with user subscription</returns>
+        public async Task<ApiResponse<UserSubscriptionDto>> GetUserSubscriptionAsync(int userId)
+        {
+            try
+            {
+                _logger.LogInformation(
+                    "Fetching subscription record for user {UserId}",
+                    userId);
+
+                var response = await _httpClient.GetAsync($"api/cv/{userId}/subscription");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "GetUserSubscriptionAsync failed for user {UserId}. StatusCode: {StatusCode}, Error: {Error}",
+                        userId, response.StatusCode, errorContent);
+
+                    return ApiResponse<UserSubscriptionDto>.ErrorResponse(errorContent);
+                }
+
+                var result = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<UserSubscriptionDto>>(AppJsonOptions.Options);
+
+                if (result == null)
+                {
+                    _logger.LogWarning(
+                        "GetUserSubscriptionAsync returned null response for user {UserId}",
+                        userId);
+
+                    return ApiResponse<UserSubscriptionDto>.ErrorResponse("Invalid response from API");
+                }
+
+                _logger.LogInformation(
+                    "Successfully fetched subscription record for user {UserId}",
+                    userId);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Exception occurred in GetUserSubscriptionAsync for user {UserId}",
+                    userId);
+
+                return ApiResponse<UserSubscriptionDto>.ErrorResponse("Network or API error");
+            }
+        }
+
+        /// <summary>
+        /// Save user subscription record
+        /// </summary>
+        /// <param name="subscription">User subscription to save</param>
+        /// <returns>ApiResponse with saved subscription</returns>
+        public async Task<ApiResponse<UserSubscriptionDto>> SaveUserSubscriptionAsync(UserSubscriptionDto subscription)
+        {
+            if (subscription == null)
+                return ApiResponse<UserSubscriptionDto>.ErrorResponse("Subscription data is empty");
+
+            try
+            {
+                _logger.LogInformation(
+                    "Saving subscription for user {UserId}",
+                    subscription.UserId);
+
+                var response = await _httpClient.PostAsJsonAsync(
+                    "api/cv/subscription",
+                    subscription,
+                    AppJsonOptions.Options);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogWarning(
+                        "SaveUserSubscriptionAsync failed. StatusCode: {StatusCode}, Error: {Error}",
+                        response.StatusCode, errorContent);
+
+                    return ApiResponse<UserSubscriptionDto>.ErrorResponse(errorContent);
+                }
+
+                var result = await response.Content
+                    .ReadFromJsonAsync<ApiResponse<UserSubscriptionDto>>(AppJsonOptions.Options);
+
+                if (result == null)
+                {
+                    _logger.LogWarning(
+                        "SaveUserSubscriptionAsync returned null response");
+
+                    return ApiResponse<UserSubscriptionDto>.ErrorResponse("Invalid response from API");
+                }
+
+                _logger.LogInformation(
+                    "User subscription saved successfully");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Exception occurred in SaveUserSubscriptionAsync");
+
+                return ApiResponse<UserSubscriptionDto>.ErrorResponse($"Network or API error: {ex.Message}");
+            }
+        }
     }
 }
